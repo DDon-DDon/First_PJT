@@ -1,0 +1,44 @@
+{
+  "collected_at": "2025-12-28T01:25:26.723509",
+  "source": "g2",
+  "total_products": 1,
+  "total_reviews": 2,
+  "data": {
+    "inventory_management_general": [
+      {
+        "review_id": "mock_001",
+        "product_name": "Generic Inventory Software",
+        "title": "Good but expensive for small retail",
+        "rating": 3.5,
+        "pros": "Good features, reliable",
+        "cons": "Too expensive for small stores, complex setup",
+        "body": "The software works well but pricing is aimed at large retailers. Small businesses struggle with the cost.",
+        "reviewer_role": "Store Owner",
+        "company_size": "1-10 employees",
+        "industry": "Retail",
+        "posted_date": "2024-11-15",
+        "verified": true,
+        "helpful_count": 12,
+        "source": "mock_data",
+        "collected_at": "2025-12-28T01:25:26.723509"
+      },
+      {
+        "review_id": "mock_002",
+        "product_name": "Generic Inventory Software",
+        "title": "Manual counting still required",
+        "rating": 3.0,
+        "pros": "Integration with POS",
+        "cons": "Still need manual shelf checks, no automated detection",
+        "body": "We still have to manually count shelves every day. The system does not detect out-of-stock automatically.",
+        "reviewer_role": "Operations Manager",
+        "company_size": "11-50 employees",
+        "industry": "Convenience Store",
+        "posted_date": "2024-10-22",
+        "verified": true,
+        "helpful_count": 8,
+        "source": "mock_data",
+        "collected_at": "2025-12-28T01:25:26.723509"
+      }
+    ]
+  }
+}

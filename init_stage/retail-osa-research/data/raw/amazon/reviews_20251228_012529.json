@@ -1,0 +1,66 @@
+{
+  "collected_at": "2025-12-28T01:25:29.626270",
+  "source": "amazon",
+  "total_products": 1,
+  "total_reviews": 4,
+  "data": {
+    "inventory_scanner_general": [
+      {
+        "review_id": "mock_amz_001",
+        "asin": "B0MOCK001",
+        "product_name": "Wireless Barcode Scanner",
+        "title": "Good scanner but needs better software",
+        "rating": 4.0,
+        "body": "The hardware is solid but the inventory tracking software is basic. Would love automated shelf monitoring instead of manual scanning.",
+        "verified_purchase": true,
+        "helpful_count": 45,
+        "reviewer_name": "Small Store Owner",
+        "review_date": "2024-11-20",
+        "source": "mock_data",
+        "collected_at": "2025-12-28T01:25:29.626270"
+      },
+      {
+        "review_id": "mock_amz_002",
+        "asin": "B0MOCK001",
+        "product_name": "Wireless Barcode Scanner",
+        "title": "Time-consuming to scan every item",
+        "rating": 3.0,
+        "body": "Works fine but still requires manual scanning of every shelf. Takes too much time for daily inventory checks.",
+        "verified_purchase": true,
+        "helpful_count": 32,
+        "reviewer_name": "Convenience Store Manager",
+        "review_date": "2024-10-15",
+        "source": "mock_data",
+        "collected_at": "2025-12-28T01:25:29.626270"
+      },
+      {
+        "review_id": "mock_amz_003",
+        "asin": "B0MOCK002",
+        "product_name": "Smart Shelf Sensor",
+        "title": "Expensive for small stores",
+        "rating": 3.5,
+        "body": "The technology is impressive but the price per shelf is too high for independent retailers. Needs more affordable option.",
+        "verified_purchase": true,
+        "helpful_count": 28,
+        "reviewer_name": "Retail Entrepreneur",
+        "review_date": "2024-09-30",
+        "source": "mock_data",
+        "collected_at": "2025-12-28T01:25:29.626270"
+      },
+      {
+        "review_id": "mock_amz_004",
+        "asin": "B0MOCK002",
+        "product_name": "Smart Shelf Sensor",
+        "title": "Installation is complicated",
+        "rating": 3.0,
+        "body": "Good concept but installation requires technical expertise. Not practical for small business owners to set up themselves.",
+        "verified_purchase": true,
+        "helpful_count": 19,
+        "reviewer_name": "Store Owner",
+        "review_date": "2024-08-12",
+        "source": "mock_data",
+        "collected_at": "2025-12-28T01:25:29.626270"
+      }
+    ]
+  }
+}
