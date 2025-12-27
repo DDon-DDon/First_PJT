@@ -1,14 +1,63 @@
-# Day 3-4: 페인포인트 분석 보고서
+# Day 3-4: 페인포인트 분석 보고서 (v1.0 - 2차 자료 기반)
 
 **프로젝트**: 임베디드 카메라 기반 자동 재고 모니터링 솔루션
 **도메인**: 소규모 리테일 (small_retail_osa)
 **분석 대상**: 리뷰, VOC, 경쟁사 분석
 **데이터 수집일**: 2025-12-28
-**데이터 소스**: Retail industry publications, G2 reviews, Amazon reviews, Competitor analysis
+**보고서 버전**: v1.0 (2차 자료 기반 예비 분석)
 
 ---
 
-## 📊 Executive Summary
+## ⚠️ 데이터 수집 방법론 및 제한사항
+
+### 데이터 수집 방법
+
+**현재 보고서 (v1.0)**는 다음 방법으로 수집된 **2차 자료**를 기반으로 작성되었습니다:
+
+#### 1. WebSearch 도구 사용
+- **도구**: Claude Code의 WebSearch 기능
+- **방법**: 구조화된 웹 검색을 통한 공개 정보 수집
+- **수집 대상**:
+  - Retail industry publications (Retail Dive, The Retail Exec 등)
+  - 소프트웨어 리뷰 사이트 요약 정보
+  - 경쟁사 마케팅 자료 및 공개 정보
+
+#### 2. 수집된 정보의 한계
+- ❌ **실제 G2 사용자 리뷰 크롤링 없음**: G2 플랫폼에 대한 일반 정보만 수집
+- ❌ **Reddit API 직접 호출 없음**: Reddit 관련 웹 검색 결과만 활용
+- ❌ **Amazon 리뷰 스크래핑 없음**: Amazon 재고 관리 솔루션에 대한 간접 정보만 수집
+- ❌ **1차 데이터(원본 리뷰, 포스트) 미저장**: 검색 결과 요약만 사용
+
+#### 3. 데이터 신뢰도
+- **정보 출처**: 주로 업계 리포트, 소프트웨어 제공업체 블로그, 리뷰 플랫폼 요약
+- **검증 수준**: 2차 자료로서 일반적인 트렌드 파악에는 유용하나, 구체적인 VOC 분석에는 제한적
+- **대표성**: 실제 사용자 목소리보다는 업계 전문가 의견 중심
+
+### 다음 단계: 1차 데이터 수집 계획
+
+**v2.0 보고서**를 위해 다음 방법으로 1차 데이터를 수집할 예정:
+
+1. **Reddit API (PRAW)**
+   - Subreddit: r/retailmanagement, r/smallbusiness, r/entrepreneur
+   - 키워드: inventory, stockout, shelf monitoring, manual counting
+   - 데이터: 포스트 제목, 본문, 댓글
+   - 저장 위치: `data/raw/reddit/posts_YYYYMMDD.jsonl`
+
+2. **G2 웹 스크래핑 (Scrapy)**
+   - 타겟: Inventory management software reviews
+   - 데이터: 별점, 리뷰 텍스트, Pros/Cons, 사용자 프로필
+   - 저장 위치: `data/raw/g2/reviews_YYYYMMDD.jsonl`
+   - 준수: robots.txt, rate limiting, ToS
+
+3. **Amazon 제품 리뷰 (또는 대안)**
+   - 타겟: Inventory management hardware/software
+   - 데이터: 리뷰 텍스트, 별점, verified purchase
+   - 저장 위치: `data/raw/amazon/reviews_YYYYMMDD.jsonl`
+   - 참고: Amazon ToS 제한으로 인해 공개 API 또는 수동 수집 검토 필요
+
+---
+
+## 📊 Executive Summary (현재 v1.0 기준)
 
 ### 핵심 발견사항
 
