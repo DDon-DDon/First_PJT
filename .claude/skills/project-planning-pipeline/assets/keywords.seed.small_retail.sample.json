@@ -1,0 +1,117 @@
+{
+  "version": "v1",
+  "domain": "small_retail_osa",
+  "description": "소규모 리테일/쇼핑몰 재고 모니터링 솔루션 기획용 키워드 세트",
+  "keywords": [
+    {
+      "keyword_id": "kw_on_shelf_availability",
+      "text": "on-shelf availability",
+      "lang": "en",
+      "geo": "KR",
+      "tags": ["retail", "osa", "availability"],
+      "intent": "problem_space",
+      "priority": 5,
+      "created_at": "2025-12-27T00:00:00+09:00"
+    },
+    {
+      "keyword_id": "kw_osa_retail",
+      "text": "OSA retail",
+      "lang": "en",
+      "geo": "KR",
+      "tags": ["retail", "osa"],
+      "intent": "problem_space",
+      "priority": 5,
+      "created_at": "2025-12-27T00:00:00+09:00"
+    },
+    {
+      "keyword_id": "kw_out_of_stock_retail",
+      "text": "out of stock retail",
+      "lang": "en",
+      "geo": "KR",
+      "tags": ["retail", "stockout"],
+      "intent": "problem_space",
+      "priority": 5,
+      "created_at": "2025-12-27T00:00:00+09:00"
+    },
+    {
+      "keyword_id": "kw_shelf_gap_detection",
+      "text": "shelf gap detection",
+      "lang": "en",
+      "geo": "KR",
+      "tags": ["retail", "vision", "detection"],
+      "intent": "solution_search",
+      "priority": 5,
+      "created_at": "2025-12-27T00:00:00+09:00"
+    },
+    {
+      "keyword_id": "kw_stockout_alert_system",
+      "text": "stockout alert system",
+      "lang": "en",
+      "geo": "KR",
+      "tags": ["retail", "alert", "automation"],
+      "intent": "solution_search",
+      "priority": 5,
+      "created_at": "2025-12-27T00:00:00+09:00"
+    },
+    {
+      "keyword_id": "kw_small_retail_inventory",
+      "text": "small retail inventory management",
+      "lang": "en",
+      "geo": "KR",
+      "tags": ["retail", "inventory", "small_business"],
+      "intent": "solution_search",
+      "priority": 5,
+      "created_at": "2025-12-27T00:00:00+09:00"
+    },
+    {
+      "keyword_id": "kw_manual_inventory_count",
+      "text": "manual inventory count",
+      "lang": "en",
+      "geo": "KR",
+      "tags": ["retail", "inventory", "pain"],
+      "intent": "problem_space",
+      "priority": 5,
+      "created_at": "2025-12-27T00:00:00+09:00"
+    },
+    {
+      "keyword_id": "kw_retail_cv_monitoring",
+      "text": "retail shelf monitoring computer vision",
+      "lang": "en",
+      "geo": "KR",
+      "tags": ["retail", "vision", "monitoring"],
+      "intent": "solution_search",
+      "priority": 5,
+      "created_at": "2025-12-27T00:00:00+09:00"
+    },
+    {
+      "keyword_id": "kw_empty_shelf_detection",
+      "text": "empty shelf detection",
+      "lang": "en",
+      "geo": "KR",
+      "tags": ["retail", "vision", "detection"],
+      "intent": "solution_search",
+      "priority": 5,
+      "created_at": "2025-12-27T00:00:00+09:00"
+    },
+    {
+      "keyword_id": "kw_smart_shelf_camera",
+      "text": "smart shelf camera",
+      "lang": "en",
+      "geo": "KR",
+      "tags": ["retail", "hardware", "camera"],
+      "intent": "solution_search",
+      "priority": 5,
+      "created_at": "2025-12-27T00:00:00+09:00"
+    },
+    {
+      "keyword_id": "kw_shelf_stockout_alert_kr",
+      "text": "매대 품절 알림",
+      "lang": "ko",
+      "geo": "KR",
+      "tags": ["retail", "alert", "korean"],
+      "intent": "solution_search",
+      "priority": 5,
+      "created_at": "2025-12-27T00:00:00+09:00"
+    }
+  ]
+}
