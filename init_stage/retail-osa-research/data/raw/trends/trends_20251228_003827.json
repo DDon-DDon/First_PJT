@@ -1,0 +1,802 @@
+{
+  "collected_at": "2025-12-28T00:38:27.434324",
+  "total_keywords": 13,
+  "results": [
+    {
+      "keyword_id": "kw_osa_001",
+      "keyword_text": "on-shelf availability",
+      "geo": "US",
+      "category": "osa_stockout",
+      "priority": 5,
+      "intent": "problem_space",
+      "collected_at": "2025-12-28T00:36:55.380155",
+      "interest_over_time": [
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 0
+        },
+        {
+          "on-shelf availability": 100
+        },
+        {
+          "on-shelf availability": 85
+        }
+      ],
+      "related_queries_top": [],
+      "related_queries_rising": []
+    },
+    {
+      "keyword_id": "kw_osa_002",
+      "keyword_text": "OSA retail",
+      "geo": "US",
+      "category": "osa_stockout",
+      "priority": 5,
+      "intent": "problem_space",
+      "collected_at": "2025-12-28T00:37:01.444499",
+      "interest_over_time": [
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 100
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 0
+        },
+        {
+          "OSA retail": 6
+        },
+        {
+          "OSA retail": 0
+        }
+      ],
+      "related_queries_top": [],
+      "related_queries_rising": []
+    },
+    {
+      "keyword_id": "kw_osa_003",
+      "keyword_text": "out of stock retail",
+      "geo": "US",
+      "category": "osa_stockout",
+      "priority": 5,
+      "intent": "problem_space",
+      "collected_at": "2025-12-28T00:37:08.276075",
+      "interest_over_time": [
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 31
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 30
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 30
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 50
+        },
+        {
+          "out of stock retail": 35
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 34
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 32
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 38
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 39
+        },
+        {
+          "out of stock retail": 38
+        },
+        {
+          "out of stock retail": 32
+        },
+        {
+          "out of stock retail": 43
+        },
+        {
+          "out of stock retail": 37
+        },
+        {
+          "out of stock retail": 66
+        },
+        {
+          "out of stock retail": 45
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 54
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 0
+        },
+        {
+          "out of stock retail": 59
+        },
+        {
+          "out of stock retail": 43
+        },
+        {
+          "out of stock retail": 57
+        },
+        {
+          "out of stock retail": 47
+        },
+        {
+          "out of stock retail": 47
+        },
+        {
+          "out of stock retail": 66
+        },
+        {
+          "out of stock retail": 63
+        },
+        {
+          "out of stock retail": 43
+        },
+        {
+          "out of stock retail": 50
+        },
+        {
+          "out of stock retail": 59
+        },
+        {
+          "out of stock retail": 100
+        },
+        {
+          "out of stock retail": 82
+        },
+        {
+          "out of stock retail": 27
+        },
+        {
+          "out of stock retail": 13
+        }
+      ],
+      "related_queries_top": [],
+      "related_queries_rising": []
+    },
+    {
+      "keyword_id": "kw_osa_005",
+      "keyword_text": "shelf gap detection",
+      "geo": "US",
+      "category": "osa_stockout",
+      "priority": 5,
+      "intent": "solution_search",
+      "collected_at": "2025-12-28T00:37:14.638318",
+      "interest_over_time": [],
+      "related_queries_top": [],
+      "related_queries_rising": []
+    },
+    {
+      "keyword_id": "kw_osa_006",
+      "keyword_text": "stockout alert system",
+      "geo": "US",
+      "category": "osa_stockout",
+      "priority": 5,
+      "intent": "solution_search",
+      "collected_at": "2025-12-28T00:37:21.382336",
+      "interest_over_time": [],
+      "related_queries_top": [],
+      "related_queries_rising": []
+    },
+    {
+      "keyword_id": "kw_inv_001",
+      "keyword_text": "small retail inventory management",
+      "geo": "US",
+      "category": "inventory_operations",
+      "priority": 5,
+      "intent": "solution_search",
+      "collected_at": "2025-12-28T00:37:33.633407",
+      "interest_over_time": [],
+      "related_queries_top": [],
+      "related_queries_rising": []
+    },
+    {
+      "keyword_id": "kw_inv_002",
+      "keyword_text": "inventory management for small business",
+      "geo": "US",
+      "category": "inventory_operations",
+      "priority": 5,
+      "intent": "solution_search",
+      "collected_at": "2025-12-28T00:37:45.524459",
+      "interest_over_time": [],
+      "related_queries_top": [],
+      "related_queries_rising": []
+    },
+    {
+      "keyword_id": "kw_inv_004",
+      "keyword_text": "manual inventory count",
+      "geo": "US",
+      "category": "inventory_operations",
+      "priority": 5,
+      "intent": "problem_space",
+      "collected_at": "2025-12-28T00:37:54.934278",
+      "interest_over_time": [],
+      "related_queries_top": [],
+      "related_queries_rising": []
+    },
+    {
+      "keyword_id": "kw_cv_001",
+      "keyword_text": "retail shelf monitoring computer vision",
+      "geo": "US",
+      "category": "vision_camera",
+      "priority": 5,
+      "intent": "solution_search",
+      "collected_at": "2025-12-28T00:38:01.804891",
+      "interest_over_time": [],
+      "related_queries_top": [],
+      "related_queries_rising": []
+    },
+    {
+      "keyword_id": "kw_cv_002",
+      "keyword_text": "computer vision shelf monitoring",
+      "geo": "US",
+      "category": "vision_camera",
+      "priority": 5,
+      "intent": "solution_search",
+      "collected_at": "2025-12-28T00:38:08.361712",
+      "interest_over_time": [],
+      "related_queries_top": [],
+      "related_queries_rising": []
+    },
+    {
+      "keyword_id": "kw_cv_003",
+      "keyword_text": "empty shelf detection",
+      "geo": "US",
+      "category": "vision_camera",
+      "priority": 5,
+      "intent": "solution_search",
+      "collected_at": "2025-12-28T00:38:14.817909",
+      "interest_over_time": [],
+      "related_queries_top": [],
+      "related_queries_rising": []
+    },
+    {
+      "keyword_id": "kw_cv_004",
+      "keyword_text": "smart shelf camera",
+      "geo": "US",
+      "category": "vision_camera",
+      "priority": 5,
+      "intent": "solution_search",
+      "collected_at": "2025-12-28T00:38:21.599304",
+      "interest_over_time": [
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 49
+        },
+        {
+          "smart shelf camera": 100
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 0
+        },
+        {
+          "smart shelf camera": 3
+        },
+        {
+          "smart shelf camera": 0
+        }
+      ],
+      "related_queries_top": [],
+      "related_queries_rising": []
+    },
+    {
+      "keyword_id": "kw_cv_010",
+      "keyword_text": "매대 품절 알림",
+      "geo": "KR",
+      "category": "vision_camera",
+      "priority": 5,
+      "intent": "solution_search",
+      "collected_at": "2025-12-28T00:38:27.434324",
+      "interest_over_time": [],
+      "related_queries_top": [],
+      "related_queries_rising": []
+    }
+  ]
+}

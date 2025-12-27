@@ -1,18 +1,307 @@
 {
   "version": "v1",
   "domain": "small_retail_osa",
+  "updated_at": "2025-12-28T00:30:00+09:00",
   "keywords": [
     {
-      "keyword_id": "kw_small_retail_osa_example",
-      "text": "example keyword",
+      "keyword_id": "kw_osa_001",
+      "text": "on-shelf availability",
       "lang": "en",
-      "geo": "KR",
-      "tags": [
-        "example"
-      ],
+      "geo": "US",
+      "tags": ["osa", "problem_space"],
+      "intent": "problem_space",
+      "priority": 5,
+      "category": "osa_stockout"
+    },
+    {
+      "keyword_id": "kw_osa_002",
+      "text": "OSA retail",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["osa", "problem_space"],
+      "intent": "problem_space",
+      "priority": 5,
+      "category": "osa_stockout"
+    },
+    {
+      "keyword_id": "kw_osa_003",
+      "text": "out of stock retail",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["stockout", "problem_space"],
+      "intent": "problem_space",
+      "priority": 5,
+      "category": "osa_stockout"
+    },
+    {
+      "keyword_id": "kw_osa_004",
+      "text": "out-of-shelf stockout",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["stockout", "problem_space"],
+      "intent": "problem_space",
+      "priority": 4,
+      "category": "osa_stockout"
+    },
+    {
+      "keyword_id": "kw_osa_005",
+      "text": "shelf gap detection",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["solution", "detection"],
+      "intent": "solution_search",
+      "priority": 5,
+      "category": "osa_stockout"
+    },
+    {
+      "keyword_id": "kw_osa_006",
+      "text": "stockout alert system",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["solution", "alert"],
+      "intent": "solution_search",
+      "priority": 5,
+      "category": "osa_stockout"
+    },
+    {
+      "keyword_id": "kw_osa_007",
+      "text": "low stock alert retail",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["solution", "alert"],
+      "intent": "solution_search",
+      "priority": 4,
+      "category": "osa_stockout"
+    },
+    {
+      "keyword_id": "kw_osa_008",
+      "text": "shelf replenishment",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["problem_space", "operations"],
+      "intent": "problem_space",
+      "priority": 4,
+      "category": "osa_stockout"
+    },
+    {
+      "keyword_id": "kw_osa_009",
+      "text": "retail shelf audit",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["problem_space", "audit"],
       "intent": "problem_space",
       "priority": 3,
-      "created_at": "2025-12-28T00:19:07.550738"
+      "category": "osa_stockout"
+    },
+    {
+      "keyword_id": "kw_osa_010",
+      "text": "planogram compliance",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["solution", "compliance"],
+      "intent": "solution_search",
+      "priority": 3,
+      "category": "osa_stockout"
+    },
+    {
+      "keyword_id": "kw_inv_001",
+      "text": "small retail inventory management",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["inventory", "solution"],
+      "intent": "solution_search",
+      "priority": 5,
+      "category": "inventory_operations"
+    },
+    {
+      "keyword_id": "kw_inv_002",
+      "text": "inventory management for small business",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["inventory", "solution", "small_business"],
+      "intent": "solution_search",
+      "priority": 5,
+      "category": "inventory_operations"
+    },
+    {
+      "keyword_id": "kw_inv_003",
+      "text": "inventory counting process",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["inventory", "problem_space"],
+      "intent": "problem_space",
+      "priority": 4,
+      "category": "inventory_operations"
+    },
+    {
+      "keyword_id": "kw_inv_004",
+      "text": "manual inventory count",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["inventory", "problem_space", "manual"],
+      "intent": "problem_space",
+      "priority": 5,
+      "category": "inventory_operations"
+    },
+    {
+      "keyword_id": "kw_inv_005",
+      "text": "cycle counting retail",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["inventory", "problem_space"],
+      "intent": "problem_space",
+      "priority": 4,
+      "category": "inventory_operations"
+    },
+    {
+      "keyword_id": "kw_inv_006",
+      "text": "phantom stock",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["inventory", "problem_space"],
+      "intent": "problem_space",
+      "priority": 4,
+      "category": "inventory_operations"
+    },
+    {
+      "keyword_id": "kw_inv_007",
+      "text": "inventory accuracy retail",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["inventory", "problem_space"],
+      "intent": "problem_space",
+      "priority": 4,
+      "category": "inventory_operations"
+    },
+    {
+      "keyword_id": "kw_inv_008",
+      "text": "shrinkage inventory retail",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["inventory", "problem_space"],
+      "intent": "problem_space",
+      "priority": 3,
+      "category": "inventory_operations"
+    },
+    {
+      "keyword_id": "kw_inv_009",
+      "text": "backroom to shelf visibility",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["inventory", "solution"],
+      "intent": "solution_search",
+      "priority": 3,
+      "category": "inventory_operations"
+    },
+    {
+      "keyword_id": "kw_inv_010",
+      "text": "inventory discrepancy",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["inventory", "problem_space"],
+      "intent": "problem_space",
+      "priority": 3,
+      "category": "inventory_operations"
+    },
+    {
+      "keyword_id": "kw_cv_001",
+      "text": "retail shelf monitoring computer vision",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["computer_vision", "solution"],
+      "intent": "solution_search",
+      "priority": 5,
+      "category": "vision_camera"
+    },
+    {
+      "keyword_id": "kw_cv_002",
+      "text": "computer vision shelf monitoring",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["computer_vision", "solution"],
+      "intent": "solution_search",
+      "priority": 5,
+      "category": "vision_camera"
+    },
+    {
+      "keyword_id": "kw_cv_003",
+      "text": "empty shelf detection",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["computer_vision", "solution", "detection"],
+      "intent": "solution_search",
+      "priority": 5,
+      "category": "vision_camera"
+    },
+    {
+      "keyword_id": "kw_cv_004",
+      "text": "smart shelf camera",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["camera", "solution"],
+      "intent": "solution_search",
+      "priority": 5,
+      "category": "vision_camera"
+    },
+    {
+      "keyword_id": "kw_cv_005",
+      "text": "CCTV shelf monitoring",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["camera", "solution"],
+      "intent": "solution_search",
+      "priority": 4,
+      "category": "vision_camera"
+    },
+    {
+      "keyword_id": "kw_cv_006",
+      "text": "edge AI camera retail",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["edge_ai", "camera", "solution"],
+      "intent": "solution_search",
+      "priority": 4,
+      "category": "vision_camera"
+    },
+    {
+      "keyword_id": "kw_cv_007",
+      "text": "product facing detection",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["computer_vision", "solution"],
+      "intent": "solution_search",
+      "priority": 3,
+      "category": "vision_camera"
+    },
+    {
+      "keyword_id": "kw_cv_008",
+      "text": "shelf image analytics",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["computer_vision", "analytics"],
+      "intent": "solution_search",
+      "priority": 3,
+      "category": "vision_camera"
+    },
+    {
+      "keyword_id": "kw_cv_009",
+      "text": "real-time shelf monitoring",
+      "lang": "en",
+      "geo": "US",
+      "tags": ["real_time", "solution"],
+      "intent": "solution_search",
+      "priority": 4,
+      "category": "vision_camera"
+    },
+    {
+      "keyword_id": "kw_cv_010",
+      "text": "매대 품절 알림",
+      "lang": "ko",
+      "geo": "KR",
+      "tags": ["korean", "alert", "solution"],
+      "intent": "solution_search",
+      "priority": 5,
+      "category": "vision_camera"
     }
   ]
 }

@@ -1,0 +1,14 @@
+﻿keyword_id,keyword,category,priority,intent,geo,avg_recent_interest,top_queries_count,rising_queries_count,has_rising_trend
+kw_osa_001,on-shelf availability,osa_stockout,5,problem_space,US,15.42,0,0,False
+kw_osa_002,OSA retail,osa_stockout,5,problem_space,US,8.83,0,0,False
+kw_osa_003,out of stock retail,osa_stockout,5,problem_space,US,54.5,0,0,False
+kw_osa_005,shelf gap detection,osa_stockout,5,solution_search,US,0.0,0,0,False
+kw_osa_006,stockout alert system,osa_stockout,5,solution_search,US,0.0,0,0,False
+kw_inv_001,small retail inventory management,inventory_operations,5,solution_search,US,0.0,0,0,False
+kw_inv_002,inventory management for small business,inventory_operations,5,solution_search,US,0.0,0,0,False
+kw_inv_004,manual inventory count,inventory_operations,5,problem_space,US,0.0,0,0,False
+kw_cv_001,retail shelf monitoring computer vision,vision_camera,5,solution_search,US,0.0,0,0,False
+kw_cv_002,computer vision shelf monitoring,vision_camera,5,solution_search,US,0.0,0,0,False
+kw_cv_003,empty shelf detection,vision_camera,5,solution_search,US,0.0,0,0,False
+kw_cv_004,smart shelf camera,vision_camera,5,solution_search,US,12.67,0,0,False
+kw_cv_010,매대 품절 알림,vision_camera,5,solution_search,KR,0.0,0,0,False
