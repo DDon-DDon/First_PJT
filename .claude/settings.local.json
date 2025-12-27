@@ -4,7 +4,13 @@
       "Bash(python init_project.py:*)",
       "Bash(tree:*)",
       "Bash(python:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(pip install:*)",
+      "WebSearch",
+      "WebFetch(domain:www.retaildive.com)",
+      "WebFetch(domain:theretailexec.com)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []
