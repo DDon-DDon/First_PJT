@@ -1,0 +1,252 @@
+{
+  "collected_at": "2025-12-28T01:30:00",
+  "collection_method": "WebSearch",
+  "sources": [
+    "Gartner",
+    "McKinsey",
+    "NRF",
+    "IHL Group",
+    "Various Industry Analysts"
+  ],
+  "total_searches": 6,
+  "data_quality": "secondary_sources",
+  "reports": [
+    {
+      "source": "IHL Group",
+      "topic": "Inventory Distortion Cost Impact",
+      "year": "2023-2025",
+      "key_findings": [
+        {
+          "metric": "Global inventory distortion cost",
+          "value": "$1.73 trillion annually",
+          "breakdown": {
+            "out_of_stocks": "$1.2 trillion",
+            "overstocks": "$562 billion"
+          }
+        },
+        {
+          "metric": "Inventory distortion as % of retail sales",
+          "value": "6.5%"
+        },
+        {
+          "metric": "Supply chain disruption impact",
+          "value": "$301 billion annually"
+        },
+        {
+          "metric": "Theft and organized retail crime",
+          "value": "$379 billion"
+        },
+        {
+          "metric": "AI/ML adoption rate",
+          "value": "< 25%",
+          "context": "Less than one-fourth of retailers have successfully rolled out AI/ML in areas most impacted by inventory distortion"
+        },
+        {
+          "metric": "AI/ML performance impact",
+          "value": {
+            "sales_growth": "2.3x higher",
+            "profit_growth": "2.5x higher"
+          }
+        }
+      ],
+      "relevance_score": 0.98,
+      "url": "https://www.ihlservices.com/"
+    },
+    {
+      "source": "Gartner",
+      "topic": "Retail Inventory Management Trends 2024-2025",
+      "year": "2024-2025",
+      "key_findings": [
+        {
+          "metric": "AI-enabled vision systems",
+          "value": "Leading trend for supply chains in 2024",
+          "technology": "3D cameras + computer vision + AI pattern recognition"
+        },
+        {
+          "metric": "Inventory carrying cost reduction",
+          "value": "30%",
+          "context": "Major retailers in North America and Europe will reduce by 2024"
+        },
+        {
+          "metric": "Agentic technologies",
+          "value": "Increased autonomy in virtual workforces",
+          "use_case": "Optimizing inventory management by autonomously adjusting stock levels in response to real-time demand predictions"
+        },
+        {
+          "metric": "Drones and mobile robots",
+          "value": "Check inventory, eliminate discrepancies related to manual counts"
+        },
+        {
+          "metric": "RFID and sensing technology",
+          "value": "Low-cost lift for monitoring perishable goods"
+        }
+      ],
+      "relevance_score": 0.95,
+      "url": "https://www.gartner.com/"
+    },
+    {
+      "source": "NRF (National Retail Federation)",
+      "topic": "Inventory Management Challenges",
+      "year": "2024-2025",
+      "key_findings": [
+        {
+          "metric": "Global stockout cost",
+          "value": "$1 trillion annually"
+        },
+        {
+          "metric": "Shrinkage cost",
+          "value": "Up to 1.4% of annual revenue"
+        },
+        {
+          "metric": "Inventory management challenges",
+          "value": "More unpredictable due to stricter return policies and inflation"
+        },
+        {
+          "metric": "Technology solutions",
+          "value": "AI-powered inventory management systems, real-time tracking solutions, pre-order models"
+        }
+      ],
+      "relevance_score": 0.92,
+      "url": "https://nrf.com/"
+    },
+    {
+      "source": "Computer Vision Market Analysis",
+      "topic": "Computer Vision AI in Retail Market",
+      "year": "2024-2033",
+      "key_findings": [
+        {
+          "metric": "Market size 2024",
+          "value": "$1.66 billion"
+        },
+        {
+          "metric": "Projected market size 2033",
+          "value": "$12.56 billion"
+        },
+        {
+          "metric": "CAGR",
+          "value": "~25% (estimated)"
+        },
+        {
+          "metric": "Stockout reduction",
+          "value": "Up to 50%",
+          "context": "AI-powered shelf monitoring systems reduce stockouts through real-time inventory tracking"
+        },
+        {
+          "metric": "Key use cases",
+          "value": [
+            "Inventory management & stock monitoring",
+            "Automated shelf audits",
+            "Planogram compliance",
+            "Customer behavior analysis"
+          ]
+        },
+        {
+          "metric": "Retailers using CV",
+          "value": "Walmart, Auchan, and others"
+        }
+      ],
+      "relevance_score": 0.97,
+      "url": "https://www.grandviewresearch.com/"
+    },
+    {
+      "source": "Small Business Inventory Statistics",
+      "topic": "Small Business Retail Inventory Challenges",
+      "year": "2024",
+      "key_findings": [
+        {
+          "metric": "Small businesses not tracking inventory",
+          "value": "43%",
+          "context": "Do not track or use outdated manual systems"
+        },
+        {
+          "metric": "Average inventory accuracy",
+          "value": "66%",
+          "context": "U.S. retail businesses"
+        },
+        {
+          "metric": "Full inventory visibility",
+          "value": "9%",
+          "context": "Only 9% achieve full visibility, 63% struggle with limited visibility"
+        },
+        {
+          "metric": "Overstocking challenges",
+          "value": "42%",
+          "context": "Small businesses struggle with overstocking"
+        },
+        {
+          "metric": "Revenue loss from poor inventory management",
+          "value": "Up to 11% of annual revenue"
+        },
+        {
+          "metric": "Annual loss per retailer (stockouts)",
+          "value": "$1.1 million"
+        },
+        {
+          "metric": "Online shoppers abandoning purchase",
+          "value": "69%",
+          "context": "Will shop with competitor if item out of stock"
+        },
+        {
+          "metric": "Technology adoption",
+          "value": {
+            "inventory_management_software": "46%",
+            "AI_integration": "46%"
+          }
+        },
+        {
+          "metric": "Supply chain unpredictability",
+          "value": "72%",
+          "context": "SMEs experiencing unpredictable delivery times"
+        }
+      ],
+      "relevance_score": 0.96,
+      "url": "Multiple sources"
+    },
+    {
+      "source": "McKinsey",
+      "topic": "Retail Supply Chain Optimization",
+      "year": "2024",
+      "key_findings": [
+        {
+          "metric": "Incremental sales from improved availability",
+          "value": "$100 million+",
+          "context": "One convenience retailer unlocked through inventory tactics"
+        },
+        {
+          "metric": "Automation impact",
+          "value": "Increases service levels and reduces risk of lost sales from stock-outs"
+        }
+      ],
+      "relevance_score": 0.85,
+      "url": "https://www.mckinsey.com/"
+    }
+  ],
+  "cross_validation": {
+    "out_of_stock_cost": {
+      "IHL_Group": "$1.2 trillion",
+      "NRF": "$1 trillion",
+      "average": "$1.1 trillion",
+      "validated": true
+    },
+    "technology_adoption": {
+      "AI_ML_adoption": "< 25% (IHL) vs 46% AI integration (SMB stats)",
+      "note": "Discrepancy likely due to different segments (enterprise vs SMB)"
+    },
+    "market_growth": {
+      "computer_vision_market": {
+        "2024": "$1.66B",
+        "2033": "$12.56B",
+        "validated": true
+      }
+    }
+  },
+  "limitations": {
+    "data_collection_method": "WebSearch (secondary sources)",
+    "primary_research": false,
+    "paywalled_reports": [
+      "Gartner Retail and Consumer Products Inventory Trends, 2025",
+      "IHL Group Fixing Inventory Distortion report"
+    ],
+    "note": "Full report access would provide more detailed statistics and methodology"
+  }
+}
