@@ -360,32 +360,99 @@ id = Column(GUID, primary_key=True, default=uuid.uuid4)
 
 ---
 
-## 5. 다음 작업 (진행 예정)
+## 5. 완료된 작업
 
-### 5.1 모델 UUID → GUID 타입 변경
-- [ ] user.py
-- [ ] store.py
-- [ ] category.py
-- [ ] product.py
-- [ ] transaction.py
-- [ ] stock.py
+### 5.1 모델 UUID → GUID 타입 변경 ✅
+- [x] user.py - `from app.db.types import GUID` 적용
+- [x] store.py - `Column(GUID, ...)` 변경 완료
+- [x] category.py - GUID 타입 적용
+- [x] product.py - id, category_id GUID 변경
+- [x] transaction.py - id, product_id, store_id, user_id GUID 변경
+- [x] stock.py - product_id, store_id GUID 변경 (복합키)
 
-### 5.2 테스트 실행 및 통과 확인
-```bash
-pytest tests/test_models.py -v
+**변경 내용**:
+```python
+# 변경 전
+from sqlalchemy.dialects.postgresql import UUID
+id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+
+# 변경 후
+from app.db.types import GUID
+id = Column(GUID, primary_key=True, default=uuid.uuid4)
 ```
 
-### 5.3 🔵 REFACTOR: 리팩토링
+### 5.2 테스트 실행 및 통과 확인 ✅
+
+**테스트 실행 결과**:
+```bash
+$ pytest tests/test_models.py -v
+
+============================= test session starts =============================
+platform win32 -- Python 3.12.11, pytest-7.4.4, pluggy-1.6.0
+collected 13 items
+
+tests/test_models.py::TestUserModel::test_create_user PASSED             [  7%]
+tests/test_models.py::TestUserModel::test_user_default_role PASSED       [ 15%]
+tests/test_models.py::TestUserModel::test_user_email_unique PASSED       [ 23%]
+tests/test_models.py::TestStoreModel::test_create_store PASSED           [ 30%]
+tests/test_models.py::TestStoreModel::test_store_code_unique PASSED      [ 38%]
+tests/test_models.py::TestCategoryModel::test_create_category PASSED     [ 46%]
+tests/test_models.py::TestProductModel::test_create_product PASSED       [ 53%]
+tests/test_models.py::TestProductModel::test_product_barcode_unique PASSED [ 61%]
+tests/test_models.py::TestProductModel::test_product_default_safety_stock PASSED [ 69%]
+tests/test_models.py::TestInventoryTransactionModel::test_create_inbound_transaction PASSED [ 76%]
+tests/test_models.py::TestInventoryTransactionModel::test_create_adjust_transaction_with_reason PASSED [ 84%]
+tests/test_models.py::TestCurrentStockModel::test_create_current_stock PASSED [ 92%]
+tests/test_models.py::TestCurrentStockModel::test_current_stock_composite_key PASSED [100%]
+
+======================= 13 passed, 35 warnings in 0.39s ==============================
+```
+
+**결과**: 🟢 **모든 테스트 통과 (13/13)**
+
+**경고 사항**:
+- `datetime.utcnow()` deprecation 경고 (Python 3.12+) - Phase 1.2에서 개선 예정
+
+### 5.3 🔵 REFACTOR: 리팩토링 (Phase 1.2에서 진행 예정)
 - [ ] Enum 타입 별도 파일로 분리
 - [ ] 공통 Base 클래스 메서드 추가
 - [ ] Relationship 설정 최적화
+- [ ] datetime.utcnow() → datetime.now(UTC) 변경
 
-### 5.4 커밋
+### 5.4 커밋 ✅
+
+**커밋 해시**: `d027231`
+
 ```bash
-git add .
-git commit -m "test: Add SQLAlchemy model tests (13 tests)
-feat: Implement database models with TDD approach
-fix: Add GUID type for SQLite compatibility"
+git commit -m "test: Add SQLAlchemy model tests (13 tests passed)
+
+- User 모델 테스트 (3개): 생성, 기본 역할, 이메일 유니크
+- Store 모델 테스트 (2개): 생성, 코드 유니크
+- Category 모델 테스트 (1개): 생성
+- Product 모델 테스트 (3개): 생성, 바코드 유니크, 안전재고 기본값
+- InventoryTransaction 모델 테스트 (2개): 입고, 조정+사유
+- CurrentStock 모델 테스트 (2개): 생성, 복합키
+
+feat: Implement database models with GUID type
+
+- User 모델 (UserRole Enum)
+- Store 모델
+- Category 모델
+- Product 모델 (바코드 인덱스, 안전재고 기본값=10)
+- InventoryTransaction 모델 (TransactionType, AdjustReason Enum)
+- CurrentStock 모델 (복합 primary key)
+
+fix: Add GUID type for SQLite compatibility
+
+- PostgreSQL: UUID 타입 사용
+- SQLite: CHAR(32) 타입 사용 (hex 저장)
+- TypeDecorator로 플랫폼 독립적 구현
+
+docs: Add Phase 1 implementation report
+
+- 문제점 및 해결 방법 문서화
+- pytest-asyncio 설정 해결 과정
+- GUID 타입 구현 배경"
 ```
 
 ---
@@ -435,9 +502,14 @@ fix: Add GUID type for SQLite compatibility"
 ✅ app/db/types.py                   (45줄)  - GUID 커스텀 타입
 ```
 
-### 수정 예정 파일
+### 수정된 파일
 ```
-⏳ app/models/*.py                   - UUID → GUID 타입 변경
+✅ app/models/user.py                - UUID → GUID 타입 변경 완료
+✅ app/models/store.py               - UUID → GUID 타입 변경 완료
+✅ app/models/category.py            - UUID → GUID 타입 변경 완료
+✅ app/models/product.py             - UUID → GUID 타입 변경 완료
+✅ app/models/transaction.py         - UUID → GUID 타입 변경 완료
+✅ app/models/stock.py               - UUID → GUID 타입 변경 완료
 ```
 
 ---
@@ -451,4 +523,5 @@ fix: Add GUID type for SQLite compatibility"
 ---
 
 **작성자**: Claude Code
-**검토**: TDD Phase 1.1 완료 대기 중
+**상태**: ✅ TDD Phase 1.1 완료 (2026-01-01)
+**다음 단계**: Phase 1.2 - Pydantic 스키마 구현
