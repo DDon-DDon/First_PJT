@@ -72,10 +72,10 @@ def test_user_schema_validation():
 ```
 
 #### 🟢 GREEN: 스키마 구현
-- [ ] `app/schemas/user.py` - UserCreate, UserResponse
-- [ ] `app/schemas/product.py` - ProductCreate, ProductResponse
-- [ ] `app/schemas/transaction.py` - TransactionCreate, TransactionResponse
-- [ ] `app/schemas/common.py` - Pagination, ErrorResponse
+- [x] `app/schemas/user.py` - UserCreate, UserResponse
+- [x] `app/schemas/product.py` - ProductCreate, ProductResponse
+- [x] `app/schemas/transaction.py` - InboundTransactionCreate, OutboundTransactionCreate, AdjustTransactionCreate, TransactionResponse
+- [x] `app/schemas/common.py` - Pagination, ErrorResponse, SuccessResponse
 
 #### 🔵 REFACTOR
 - [ ] BaseModel 상속 구조 정리

@@ -22,7 +22,9 @@
       "Bash(.venv/Scripts/python.exe:*)",
       "Bash(taskkill //F //PID 50732)",
       "Bash(pkill:*)",
-      "Bash(docker-compose exec:*)"
+      "Bash(docker-compose exec:*)",
+      "Bash(cat:*)",
+      "Bash(uv pip freeze:*)"
     ],
     "deny": [],
     "ask": []
