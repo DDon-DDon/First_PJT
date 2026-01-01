@@ -33,12 +33,13 @@ def test_user_model_creation():
 ```
 
 #### 🟢 GREEN: 모델 구현
-- [ ] `app/models/user.py` - User 모델
-- [ ] `app/models/store.py` - Store 모델
-- [ ] `app/models/category.py` - Category 모델
-- [ ] `app/models/product.py` - Product 모델
-- [ ] `app/models/transaction.py` - InventoryTransaction 모델
-- [ ] `app/models/stock.py` - CurrentStock 모델
+- [x] `app/models/user.py` - User 모델
+- [x] `app/models/store.py` - Store 모델
+- [x] `app/models/category.py` - Category 모델
+- [x] `app/models/product.py` - Product 모델
+- [x] `app/models/transaction.py` - InventoryTransaction 모델
+- [x] `app/models/stock.py` - CurrentStock 모델
+- [x] `app/db/types.py` - GUID 커스텀 타입 (SQLite 호환성)
 
 #### 🔵 REFACTOR
 - [ ] Enum 타입 정리 (UserRole, TransactionType, AdjustReason)
