@@ -1,8 +1,9 @@
-# Phase 1: SQLAlchemy 모델 구현 보고서
+# Phase 1: 데이터 모델 및 스키마 구현 보고서
 
 **작성일**: 2026-01-01
-**Phase**: 1.1 - SQLAlchemy 모델 테스트 및 구현
+**Phase**: 1.1 - SQLAlchemy 모델 / 1.2 - Pydantic 스키마
 **TDD 단계**: 🔴 RED → 🟢 GREEN
+**최종 상태**: ✅ Phase 1 완료 (27/27 테스트 통과)
 
 ---
 
@@ -457,40 +458,457 @@ docs: Add Phase 1 implementation report
 
 ---
 
-## 6. 테스트 커버리지 목표
+## 6. Phase 1.2: Pydantic 스키마 구현
 
-| 영역 | 현재 | 목표 |
-|------|------|------|
-| models/ | 0% → 예상 70%+ | 70%+ |
-| 테스트 개수 | 13개 | 13개 ✅ |
-| 모델 개수 | 6개 | 6개 ✅ |
+**Phase**: 1.2 - Pydantic Request/Response 스키마
+**TDD 단계**: 🔴 RED → 🟢 GREEN
+**완료일**: 2026-01-01
+
+### 6.1 작업 개요
+
+#### 목표
+- TDD 방식으로 Pydantic v2 스키마 구현
+- Request/Response 스키마 분리
+- FastAPI와 통합 가능한 데이터 검증 계층 구축
+
+#### 구현한 스키마 (4개 모듈)
+1. **common.py** - 공통 스키마 (Pagination, ErrorResponse, SuccessResponse)
+2. **user.py** - 사용자 스키마 (UserCreate, UserResponse)
+3. **product.py** - 제품 스키마 (ProductCreate, ProductResponse)
+4. **transaction.py** - 트랜잭션 스키마 (InboundTransactionCreate, OutboundTransactionCreate, AdjustTransactionCreate, TransactionResponse)
 
 ---
 
-## 7. 배운 점 (Lessons Learned)
+### 6.2 🔴 RED: 테스트 작성
+
+#### 테스트 파일
+```
+tests/test_schemas.py       # 스키마 검증 테스트 (14개)
+```
+
+#### 작성한 테스트 (총 14개)
+
+**User 스키마 테스트 (4개)**
+```python
+class TestUserSchemas:
+    def test_user_create_schema_valid()           # 정상 데이터 검증
+    def test_user_create_schema_default_role()    # 기본 역할 = WORKER
+    def test_user_create_schema_invalid_email()   # 이메일 검증 실패
+    def test_user_response_schema()               # 응답 스키마 (password 제외)
+```
+
+**Product 스키마 테스트 (3개)**
+```python
+class TestProductSchemas:
+    def test_product_create_schema_valid()            # 정상 데이터
+    def test_product_create_schema_default_safety_stock()  # 안전재고 기본값=10
+    def test_product_response_schema()                # 응답 스키마
+```
+
+**Transaction 스키마 테스트 (4개)**
+```python
+class TestTransactionSchemas:
+    def test_inbound_transaction_create_schema()   # 입고 트랜잭션
+    def test_outbound_transaction_create_schema()  # 출고 트랜잭션
+    def test_adjust_transaction_create_schema()    # 조정 트랜잭션 (reason 필수)
+    def test_transaction_response_schema()         # 트랜잭션 응답
+```
+
+**Common 스키마 테스트 (3개)**
+```python
+class TestCommonSchemas:
+    def test_pagination_schema()       # 페이지네이션 (ge=1 검증)
+    def test_error_response_schema()   # 에러 응답 (code, message, details)
+    def test_success_response_schema() # 성공 응답 (success=True, data)
+```
+
+#### RED 단계 결과
+```bash
+$ pytest tests/test_schemas.py -v
+# 14개 테스트 모두 FAILED (ImportError: No module named 'app.schemas')
+```
+
+🔴 **예상된 실패** - 스키마 파일이 없어 import 실패
+
+---
+
+### 6.3 🟢 GREEN: 스키마 구현
+
+#### 구현한 스키마 파일
+```
+app/schemas/
+├── __init__.py
+├── common.py        # 공통 스키마
+├── user.py          # 사용자 스키마
+├── product.py       # 제품 스키마
+└── transaction.py   # 트랜잭션 스키마
+```
+
+#### 주요 스키마 구현 내용
+
+**common.py - 공통 응답 스키마**
+```python
+from pydantic import BaseModel, Field
+from typing import Any, Optional, Dict
+
+class Pagination(BaseModel):
+    """페이지네이션 정보"""
+    page: int = Field(..., ge=1, description="현재 페이지")
+    limit: int = Field(..., ge=1, le=100, description="페이지당 항목 수")
+    total: int = Field(..., ge=0, description="전체 항목 수")
+    totalPages: int = Field(..., ge=0, description="전체 페이지 수")
+
+class ErrorResponse(BaseModel):
+    """에러 응답 스키마"""
+    code: str = Field(..., description="에러 코드")
+    message: str = Field(..., description="에러 메시지")
+    details: Optional[Dict[str, Any]] = Field(None, description="상세 정보")
+
+class SuccessResponse(BaseModel):
+    """성공 응답 스키마"""
+    success: bool = Field(True, description="성공 여부")
+    data: Any = Field(..., description="응답 데이터")
+```
+
+**특징**:
+- API 응답 표준화 (성공/에러/페이지네이션)
+- `Field` 제약조건으로 검증 강화 (ge, le)
+- `details`는 Optional로 에러 상세정보 선택적 제공
+
+**user.py - 사용자 스키마**
+```python
+from pydantic import BaseModel, EmailStr, Field
+from uuid import UUID
+from datetime import datetime
+from typing import Optional
+
+class UserCreate(BaseModel):
+    """사용자 생성 요청 스키마"""
+    email: EmailStr = Field(..., description="이메일")
+    password: str = Field(..., min_length=6, description="비밀번호")
+    name: str = Field(..., min_length=1, max_length=100, description="이름")
+    role: str = Field(default="WORKER", description="역할")
+
+class UserResponse(BaseModel):
+    """사용자 응답 스키마"""
+    id: UUID
+    email: EmailStr
+    name: str
+    role: str
+    isActive: bool
+    createdAt: datetime
+    updatedAt: Optional[datetime] = None
+
+    model_config = {"from_attributes": True}
+```
+
+**특징**:
+- `EmailStr` - email-validator로 이메일 검증
+- `password` - 최소 6자 검증 (min_length)
+- `UserResponse` - password 제외 (보안)
+- `model_config` - SQLAlchemy 모델과 호환
+
+**product.py - 제품 스키마**
+```python
+from pydantic import BaseModel, Field
+from uuid import UUID
+from datetime import datetime
+from typing import Optional
+
+class ProductCreate(BaseModel):
+    """제품 생성 요청 스키마"""
+    barcode: str = Field(..., min_length=1, max_length=50, description="바코드")
+    name: str = Field(..., min_length=1, max_length=200, description="제품명")
+    categoryId: str = Field(..., description="카테고리 ID")
+    safetyStock: int = Field(default=10, ge=0, description="안전재고")
+    imageUrl: Optional[str] = Field(None, max_length=500, description="이미지 URL")
+    memo: Optional[str] = Field(None, description="메모")
+
+class ProductResponse(BaseModel):
+    """제품 응답 스키마"""
+    id: UUID
+    barcode: str
+    name: str
+    categoryId: UUID
+    safetyStock: int
+    imageUrl: Optional[str]
+    memo: Optional[str]
+    isActive: bool
+    createdAt: datetime
+    updatedAt: Optional[datetime]
+
+    model_config = {"from_attributes": True}
+```
+
+**특징**:
+- `safetyStock` - 기본값 10, 0 이상 검증 (ge=0)
+- camelCase 필드명 (프론트엔드 호환)
+- 선택적 필드: imageUrl, memo
+
+**transaction.py - 트랜잭션 스키마**
+```python
+from pydantic import BaseModel, Field
+from uuid import UUID
+from datetime import datetime
+from typing import Optional
+
+class InboundTransactionCreate(BaseModel):
+    """입고 트랜잭션 생성 요청"""
+    productId: str = Field(..., description="제품 ID")
+    storeId: str = Field(..., description="매장 ID")
+    quantity: int = Field(..., gt=0, description="입고 수량")
+    note: Optional[str] = Field(None, description="비고")
+
+class OutboundTransactionCreate(BaseModel):
+    """출고 트랜잭션 생성 요청"""
+    productId: str
+    storeId: str
+    quantity: int = Field(..., gt=0, description="출고 수량")
+    note: Optional[str] = None
+
+class AdjustTransactionCreate(BaseModel):
+    """조정 트랜잭션 생성 요청"""
+    productId: str
+    storeId: str
+    quantity: int = Field(..., description="조정 수량")
+    reason: str = Field(..., description="조정 사유")
+    note: Optional[str] = None
+
+class TransactionResponse(BaseModel):
+    """트랜잭션 응답 스키마"""
+    id: UUID
+    productId: UUID
+    storeId: UUID
+    userId: UUID
+    type: str
+    quantity: int
+    reason: Optional[str]
+    note: Optional[str]
+    createdAt: datetime
+    syncedAt: Optional[datetime]
+
+    model_config = {"from_attributes": True}
+```
+
+**특징**:
+- 트랜잭션 타입별 스키마 분리
+- 입고/출고: `quantity > 0` 검증 (gt=0)
+- 조정: `reason` 필수, quantity는 음수 가능
+- `syncedAt` - 오프라인 동기화 상태 추적
+
+---
+
+### 6.4 발생한 문제점 및 해결
+
+#### 🚨 문제: email-validator 미설치
+
+**문제 상황**
+```
+ModuleNotFoundError: No module named 'email_validator'
+ImportError: email-validator is not installed
+```
+
+Pydantic의 `EmailStr` 타입을 사용하려면 별도의 email-validator 패키지가 필요한데 설치되어 있지 않음.
+
+**원인**
+- `pydantic==2.5.3`만 설치됨
+- `EmailStr`은 `email-validator` 패키지에 의존
+
+**해결 방법**
+```bash
+cd backend && uv pip install email-validator
+# Installed: dnspython==2.8.0, email-validator==2.3.0
+```
+
+**requirements.txt 업데이트**
+```python
+# Data Validation
+pydantic==2.5.3
+pydantic-settings==2.1.0
+email-validator==2.3.0  # ✅ 추가
+```
+
+**결과**: ✅ 모든 테스트 통과 (14/14)
+
+---
+
+### 6.5 테스트 실행 및 통과 확인 ✅
+
+**테스트 실행 결과**:
+```bash
+$ pytest tests/test_schemas.py -v
+
+============================= test session starts =============================
+collected 14 items
+
+tests/test_schemas.py::TestUserSchemas::test_user_create_schema_valid PASSED [ 7%]
+tests/test_schemas.py::TestUserSchemas::test_user_create_schema_default_role PASSED [ 14%]
+tests/test_schemas.py::TestUserSchemas::test_user_create_schema_invalid_email PASSED [ 21%]
+tests/test_schemas.py::TestUserSchemas::test_user_response_schema PASSED [ 28%]
+tests/test_schemas.py::TestProductSchemas::test_product_create_schema_valid PASSED [ 35%]
+tests/test_schemas.py::TestProductSchemas::test_product_create_schema_default_safety_stock PASSED [ 42%]
+tests/test_schemas.py::TestProductSchemas::test_product_response_schema PASSED [ 50%]
+tests/test_schemas.py::TestTransactionSchemas::test_inbound_transaction_create_schema PASSED [ 57%]
+tests/test_schemas.py::TestTransactionSchemas::test_outbound_transaction_create_schema PASSED [ 64%]
+tests/test_schemas.py::TestTransactionSchemas::test_adjust_transaction_create_schema PASSED [ 71%]
+tests/test_schemas.py::TestTransactionSchemas::test_transaction_response_schema PASSED [ 78%]
+tests/test_schemas.py::TestCommonSchemas::test_pagination_schema PASSED [ 85%]
+tests/test_schemas.py::TestCommonSchemas::test_error_response_schema PASSED [ 92%]
+tests/test_schemas.py::TestCommonSchemas::test_success_response_schema PASSED [100%]
+
+======================= 14 passed, 3 warnings in 0.11s =======================
+```
+
+**결과**: 🟢 **모든 테스트 통과 (14/14)**
+
+---
+
+### 6.6 Phase 1.2 커밋 ✅
+
+**커밋 해시**: `447b2a7`
+
+```bash
+git commit -m "test: Add Pydantic schema validation tests (14 tests passed)
+
+- User 스키마 테스트 (4개): 생성, 기본역할, 이메일검증, 응답
+- Product 스키마 테스트 (3개): 생성, 안전재고 기본값, 응답
+- Transaction 스키마 테스트 (4개): 입고, 출고, 조정, 응답
+- Common 스키마 테스트 (3개): 페이지네이션, 에러, 성공응답
+
+feat: Implement Pydantic v2 schemas for API layer
+
+- common.py: Pagination, ErrorResponse, SuccessResponse
+- user.py: UserCreate, UserResponse (EmailStr validation)
+- product.py: ProductCreate, ProductResponse
+- transaction.py: InboundTransactionCreate, OutboundTransactionCreate, AdjustTransactionCreate, TransactionResponse
+
+fix: Add email-validator dependency
+
+- email-validator==2.3.0 추가
+- Pydantic EmailStr 타입 지원
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+```
+
+---
+
+### 6.7 Phase 1.2에서 구현한 파일
+
+**새로 생성된 파일**
+```
+✅ tests/test_schemas.py             (246줄) - 스키마 검증 테스트 14개
+✅ app/schemas/__init__.py            (0줄)   - 스키마 패키지
+✅ app/schemas/common.py              (27줄)  - 공통 스키마
+✅ app/schemas/user.py                (31줄)  - 사용자 스키마
+✅ app/schemas/product.py             (34줄)  - 제품 스키마
+✅ app/schemas/transaction.py         (54줄)  - 트랜잭션 스키마
+```
+
+**수정된 파일**
+```
+✅ backend/requirements.txt           - email-validator==2.3.0 추가
+```
+
+---
+
+## 7. 테스트 커버리지 목표 (Phase 1 전체)
+
+| 영역 | Phase 1.1 | Phase 1.2 | 전체 | 목표 |
+|------|-----------|-----------|------|------|
+| SQLAlchemy Models | 13개 테스트 ✅ | - | 13개 | 13개 ✅ |
+| Pydantic Schemas | - | 14개 테스트 ✅ | 14개 | 14개 ✅ |
+| **전체** | **13개** | **14개** | **27개** | **27개 ✅** |
+| 모델 개수 | 6개 ✅ | - | 6개 | 6개 ✅ |
+| 스키마 모듈 | - | 4개 ✅ | 4개 | 4개 ✅ |
+
+---
+
+## 8. Phase 1 전체 실행 결과 ✅
+
+**최종 테스트 실행**:
+```bash
+$ pytest tests/ -v
+
+============================= test session starts =============================
+collected 27 items
+
+tests/test_models.py::TestUserModel::test_create_user PASSED             [  3%]
+tests/test_models.py::TestUserModel::test_user_default_role PASSED       [  7%]
+tests/test_models.py::TestUserModel::test_user_email_unique PASSED       [ 11%]
+tests/test_models.py::TestStoreModel::test_create_store PASSED           [ 14%]
+tests/test_models.py::TestStoreModel::test_store_code_unique PASSED      [ 18%]
+tests/test_models.py::TestCategoryModel::test_create_category PASSED     [ 22%]
+tests/test_models.py::TestProductModel::test_create_product PASSED       [ 25%]
+tests/test_models.py::TestProductModel::test_product_barcode_unique PASSED [ 29%]
+tests/test_models.py::TestProductModel::test_product_default_safety_stock PASSED [ 33%]
+tests/test_models.py::TestInventoryTransactionModel::test_create_inbound_transaction PASSED [ 37%]
+tests/test_models.py::TestInventoryTransactionModel::test_create_adjust_transaction_with_reason PASSED [ 40%]
+tests/test_models.py::TestCurrentStockModel::test_create_current_stock PASSED [ 44%]
+tests/test_models.py::TestCurrentStockModel::test_current_stock_composite_key PASSED [ 48%]
+tests/test_schemas.py::TestUserSchemas::test_user_create_schema_valid PASSED [ 51%]
+tests/test_schemas.py::TestUserSchemas::test_user_create_schema_default_role PASSED [ 55%]
+tests/test_schemas.py::TestUserSchemas::test_user_create_schema_invalid_email PASSED [ 59%]
+tests/test_schemas.py::TestUserSchemas::test_user_response_schema PASSED [ 62%]
+tests/test_schemas.py::TestProductSchemas::test_product_create_schema_valid PASSED [ 66%]
+tests/test_schemas.py::TestProductSchemas::test_product_create_schema_default_safety_stock PASSED [ 70%]
+tests/test_schemas.py::TestProductSchemas::test_product_response_schema PASSED [ 74%]
+tests/test_schemas.py::TestTransactionSchemas::test_inbound_transaction_create_schema PASSED [ 77%]
+tests/test_schemas.py::TestTransactionSchemas::test_outbound_transaction_create_schema PASSED [ 81%]
+tests/test_schemas.py::TestTransactionSchemas::test_adjust_transaction_create_schema PASSED [ 85%]
+tests/test_schemas.py::TestTransactionSchemas::test_transaction_response_schema PASSED [ 88%]
+tests/test_schemas.py::TestCommonSchemas::test_pagination_schema PASSED  [ 92%]
+tests/test_schemas.py::TestCommonSchemas::test_error_response_schema PASSED [ 96%]
+tests/test_schemas.py::TestCommonSchemas::test_success_response_schema PASSED [100%]
+
+======================= 27 passed, 38 warnings in 0.42s =======================
+```
+
+**결과**: 🟢 **Phase 1 완료 - 27/27 테스트 통과**
+
+---
+
+## 9. 배운 점 (Lessons Learned)
 
 ### TDD 효과
 1. **명확한 요구사항**: 테스트를 먼저 작성하니 필요한 필드/제약조건이 명확해짐
-2. **빠른 피드백**: 모델 구현 직후 바로 테스트로 검증 가능
+2. **빠른 피드백**: 구현 직후 바로 테스트로 검증 가능
 3. **리팩토링 안전망**: 테스트가 있어 수정 시 안심
+4. **레이어 분리**: 모델(DB)과 스키마(API) 분리로 관심사 분리 명확
 
 ### 기술적 발견
+
+#### Phase 1.1 (Models)
 1. **pytest-asyncio**: `asyncio_mode = auto` 설정으로 간편한 비동기 테스트
 2. **TypeDecorator**: SQLAlchemy에서 커스텀 타입 구현 방법 습득
 3. **Fixture 격리**: 테스트마다 테이블 생성/삭제로 완전한 격리
 
+#### Phase 1.2 (Schemas)
+1. **Pydantic v2**: `model_config = {"from_attributes": True}`로 ORM 모델 호환
+2. **EmailStr 검증**: email-validator 패키지로 이메일 자동 검증
+3. **Field 제약조건**: `gt=0`, `ge=1`, `min_length` 등으로 데이터 검증 강화
+4. **Request/Response 분리**: Create 스키마는 입력 검증, Response는 출력 직렬화
+
 ### 주의사항
+
+#### Phase 1.1 (Models)
 1. **DB 호환성**: 테스트 DB와 운영 DB가 다를 경우 타입 호환성 체크 필수
 2. **비동기 테스트**: fixture와 테스트 함수 모두 `async/await` 일관성 유지
 3. **복합키**: CurrentStock처럼 복합 Primary Key는 유니크 제약 테스트 필수
 
+#### Phase 1.2 (Schemas)
+1. **의존성 관리**: Pydantic의 특수 타입(EmailStr 등)은 추가 패키지 필요
+2. **snake_case vs camelCase**: Python 모델은 snake_case, API 스키마는 camelCase 사용
+3. **보안**: Response 스키마에서 민감 정보(password 등) 제외 필수
+
 ---
 
-## 8. 파일 변경 내역
+## 10. 파일 변경 내역 (Phase 1 전체)
 
-### 새로 생성된 파일
+### Phase 1.1 - 새로 생성된 파일
 ```
-✅ tests/conftest.py                 (128줄) - pytest 설정
+✅ tests/conftest.py                 (128줄) - pytest 설정 및 fixtures
 ✅ tests/test_models.py              (400줄) - 모델 테스트 13개
 ✅ backend/pytest.ini                (6줄)   - pytest 설정
 ✅ app/models/user.py                (45줄)  - User 모델
@@ -502,26 +920,72 @@ docs: Add Phase 1 implementation report
 ✅ app/db/types.py                   (45줄)  - GUID 커스텀 타입
 ```
 
-### 수정된 파일
+### Phase 1.2 - 새로 생성된 파일
 ```
-✅ app/models/user.py                - UUID → GUID 타입 변경 완료
-✅ app/models/store.py               - UUID → GUID 타입 변경 완료
-✅ app/models/category.py            - UUID → GUID 타입 변경 완료
-✅ app/models/product.py             - UUID → GUID 타입 변경 완료
-✅ app/models/transaction.py         - UUID → GUID 타입 변경 완료
-✅ app/models/stock.py               - UUID → GUID 타입 변경 완료
+✅ tests/test_schemas.py             (246줄) - 스키마 검증 테스트 14개
+✅ app/schemas/__init__.py            (0줄)   - 스키마 패키지
+✅ app/schemas/common.py              (27줄)  - 공통 스키마
+✅ app/schemas/user.py                (31줄)  - 사용자 스키마
+✅ app/schemas/product.py             (34줄)  - 제품 스키마
+✅ app/schemas/transaction.py         (54줄)  - 트랜잭션 스키마
 ```
+
+### Phase 1.1 - 수정된 파일
+```
+✅ app/models/user.py                - UUID → GUID 타입 변경
+✅ app/models/store.py               - UUID → GUID 타입 변경
+✅ app/models/category.py            - UUID → GUID 타입 변경
+✅ app/models/product.py             - UUID → GUID 타입 변경
+✅ app/models/transaction.py         - UUID → GUID 타입 변경
+✅ app/models/stock.py               - UUID → GUID 타입 변경
+```
+
+### Phase 1.2 - 수정된 파일
+```
+✅ backend/requirements.txt          - email-validator==2.3.0 추가
+```
+
+### Phase 1 전체 요약
+- **새로 생성된 파일**: 16개
+  - 테스트 파일: 3개 (conftest.py, test_models.py, test_schemas.py)
+  - 모델 파일: 7개 (models 6개 + types.py)
+  - 스키마 파일: 5개 (schemas 4개 + __init__.py)
+  - 설정 파일: 1개 (pytest.ini)
+- **수정된 파일**: 7개
+  - 모델 GUID 변경: 6개
+  - 의존성 추가: 1개 (requirements.txt)
 
 ---
 
-## 9. 참조
+## 11. 커밋 히스토리
+
+### Phase 1.1 커밋
+- **커밋 해시**: `d027231`
+- **커밋 메시지**: test: Add SQLAlchemy model tests (13 tests passed)
+- **포함 내용**: 모델 6개, 테스트 13개, GUID 타입
+
+### Phase 1.2 커밋
+- **커밋 해시**: `447b2a7`
+- **커밋 메시지**: test: Add Pydantic schema validation tests (14 tests passed)
+- **포함 내용**: 스키마 4개 모듈, 테스트 14개, email-validator 의존성
+
+---
+
+## 12. 참조
 
 - [TDD 로드맵](./tdd-roadmap.md)
 - [ERD 명세](../.claude/skills/ddon-project/references/erd.md)
 - [DB 스키마](../backend/init-db/01-schema.sql)
+- [Phase 1.1 커밋](https://github.com/DDon-DDon/ddon-backend/commit/d027231)
+- [Phase 1.2 커밋](https://github.com/DDon-DDon/ddon-backend/commit/447b2a7)
 
 ---
 
 **작성자**: Claude Code
-**상태**: ✅ TDD Phase 1.1 완료 (2026-01-01)
-**다음 단계**: Phase 1.2 - Pydantic 스키마 구현
+**상태**: ✅ TDD Phase 1 완료 (2026-01-01)
+**완료 항목**:
+- Phase 1.1: SQLAlchemy 모델 구현 (13개 테스트 통과)
+- Phase 1.2: Pydantic 스키마 구현 (14개 테스트 통과)
+- **전체**: 27개 테스트 통과 ✅
+
+**다음 단계**: Phase 2 - Authentication API 구현 (TDD 방식)
