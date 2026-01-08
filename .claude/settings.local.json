@@ -24,7 +24,8 @@
       "Bash(pkill:*)",
       "Bash(docker-compose exec:*)",
       "Bash(cat:*)",
-      "Bash(uv pip freeze:*)"
+      "Bash(uv pip freeze:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []
