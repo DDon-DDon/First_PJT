@@ -181,7 +181,6 @@ class Product(Base):
         "Category",
         backref="products",  # Category.products로 역참조 가능
         lazy="joined",  # Product 조회 시 Category도 함께 로드 (N+1 방지)
-        comment="연결된 카테고리"
     )
 
     # stocks: 현재고 목록 (CurrentStock 모델과 1:N 관계)

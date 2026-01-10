@@ -110,69 +110,6 @@ class ProductCreate(BaseModel):
 class ProductResponse(BaseModel):
     """
     제품 응답 스키마
-
-    목적:
-        제품 정보를 클라이언트에게 제공합니다.
-        모든 제품 정보를 일관된 형식으로 반환합니다.
-
-    사용 시나리오:
-        - GET /api/products/{id} (제품 조회)
-        - GET /api/products (제품 목록)
-        - GET /api/products?barcode={barcode} (바코드로 조회)
-        - POST /api/products (제품 등록 성공 응답)
-        - PUT /api/products/{id} (제품 수정 성공 응답)
-
-    Attributes:
-        id (UUID): 제품 고유 식별자
-        barcode (str): 바코드
-        name (str): 제품명
-        categoryId (UUID): 카테고리 ID
-        safetyStock (int): 안전재고 수량
-        imageUrl (str, optional): 제품 이미지 URL (선택)
-        memo (str, optional): 메모 (선택)
-        isActive (bool): 활성화 여부 (False=단종/판매중지)
-        createdAt (datetime): 제품 등록일시
-        updatedAt (datetime, optional): 최종 수정일시 (선택)
-
-    Field Naming Convention:
-        - Python 모델: snake_case (category_id, safety_stock, is_active)
-        - API 응답: camelCase (categoryId, safetyStock, isActive)
-        - model_config의 alias_generator로 자동 변환
-
-    model_config:
-        - from_attributes=True: SQLAlchemy 모델을 Pydantic 스키마로 자동 변환
-          예: ProductResponse.model_validate(product) → Product 모델을 응답 스키마로 변환
-
-    예시:
-        >>> # 응답 예시
-        >>> {
-        ...     "id": "550e8400-e29b-41d4-a716-446655440000",
-        ...     "barcode": "8801234567890",
-        ...     "name": "하이드라 에센스 100ml",
-        ...     "categoryId": "660e8400-e29b-41d4-a716-446655440000",
-        ...     "safetyStock": 20,
-        ...     "imageUrl": "https://cdn.example.com/products/essence.jpg",
-        ...     "memo": "베스트셀러 제품",
-        ...     "isActive": true,
-        ...     "createdAt": "2026-01-01T09:00:00",
-        ...     "updatedAt": "2026-01-02T10:00:00"
-        ... }
-
-        >>> # ORM 모델 → 응답 스키마 변환
-        >>> product = await session.get(Product, product_id)
-        >>> response = ProductResponse.model_validate(product)
-
-        >>> # 바코드로 조회 후 응답
-        >>> stmt = select(Product).where(Product.barcode == "8801234567890")
-        >>> result = await session.execute(stmt)
-        >>> product = result.scalar_one_or_none()
-        >>> if product:
-        ...     response = ProductResponse.model_validate(product)
-
-    주의사항:
-        - from_attributes=True로 ORM 객체 직접 변환 가능
-        - imageUrl, memo, updatedAt은 Optional (없으면 null)
-        - isActive=False인 제품은 단종/판매중지 제품
     """
     id: UUID = Field(
         ...,
@@ -189,18 +126,21 @@ class ProductResponse(BaseModel):
         description="제품명"
     )
 
-    categoryId: UUID = Field(
+    category_id: UUID = Field(
         ...,
+        alias="categoryId",
         description="카테고리 ID"
     )
 
-    safetyStock: int = Field(
+    safety_stock: int = Field(
         ...,
+        alias="safetyStock",
         description="안전재고 수량"
     )
 
-    imageUrl: Optional[str] = Field(
+    image_url: Optional[str] = Field(
         None,
+        alias="imageUrl",
         description="제품 이미지 URL (없으면 null)"
     )
 
@@ -209,22 +149,33 @@ class ProductResponse(BaseModel):
         description="메모 (없으면 null)"
     )
 
-    isActive: bool = Field(
+    is_active: bool = Field(
         ...,
+        alias="isActive",
         description="활성화 여부 (False=단종/판매중지)"
     )
 
-    createdAt: datetime = Field(
+    created_at: datetime = Field(
         ...,
+        alias="createdAt",
         description="제품 등록일시 (UTC)"
     )
 
-    updatedAt: Optional[datetime] = Field(
+    updated_at: Optional[datetime] = Field(
         None,
+        alias="updatedAt",
         description="최종 수정일시 (UTC, 수정 없으면 null)"
     )
 
     # Pydantic v2 설정
     model_config = {
-        "from_attributes": True  # SQLAlchemy 모델 → Pydantic 스키마 자동 변환
+        "from_attributes": True,  # SQLAlchemy 모델 → Pydantic 스키마 자동 변환
+        "populate_by_name": True  # 필드명으로도 생성 가능
     }
+
+from typing import List
+from app.schemas.common import Pagination
+
+class ProductListResponse(BaseModel):
+    items: List[ProductResponse]
+    pagination: Pagination
