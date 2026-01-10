@@ -162,15 +162,15 @@
 
 ---
 
-## 🏪 Phase 7: 매장/카테고리 및 관리자 API
+## 🏪 Phase 7: 매장/카테고리 및 관리자 API (완료)
 
 ### 7.1 구현 목록
-- [ ] `app/api/v1/stores.py`: **GET /stores** (매장 목록)
-- [ ] `app/api/v1/categories.py`: **GET /categories** (카테고리 목록)
-- [ ] **GET /alerts/low-stock** (ADMIN)
-    - [ ] `CurrentStock` 중 `quantity < product.safety_stock` 인 항목 조회
-- [ ] **GET /exports/low-stock** (ADMIN)
-    - [ ] `pandas` 또는 `openpyxl` 등을 사용하여 Excel 파일 생성 및 반환
+- [x] `app/api/v1/stores.py`: **GET /stores** (매장 목록)
+- [x] `app/api/v1/categories.py`: **GET /categories** (카테고리 목록)
+- [x] **GET /alerts/low-stock** (ADMIN)
+    - [x] `CurrentStock` 중 `quantity < product.safety_stock` 인 항목 조회
+- [x] **GET /exports/low-stock** (ADMIN)
+    - [x] `pandas` 또는 `openpyxl` 등을 사용하여 Excel 파일 생성 및 반환
 
 ---
 

@@ -197,12 +197,30 @@ app.include_router(
     tags=["Transactions"]
 )
 
-from app.api.v1 import sync
+from app.api.v1 import sync, stores, categories, admin
 
 app.include_router(
     sync.router,
     prefix=f"{settings.API_V1_PREFIX}/sync",
     tags=["Sync"]
+)
+
+app.include_router(
+    stores.router,
+    prefix=f"{settings.API_V1_PREFIX}/stores",
+    tags=["Stores"]
+)
+
+app.include_router(
+    categories.router,
+    prefix=f"{settings.API_V1_PREFIX}/categories",
+    tags=["Categories"]
+)
+
+app.include_router(
+    admin.router,
+    prefix=settings.API_V1_PREFIX, # /api/v1/alerts..., /api/v1/exports...
+    tags=["Admin"]
 )
 
 # TODO: 나머지 API 라우터 등록
