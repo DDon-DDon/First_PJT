@@ -43,33 +43,33 @@ async def get_current_user_id(
         raise UnauthorizedException("Could not validate credentials")
 
 
-# TODO: User 모델 구현 후 활성화
-# from app.models.user import User
-# from sqlalchemy import select
+# User 모델 구현 후 활성화
+from app.models.user import User
+from sqlalchemy import select
 
-# async def get_current_user(
-#     db: AsyncSession = Depends(get_db),
-#     user_id: str = Depends(get_current_user_id)
-# ) -> User:
-#     """
-#     현재 인증된 사용자 정보 조회
-#
-#     Args:
-#         db: 데이터베이스 세션
-#         user_id: 사용자 ID
-#
-#     Returns:
-#         User: 사용자 모델 인스턴스
-#
-#     Raises:
-#         UnauthorizedException: 사용자를 찾을 수 없는 경우
-#     """
-#     result = await db.execute(
-#         select(User).where(User.id == user_id)
-#     )
-#     user = result.scalar_one_or_none()
-#
-#     if not user:
-#         raise UnauthorizedException("User not found")
-#
-#     return user
+async def get_current_user(
+    db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(get_current_user_id)
+) -> User:
+    """
+    현재 인증된 사용자 정보 조회
+
+    Args:
+        db: 데이터베이스 세션
+        user_id: 사용자 ID
+
+    Returns:
+        User: 사용자 모델 인스턴스
+
+    Raises:
+        UnauthorizedException: 사용자를 찾을 수 없는 경우
+    """
+    result = await db.execute(
+        select(User).where(User.id == user_id)
+    )
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise UnauthorizedException("User not found")
+
+    return user

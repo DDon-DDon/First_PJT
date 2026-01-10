@@ -24,7 +24,12 @@
       "Bash(pkill:*)",
       "Bash(docker-compose exec:*)",
       "Bash(cat:*)",
-      "Bash(uv pip freeze:*)"
+      "Bash(uv pip freeze:*)",
+      "Bash(ls:*)",
+      "Skill(01-planner)",
+      "Skill(01-planner:*)",
+      "Bash(wc:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []

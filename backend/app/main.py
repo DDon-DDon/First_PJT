@@ -175,17 +175,59 @@ async def root():
     }
 
 
-# ========== API 라우터 등록 (추후 구현) ==========
+# ========== API 라우터 등록 ==========
 
-# TODO: API 라우터 등록
+from app.api.v1 import products, inventory, transactions
+
+app.include_router(
+    products.router,
+    prefix=f"{settings.API_V1_PREFIX}/products",
+    tags=["Products"]
+)
+
+app.include_router(
+    inventory.router,
+    prefix=f"{settings.API_V1_PREFIX}/inventory",
+    tags=["Inventory"]
+)
+
+app.include_router(
+    transactions.router,
+    prefix=f"{settings.API_V1_PREFIX}/transactions",
+    tags=["Transactions"]
+)
+
+from app.api.v1 import sync, stores, categories, admin
+
+app.include_router(
+    sync.router,
+    prefix=f"{settings.API_V1_PREFIX}/sync",
+    tags=["Sync"]
+)
+
+app.include_router(
+    stores.router,
+    prefix=f"{settings.API_V1_PREFIX}/stores",
+    tags=["Stores"]
+)
+
+app.include_router(
+    categories.router,
+    prefix=f"{settings.API_V1_PREFIX}/categories",
+    tags=["Categories"]
+)
+
+app.include_router(
+    admin.router,
+    prefix=settings.API_V1_PREFIX, # /api/v1/alerts..., /api/v1/exports...
+    tags=["Admin"]
+)
+
+# TODO: 나머지 API 라우터 등록
 # Phase 2 이후 API 라우터를 등록할 예정입니다.
 #
 # 라우터 구조:
 #   - auth.router: 인증 관련 (로그인, 회원가입, 토큰 갱신)
-#   - products.router: 제품 관리 (등록, 수정, 삭제, 조회)
-#   - inventory.router: 재고 조회 (현재고, 매장별 재고)
-#   - transactions.router: 트랜잭션 관리 (입고, 출고, 조정)
-#   - sync.router: 오프라인 동기화 (미동기 데이터 업로드)
 #
 # 등록 예시:
 #   from app.api.v1 import auth, products, inventory, transactions, sync

@@ -166,14 +166,12 @@ class CurrentStock(Base):
         "Product",
         backref="stocks",  # Product.stocks로 역참조 가능
         lazy="joined",  # CurrentStock 조회 시 Product도 함께 로드
-        comment="연결된 제품"
     )
 
     store = relationship(
         "Store",
         backref="stocks",  # Store.stocks로 역참조 가능
         lazy="joined",  # CurrentStock 조회 시 Store도 함께 로드
-        comment="연결된 매장"
     )
 
     def __repr__(self):

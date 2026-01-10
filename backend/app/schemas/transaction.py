@@ -232,89 +232,27 @@ class AdjustTransactionCreate(BaseModel):
 class TransactionResponse(BaseModel):
     """
     트랜잭션 응답 스키마
-
-    목적:
-        트랜잭션 정보를 클라이언트에게 제공합니다.
-        입고/출고/조정 모든 트랜잭션에 공통으로 사용됩니다.
-
-    사용 시나리오:
-        - POST /api/transactions/inbound (입고 성공 응답)
-        - POST /api/transactions/outbound (출고 성공 응답)
-        - POST /api/transactions/adjust (조정 성공 응답)
-        - GET /api/transactions/{id} (트랜잭션 조회)
-        - GET /api/transactions (트랜잭션 목록)
-
-    Attributes:
-        id (UUID): 트랜잭션 고유 식별자
-        productId (UUID): 제품 ID
-        storeId (UUID): 매장 ID
-        userId (UUID): 작업자 ID (누가 처리했는지)
-        type (str): 트랜잭션 타입 (INBOUND, OUTBOUND, ADJUST)
-        quantity (int): 수량 (양수=입고, 음수=출고/조정)
-        reason (str, optional): 조정 사유 (ADJUST일 때만, 선택)
-        note (str, optional): 비고 (선택)
-        createdAt (datetime): 트랜잭션 발생 일시
-        syncedAt (datetime, optional): 동기화 완료 일시 (선택)
-
-    Field Naming Convention:
-        - Python 모델: snake_case (user_id, created_at)
-        - API 응답: camelCase (userId, createdAt)
-
-    model_config:
-        - from_attributes=True: SQLAlchemy 모델을 Pydantic 스키마로 자동 변환
-
-    예시:
-        >>> # 입고 트랜잭션 응답
-        >>> {
-        ...     "id": "770e8400-e29b-41d4-a716-446655440000",
-        ...     "productId": "550e8400-e29b-41d4-a716-446655440000",
-        ...     "storeId": "660e8400-e29b-41d4-a716-446655440000",
-        ...     "userId": "880e8400-e29b-41d4-a716-446655440000",
-        ...     "type": "INBOUND",
-        ...     "quantity": 30,
-        ...     "reason": null,
-        ...     "note": "정기 입고",
-        ...     "createdAt": "2026-01-01T09:00:00",
-        ...     "syncedAt": "2026-01-01T09:00:05"
-        ... }
-
-        >>> # 조정 트랜잭션 응답
-        >>> {
-        ...     "id": "770e8400-e29b-41d4-a716-446655440000",
-        ...     "productId": "550e8400-e29b-41d4-a716-446655440000",
-        ...     "storeId": "660e8400-e29b-41d4-a716-446655440000",
-        ...     "userId": "880e8400-e29b-41d4-a716-446655440000",
-        ...     "type": "ADJUST",
-        ...     "quantity": -5,
-        ...     "reason": "EXPIRED",
-        ...     "note": "유통기한 만료",
-        ...     "createdAt": "2026-01-01T09:00:00",
-        ...     "syncedAt": null
-        ... }
-
-    주의사항:
-        - quantity 부호로 입출고 구분 (양수=입고, 음수=출고/조정)
-        - reason은 ADJUST 타입일 때만 값 있음 (나머지는 null)
-        - syncedAt이 null이면 동기화 대기 중
-        - userId로 누가 처리했는지 추적 가능
     """
     id: UUID = Field(
         ...,
         description="트랜잭션 고유 식별자 (UUID)"
     )
 
-    productId: UUID = Field(
+    product_id: UUID = Field(
         ...,
+        alias="productId",
         description="제품 ID"
     )
 
-    storeId: UUID = Field(
+    store_id: UUID = Field(
         ...,
+        alias="storeId",
         description="매장 ID"
     )
 
-    userId: UUID = Field(
+    user_id: UUID = Field(
         ...,
+        alias="userId",
         description="작업자 ID (누가 처리했는지)"
     )
 
@@ -338,17 +276,47 @@ class TransactionResponse(BaseModel):
         description="비고 (없으면 null)"
     )
 
-    createdAt: datetime = Field(
+    created_at: datetime = Field(
         ...,
+        alias="createdAt",
         description="트랜잭션 발생 일시 (UTC)"
     )
 
-    syncedAt: Optional[datetime] = Field(
+    synced_at: Optional[datetime] = Field(
         None,
+        alias="syncedAt",
         description="동기화 완료 일시 (UTC, null=동기화 대기 중)"
     )
 
     # Pydantic v2 설정
     model_config = {
-        "from_attributes": True  # SQLAlchemy 모델 → Pydantic 스키마 자동 변환
+        "from_attributes": True,  # SQLAlchemy 모델 → Pydantic 스키마 자동 변환
+        "populate_by_name": True  # 필드명으로도 생성 가능
     }
+
+
+class TransactionResultResponse(TransactionResponse):
+    """
+    트랜잭션 처리 결과 응답 스키마
+
+    목적:
+        트랜잭션 생성 후 결과(새로운 재고량, 알림 여부 등)를 포함하여 반환합니다.
+    """
+    new_stock: Optional[int] = Field(
+        None,
+        alias="newStock",
+        description="트랜잭션 후 현재고 (계산된 값)"
+    )
+
+    safety_alert: Optional[bool] = Field(
+        False,
+        alias="safetyAlert",
+        description="안전재고 경고 발생 여부 (True=부족)"
+    )
+
+from typing import List
+from app.schemas.common import Pagination
+
+class TransactionListResponse(BaseModel):
+    items: List[TransactionResponse]
+    pagination: Pagination

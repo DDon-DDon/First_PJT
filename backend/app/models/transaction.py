@@ -266,26 +266,30 @@ class InventoryTransaction(Base):
         comment="서버 동기화 완료 일시 (NULL=동기화 대기)"
     )
 
+    local_id = Column(
+        GUID,
+        nullable=True,
+        unique=True,  # 중복 방지
+        comment="클라이언트 로컬 ID (오프라인 생성 ID)"
+    )
+
     # Relationships (ORM 편의 기능)
     product = relationship(
         "Product",
         backref="transactions",
         lazy="joined",  # 트랜잭션 조회 시 제품 정보도 함께 로드
-        comment="연결된 제품"
     )
 
     store = relationship(
         "Store",
         backref="transactions",
         lazy="joined",
-        comment="연결된 매장"
     )
 
     user = relationship(
         "User",
         backref="transactions",
         lazy="joined",
-        comment="트랜잭션 작성자"
     )
 
     def __repr__(self):
