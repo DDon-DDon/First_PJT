@@ -142,23 +142,23 @@
 
 ---
 
-## 🔄 Phase 6: 동기화 (Sync) API
+## 🔄 Phase 6: 동기화 (Sync) API (완료)
 
 ### 6.1 테스트 작성
-- [ ] `tests/test_sync.py`
-    - [ ] `test_sync_batch`: 여러 트랜잭션 일괄 처리 확인
-    - [ ] `test_sync_duplicate`: 이미 동기화된 트랜잭션(localId 중복) 무시 확인
+- [x] `tests/test_sync.py`
+    - [x] `test_sync_batch`: 여러 트랜잭션 일괄 처리 확인
+    - [x] `test_sync_duplicate`: 이미 동기화된 트랜잭션(localId 중복) 무시 확인
 
 ### 6.2 서비스 레이어 구현 (`app/services/sync.py`)
-- [ ] `sync_transactions(transactions_list)`:
-    - [ ] Loop 처리 또는 Bulk Insert 최적화
-    - [ ] `local_id` 중복 체크 (Idempotency)
-    - [ ] 각 트랜잭션 처리 후 결과(성공/실패) 집계
+- [x] `sync_transactions(transactions_list)`:
+    - [x] Loop 처리 또는 Bulk Insert 최적화
+    - [x] `local_id` 중복 체크 (Idempotency)
+    - [x] 각 트랜잭션 처리 후 결과(성공/실패) 집계
 
 ### 6.3 API 엔드포인트 구현 (`app/api/v1/sync.py`)
-- [ ] **POST /sync/transactions**
-    - [ ] Request: 오프라인에서 생성된 트랜잭션 배열
-    - [ ] Response: 성공한 localId 목록, 실패한 목록
+- [x] **POST /sync/transactions**
+    - [x] Request: 오프라인에서 생성된 트랜잭션 배열
+    - [x] Response: 성공한 localId 목록, 실패한 목록
 
 ---
 

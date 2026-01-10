@@ -266,6 +266,13 @@ class InventoryTransaction(Base):
         comment="서버 동기화 완료 일시 (NULL=동기화 대기)"
     )
 
+    local_id = Column(
+        GUID,
+        nullable=True,
+        unique=True,  # 중복 방지
+        comment="클라이언트 로컬 ID (오프라인 생성 ID)"
+    )
+
     # Relationships (ORM 편의 기능)
     product = relationship(
         "Product",

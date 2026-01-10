@@ -197,12 +197,19 @@ app.include_router(
     tags=["Transactions"]
 )
 
+from app.api.v1 import sync
+
+app.include_router(
+    sync.router,
+    prefix=f"{settings.API_V1_PREFIX}/sync",
+    tags=["Sync"]
+)
+
 # TODO: 나머지 API 라우터 등록
 # Phase 2 이후 API 라우터를 등록할 예정입니다.
 #
 # 라우터 구조:
 #   - auth.router: 인증 관련 (로그인, 회원가입, 토큰 갱신)
-#   - sync.router: 오프라인 동기화 (미동기 데이터 업로드)
 #
 # 등록 예시:
 #   from app.api.v1 import auth, products, inventory, transactions, sync
