@@ -162,10 +162,13 @@ class User(Base):
     )
 
     # Relationships (실제 컬럼 아님, ORM 편의 기능)
-    # stores: 배정된 매장 목록 (user_stores를 통해)
-    #   - relationship 정의는 추후 추가 예정
-    #   - 예: user.stores → [Store, Store, ...]
-    #
+    stores = relationship(
+        "Store",
+        secondary="user_stores",
+        backref="users",
+        lazy="selectin"
+    )
+    
     # transactions: 작성한 트랜잭션 목록
     #   - relationship 정의는 추후 추가 예정
     #   - 예: user.transactions → [InventoryTransaction, ...]

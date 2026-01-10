@@ -87,58 +87,58 @@
 
 ---
 
-## 🏭 Phase 4: 재고 (Inventory) 조회 API
+## 🏭 Phase 4: 재고 (Inventory) 조회 API (완료)
 
 ### 4.1 테스트 작성
-- [ ] `tests/test_inventory.py` (조회 관련)
-    - [ ] `test_get_stock_status`: 재고 수량에 따른 상태(LOW/NORMAL/GOOD) 확인
-    - [ ] `test_get_stocks_list`: 매장별/카테고리별 재고 목록 조회
+- [x] `tests/test_inventory.py` (조회 관련)
+    - [x] `test_get_stock_status`: 재고 수량에 따른 상태(LOW/NORMAL/GOOD) 확인
+    - [x] `test_get_stocks_list`: 매장별/카테고리별 재고 목록 조회
 
 ### 4.2 서비스 레이어 구현 (`app/services/inventory.py`)
-- [ ] `get_stock_status(quantity, safety_stock)`: 상태 결정 로직 구현
-- [ ] `get_current_stocks(store_id, params)`: `CurrentStock` 테이블 조인 조회
+- [x] `get_stock_status(quantity, safety_stock)`: 상태 결정 로직 구현
+- [x] `get_current_stocks(store_id, params)`: `CurrentStock` 테이블 조인 조회
 
 ### 4.3 API 엔드포인트 구현 (`app/api/v1/inventory.py`)
-- [ ] **GET /inventory/stocks**
-    - [ ] WORKER: 본인 배정 매장 강제 필터링
-    - [ ] ADMIN: `store_id` 파라미터로 선택 가능
-    - [ ] Response에 `status` 필드 계산 포함
-- [ ] **GET /inventory/stocks/{productId}**
-    - [ ] 해당 제품의 모든 매장 재고 현황 조회 (ADMIN용)
+- [x] **GET /inventory/stocks**
+    - [x] WORKER: 본인 배정 매장 강제 필터링
+    - [x] ADMIN: `store_id` 파라미터로 선택 가능
+    - [x] Response에 `status` 필드 계산 포함
+- [x] **GET /inventory/stocks/{productId}**
+    - [x] 해당 제품의 모든 매장 재고 현황 조회 (ADMIN용)
 
 ---
 
-## 🚚 Phase 5: 트랜잭션 (입출고) API
+## 🚚 Phase 5: 트랜잭션 (입출고) API (완료)
 
 ### 5.1 테스트 작성 (핵심 비즈니스 로직)
-- [ ] `tests/test_transactions.py` 생성
-    - [ ] `test_inbound`: 재고 증가 및 트랜잭션 기록 확인
-    - [ ] `test_outbound_success`: 재고 감소 및 트랜잭션 기록 확인
-    - [ ] `test_outbound_insufficient`: 재고 부족 시 400 에러 확인
-    - [ ] `test_outbound_safety_alert`: 안전재고 미만 도달 시 알림 플래그 확인
-    - [ ] `test_adjust_stock`: 조정(폐기 등) 처리 확인
+- [x] `tests/test_transactions.py` 생성
+    - [x] `test_inbound`: 재고 증가 및 트랜잭션 기록 확인
+    - [x] `test_outbound_success`: 재고 감소 및 트랜잭션 기록 확인
+    - [x] `test_outbound_insufficient`: 재고 부족 시 400 에러 확인
+    - [x] `test_outbound_safety_alert`: 안전재고 미만 도달 시 알림 플래그 확인
+    - [x] `test_adjust_stock`: 조정(폐기 등) 처리 확인
 
 ### 5.2 서비스 레이어 구현 (`app/services/inventory.py` 확장)
-- [ ] `process_inbound(data)`:
-    - [ ] Transaction INSERT (type=INBOUND)
-    - [ ] CurrentStock UPDATE (quantity += input) (Upsert 로직 필요)
-- [ ] `process_outbound(data)`:
-    - [ ] CurrentStock Lock (for update) 또는 원자적 연산
-    - [ ] 재고 부족 체크 (`current < request` -> Error)
-    - [ ] Transaction INSERT (type=OUTBOUND)
-    - [ ] CurrentStock UPDATE (quantity -= input)
-    - [ ] 안전재고 체크 로직
-- [ ] `process_adjust(data)`:
-    - [ ] Transaction INSERT (type=ADJUST, reason 필수)
-    - [ ] CurrentStock UPDATE
+- [x] `process_inbound(data)`:
+    - [x] Transaction INSERT (type=INBOUND)
+    - [x] CurrentStock UPDATE (quantity += input) (Upsert 로직 필요)
+- [x] `process_outbound(data)`:
+    - [x] CurrentStock Lock (for update) 또는 원자적 연산
+    - [x] 재고 부족 체크 (`current < request` -> Error)
+    - [x] Transaction INSERT (type=OUTBOUND)
+    - [x] CurrentStock UPDATE (quantity -= input)
+    - [x] 안전재고 체크 로직
+- [x] `process_adjust(data)`:
+    - [x] Transaction INSERT (type=ADJUST, reason 필수)
+    - [x] CurrentStock UPDATE
 
 ### 5.3 API 엔드포인트 구현 (`app/api/v1/transactions.py`)
-- [ ] **POST /transactions/inbound**
-- [ ] **POST /transactions/outbound**
-    - [ ] 예외 처리: `InsufficientStockError` -> 400 Bad Request 변환
-- [ ] **POST /transactions/adjust**
-- [ ] **GET /transactions**
-    - [ ] 필터: `store_id`, `product_id`, `type`, `date_range`
+- [x] **POST /transactions/inbound**
+- [x] **POST /transactions/outbound**
+    - [x] 예외 처리: `InsufficientStockError` -> 400 Bad Request 변환
+- [x] **POST /transactions/adjust**
+- [x] **GET /transactions**
+    - [x] 필터: `store_id`, `product_id`, `type`, `date_range`
 
 ---
 

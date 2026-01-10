@@ -271,21 +271,18 @@ class InventoryTransaction(Base):
         "Product",
         backref="transactions",
         lazy="joined",  # 트랜잭션 조회 시 제품 정보도 함께 로드
-        comment="연결된 제품"
     )
 
     store = relationship(
         "Store",
         backref="transactions",
         lazy="joined",
-        comment="연결된 매장"
     )
 
     user = relationship(
         "User",
         backref="transactions",
         lazy="joined",
-        comment="트랜잭션 작성자"
     )
 
     def __repr__(self):
