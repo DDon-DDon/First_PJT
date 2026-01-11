@@ -12,11 +12,15 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
+# 프로젝트 루트 위치 파악 (스크립트 기준 두 단계 상위)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
 # 프로젝트 루트로 이동
-cd "$(dirname "$0")/.."
+cd "$PROJECT_ROOT"
 
 # Docker Compose로 PostgreSQL 실행
-docker-compose up -d postgres
+docker compose up -d postgres
 
 echo "⏳ PostgreSQL 헬스체크 대기 중..."
 
@@ -25,7 +29,7 @@ max_attempts=30
 attempt=0
 
 while [ $attempt -lt $max_attempts ]; do
-    if docker-compose exec -T postgres pg_isready -U donedone > /dev/null 2>&1; then
+    if docker compose exec -T postgres pg_isready -U donedone > /dev/null 2>&1; then
         echo "✅ PostgreSQL이 준비되었습니다!"
         echo ""
         echo "📊 연결 정보:"
@@ -38,8 +42,8 @@ while [ $attempt -lt $max_attempts ]; do
         echo "🔗 Connection String:"
         echo "  postgresql+asyncpg://donedone:donedone123@localhost:5432/donedone"
         echo ""
-        echo "💡 로그 확인: docker-compose logs -f postgres"
-        echo "💡 중지: docker-compose down"
+        echo "💡 로그 확인: docker compose logs -f postgres"
+        echo "💡 중지: docker compose down"
         echo "💡 pgAdmin: http://localhost:5050 (admin@donedone.local / admin)"
         exit 0
     fi
@@ -50,5 +54,5 @@ while [ $attempt -lt $max_attempts ]; do
 done
 
 echo "❌ PostgreSQL 시작 실패 (타임아웃)"
-docker-compose logs postgres
+docker compose logs postgres
 exit 1

@@ -1,0 +1,1831 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DoneDone API",
+    "description": "똔똔(DoneDone) 오프라인 매장 재고 관리 시스템 API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health Check",
+        "description": "서버 상태 확인 (Health Check)\n\n목적:\n    서버가 정상적으로 실행 중인지 확인하는 엔드포인트입니다.\n    로드 밸런서, 모니터링 툴에서 사용합니다.\n\n사용 시나리오:\n    - 배포 후 서버 시작 확인\n    - 로드 밸런서의 헬스체크\n    - 모니터링 시스템의 Alive 확인\n    - CI/CD 파이프라인의 배포 검증\n\n응답:\n    - status: 서버 상태 (항상 \"healthy\")\n    - version: API 버전 (예: \"1.0.0\")\n    - environment: 실행 환경 (예: \"development\")\n\nReturns:\n    dict: 서버 상태 정보\n\n예시:\n    >>> GET /health\n    >>> {\n    ...     \"status\": \"healthy\",\n    ...     \"version\": \"1.0.0\",\n    ...     \"environment\": \"development\"\n    ... }",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "Root"
+        ],
+        "summary": "Root",
+        "description": "API 루트 엔드포인트 (Welcome)\n\n목적:\n    API의 기본 정보를 제공하는 엔드포인트입니다.\n    API 사용 방법과 문서 링크를 안내합니다.\n\n사용 시나리오:\n    - API 접속 시 첫 화면\n    - API 정보 확인\n    - 문서 링크 안내\n\n응답:\n    - message: 환영 메시지\n    - version: API 버전\n    - docs: Swagger UI 경로\n    - health: 헬스체크 경로\n\nReturns:\n    dict: API 정보\n\n예시:\n    >>> GET /\n    >>> {\n    ...     \"message\": \"Welcome to DoneDone API\",\n    ...     \"version\": \"1.0.0\",\n    ...     \"docs\": \"/docs\",\n    ...     \"health\": \"/health\"\n    ... }",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/products/barcode/{barcode}": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Get Product By Barcode",
+        "description": "바코드로 제품 조회",
+        "operationId": "get_product_by_barcode_api_v1_products_barcode__barcode__get",
+        "parameters": [
+          {
+            "name": "barcode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Barcode"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/products": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "List Products",
+        "description": "제품 목록 조회",
+        "operationId": "list_products_api_v1_products_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 10,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Create Product",
+        "description": "제품 등록 (관리자 전용)",
+        "operationId": "create_product_api_v1_products_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inventory/stocks": {
+      "get": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "List Stocks",
+        "description": "현재고 목록 조회",
+        "operationId": "list_stocks_api_v1_inventory_stocks_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 10,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "store_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Store Id"
+            }
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category Id"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(LOW|NORMAL|GOOD)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inventory/stocks/{product_id}": {
+      "get": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Get Product Stock Detail",
+        "description": "제품별 매장 재고 조회 (ADMIN Only)",
+        "operationId": "get_product_stock_detail_api_v1_inventory_stocks__product_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductStockDetailResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/inbound": {
+      "post": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Inbound",
+        "description": "입고 처리",
+        "operationId": "inbound_api_v1_transactions_inbound_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InboundTransactionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResultResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/transactions/outbound": {
+      "post": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Outbound",
+        "description": "출고 처리",
+        "operationId": "outbound_api_v1_transactions_outbound_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OutboundTransactionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResultResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/transactions/adjust": {
+      "post": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Adjust",
+        "description": "재고 조정",
+        "operationId": "adjust_api_v1_transactions_adjust_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdjustTransactionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResultResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/transactions": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "List Transactions",
+        "description": "트랜잭션 이력 조회",
+        "operationId": "list_transactions_api_v1_transactions_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 10,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "store_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Store Id"
+            }
+          },
+          {
+            "name": "product_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Product Id"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Type"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sync/transactions": {
+      "post": {
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Sync Transactions",
+        "description": "오프라인 트랜잭션 동기화",
+        "operationId": "sync_transactions_api_v1_sync_transactions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/stores": {
+      "get": {
+        "tags": [
+          "Stores"
+        ],
+        "summary": "List Stores",
+        "description": "매장 목록 조회",
+        "operationId": "list_stores_api_v1_stores_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/StoreResponse"
+                  },
+                  "type": "array",
+                  "title": "Response List Stores Api V1 Stores Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/categories": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "List Categories",
+        "description": "카테고리 목록 조회",
+        "operationId": "list_categories_api_v1_categories_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryResponse"
+                  },
+                  "type": "array",
+                  "title": "Response List Categories Api V1 Categories Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/alerts/low-stock": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get Low Stock Alerts",
+        "description": "안전재고 미만 알림 조회 (ADMIN)",
+        "operationId": "get_low_stock_alerts_api_v1_alerts_low_stock_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LowStockItemResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Get Low Stock Alerts Api V1 Alerts Low Stock Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/exports/low-stock": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Export Low Stock",
+        "description": "안전재고 미만 목록 엑셀 다운로드 (ADMIN)",
+        "operationId": "export_low_stock_api_v1_exports_low_stock_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AdjustReason": {
+        "type": "string",
+        "enum": [
+          "EXPIRED",
+          "DAMAGED",
+          "CORRECTION",
+          "OTHER"
+        ],
+        "title": "AdjustReason",
+        "description": "조정 사유 열거형\n\n목적:\n    재고 조정의 이유를 명확하게 기록하여 감사 추적을 용이하게 합니다.\n\n값:\n    EXPIRED: 유통기한 만료\n        - 폐기 처리된 제품\n        - 보통 quantity가 음수\n\n    DAMAGED: 파손\n        - 파손/불량 제품\n        - quantity는 음수\n\n    CORRECTION: 재고 정정\n        - 실사 후 차이 발견\n        - quantity는 양수/음수 가능\n\n    OTHER: 기타\n        - 위에 해당하지 않는 사유\n        - note 필드에 상세 사유 기록 필요\n\n사용 시기:\n    type이 ADJUST일 때만 필수입니다.\n\n예시:\n    >>> # 유통기한 만료로 5개 폐기\n    >>> transaction = InventoryTransaction(\n    ...     type=TransactionType.ADJUST,\n    ...     quantity=-5,\n    ...     reason=AdjustReason.EXPIRED,\n    ...     note=\"2026-01-01 유통기한 만료\"\n    ... )"
+      },
+      "AdjustTransactionCreate": {
+        "properties": {
+          "productId": {
+            "type": "string",
+            "title": "Productid",
+            "description": "제품 ID (UUID 문자열)"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "Storeid",
+            "description": "매장 ID (UUID 문자열)"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity",
+            "description": "조정 수량 (양수=증가, 음수=감소, 0 제외)"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason",
+            "description": "조정 사유 (EXPIRED, DAMAGED, CORRECTION, OTHER)"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note",
+            "description": "비고 (선택, 상세 사유 설명 권장)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "productId",
+          "storeId",
+          "quantity",
+          "reason"
+        ],
+        "title": "AdjustTransactionCreate",
+        "description": "조정 트랜잭션 생성 요청 스키마\n\n목적:\n    조정(ADJUST) 트랜잭션 생성 API의 요청 데이터를 검증합니다.\n    재고 실사, 폐기, 정정 등으로 재고를 조정할 때 사용합니다.\n\n사용 시나리오:\n    - POST /api/transactions/adjust (재고 조정)\n    - 유통기한 만료 폐기 (음수 조정)\n    - 파손 제품 폐기 (음수 조정)\n    - 재고 실사 후 차이 정정 (양수/음수 조정)\n\nAttributes:\n    productId (str): 제품 ID (UUID 문자열)\n    storeId (str): 매장 ID (UUID 문자열)\n    quantity (int): 조정 수량 (양수/음수 가능, 0 제외)\n    reason (str): 조정 사유 (EXPIRED, DAMAGED, CORRECTION, OTHER)\n    note (str, optional): 비고 (선택, 상세 사유 설명)\n\n검증 규칙:\n    - productId: 필수, 유효한 제품 ID\n    - storeId: 필수, 유효한 매장 ID\n    - quantity: 필수, 0이 아닌 정수 (양수/음수 가능)\n    - reason: 필수, AdjustReason Enum 값\n    - note: 선택 필드 (상세 사유 기록 권장)\n\n예시:\n    >>> # 유통기한 만료 폐기\n    >>> {\n    ...     \"productId\": \"550e8400-e29b-41d4-a716-446655440000\",\n    ...     \"storeId\": \"660e8400-e29b-41d4-a716-446655440000\",\n    ...     \"quantity\": -5,\n    ...     \"reason\": \"EXPIRED\",\n    ...     \"note\": \"2026-01-01 유통기한 만료\"\n    ... }\n\n    >>> # 재고 실사 후 증가 조정\n    >>> {\n    ...     \"productId\": \"550e8400-e29b-41d4-a716-446655440000\",\n    ...     \"storeId\": \"660e8400-e29b-41d4-a716-446655440000\",\n    ...     \"quantity\": 3,\n    ...     \"reason\": \"CORRECTION\",\n    ...     \"note\": \"실사 결과 +3개 발견\"\n    ... }\n\n주의사항:\n    - quantity는 0 불가 (조정이 없으면 트랜잭션 생성 불필요)\n    - reason은 필수 (왜 조정했는지 추적 필요)\n    - 음수 조정 시 재고 부족 체크 필요\n    - CurrentStock도 함께 업데이트 필요 (원자적 처리)"
+      },
+      "CategoryResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "title": "Sortorder"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "code",
+          "name",
+          "sortOrder"
+        ],
+        "title": "CategoryResponse"
+      },
+      "FailedItem": {
+        "properties": {
+          "localId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Localid"
+          },
+          "error": {
+            "type": "string",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "localId",
+          "error"
+        ],
+        "title": "FailedItem"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InboundTransactionCreate": {
+        "properties": {
+          "productId": {
+            "type": "string",
+            "title": "Productid",
+            "description": "제품 ID (UUID 문자열)"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "Storeid",
+            "description": "매장 ID (UUID 문자열)"
+          },
+          "quantity": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Quantity",
+            "description": "입고 수량 (1 이상)"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note",
+            "description": "비고 (선택, 예: 정기 입고, 긴급 입고)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "productId",
+          "storeId",
+          "quantity"
+        ],
+        "title": "InboundTransactionCreate",
+        "description": "입고 트랜잭션 생성 요청 스키마\n\n목적:\n    입고(INBOUND) 트랜잭션 생성 API의 요청 데이터를 검증합니다.\n    제품이 매장에 입고되었을 때 사용합니다.\n\n사용 시나리오:\n    - POST /api/transactions/inbound (입고 처리)\n    - 공급업체로부터 제품 입고\n    - 다른 매장에서 이동 입고\n\nAttributes:\n    productId (str): 제품 ID (UUID 문자열)\n    storeId (str): 매장 ID (UUID 문자열)\n    quantity (int): 입고 수량 (1 이상, 양수만)\n    note (str, optional): 비고 (선택, 예: \"정기 입고\")\n\n검증 규칙:\n    - productId: 필수, 유효한 제품 ID (서버에서 존재 여부 확인)\n    - storeId: 필수, 유효한 매장 ID (서버에서 존재 여부 확인)\n    - quantity: 1 이상 (gt=0), 양수만 허용\n    - note: 선택 필드\n\n예시:\n    >>> # 요청 예시\n    >>> {\n    ...     \"productId\": \"550e8400-e29b-41d4-a716-446655440000\",\n    ...     \"storeId\": \"660e8400-e29b-41d4-a716-446655440000\",\n    ...     \"quantity\": 30,\n    ...     \"note\": \"정기 입고\"\n    ... }\n\n주의사항:\n    - quantity는 양수만 받음 (서버에서 그대로 DB에 저장)\n    - CurrentStock도 함께 업데이트 필요 (원자적 처리)\n    - 권한 체크: 해당 매장에 배정된 사용자만 입고 가능"
+      },
+      "LowStockItemResponse": {
+        "properties": {
+          "product": {
+            "$ref": "#/components/schemas/ProductResponse"
+          },
+          "store": {
+            "$ref": "#/components/schemas/StoreResponse"
+          },
+          "currentStock": {
+            "type": "integer",
+            "title": "Currentstock"
+          },
+          "shortage": {
+            "type": "integer",
+            "title": "Shortage"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product",
+          "store",
+          "currentStock",
+          "shortage"
+        ],
+        "title": "LowStockItemResponse"
+      },
+      "OutboundTransactionCreate": {
+        "properties": {
+          "productId": {
+            "type": "string",
+            "title": "Productid",
+            "description": "제품 ID (UUID 문자열)"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "Storeid",
+            "description": "매장 ID (UUID 문자열)"
+          },
+          "quantity": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Quantity",
+            "description": "출고 수량 (1 이상, 서버에서 음수로 변환)"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note",
+            "description": "비고 (선택, 예: 판매, 이동)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "productId",
+          "storeId",
+          "quantity"
+        ],
+        "title": "OutboundTransactionCreate",
+        "description": "출고 트랜잭션 생성 요청 스키마\n\n목적:\n    출고(OUTBOUND) 트랜잭션 생성 API의 요청 데이터를 검증합니다.\n    제품이 매장에서 출고되었을 때 사용합니다.\n\n사용 시나리오:\n    - POST /api/transactions/outbound (출고 처리)\n    - 판매로 인한 출고\n    - 다른 매장으로 이동 출고\n\nAttributes:\n    productId (str): 제품 ID (UUID 문자열)\n    storeId (str): 매장 ID (UUID 문자열)\n    quantity (int): 출고 수량 (1 이상, 양수로 받음)\n    note (str, optional): 비고 (선택, 예: \"판매\")\n\n검증 규칙:\n    - productId: 필수, 유효한 제품 ID (서버에서 존재 여부 확인)\n    - storeId: 필수, 유효한 매장 ID (서버에서 존재 여부 확인)\n    - quantity: 1 이상 (gt=0), 양수로 받아서 서버에서 음수로 변환\n    - note: 선택 필드\n\n예시:\n    >>> # 요청 예시\n    >>> {\n    ...     \"productId\": \"550e8400-e29b-41d4-a716-446655440000\",\n    ...     \"storeId\": \"660e8400-e29b-41d4-a716-446655440000\",\n    ...     \"quantity\": 10,\n    ...     \"note\": \"판매\"\n    ... }\n\n주의사항:\n    - quantity는 양수로 받지만 서버에서 음수로 변환하여 DB 저장\n    - 재고 부족 체크 필수 (CurrentStock.quantity >= quantity)\n    - 재고 부족 시 에러 반환 (INSUFFICIENT_STOCK)\n    - CurrentStock도 함께 업데이트 필요 (원자적 처리)"
+      },
+      "Pagination": {
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Page",
+            "description": "현재 페이지 (1부터 시작)"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "description": "페이지당 항목 수 (1~100)"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total",
+            "description": "전체 항목 수"
+          },
+          "totalPages": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Totalpages",
+            "description": "전체 페이지 수 (total을 limit로 나눈 값)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "page",
+          "limit",
+          "total",
+          "totalPages"
+        ],
+        "title": "Pagination",
+        "description": "페이지네이션 정보 스키마\n\n목적:\n    목록 조회 API의 페이지네이션 메타데이터를 제공합니다.\n    클라이언트가 페이지 네비게이션을 구현할 수 있도록 합니다.\n\n사용 시나리오:\n    - 제품 목록 조회 (100개 중 1-10번째)\n    - 트랜잭션 이력 조회 (1000건 중 페이지 1)\n    - 사용자 목록 조회 (50명 중 페이지 2)\n\nAttributes:\n    page (int): 현재 페이지 번호 (1부터 시작, 최소 1)\n    limit (int): 페이지당 항목 수 (1~100, 기본 10)\n    total (int): 전체 항목 수 (0 이상)\n    totalPages (int): 전체 페이지 수 (0 이상)\n\n예시:\n    >>> # API 응답 예시\n    >>> {\n    ...     \"data\": [...],\n    ...     \"pagination\": {\n    ...         \"page\": 1,\n    ...         \"limit\": 10,\n    ...         \"total\": 47,\n    ...         \"totalPages\": 5\n    ...     }\n    ... }\n\n검증 규칙:\n    - page는 최소 1 이상 (ge=1)\n    - limit는 1~100 사이 (ge=1, le=100)\n    - total은 0 이상 (ge=0)\n    - totalPages는 0 이상 (ge=0)"
+      },
+      "ProductCreate": {
+        "properties": {
+          "barcode": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Barcode",
+            "description": "바코드 (1~50자, EAN-13 등)"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "description": "제품명 (1~200자)"
+          },
+          "categoryId": {
+            "type": "string",
+            "title": "Categoryid",
+            "description": "카테고리 ID (UUID 문자열)"
+          },
+          "safetyStock": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Safetystock",
+            "description": "안전재고 수량 (0 이상, 기본값: 10)",
+            "default": 10
+          },
+          "imageUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imageurl",
+            "description": "제품 이미지 URL (최대 500자, 선택)"
+          },
+          "memo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Memo",
+            "description": "메모 (자유 텍스트, 선택)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "barcode",
+          "name",
+          "categoryId"
+        ],
+        "title": "ProductCreate",
+        "description": "제품 생성 요청 스키마\n\n목적:\n    제품 등록 API의 요청 데이터를 검증합니다.\n    필수 입력값과 검증 규칙을 정의합니다.\n\n사용 시나리오:\n    - POST /api/products (제품 등록)\n    - ADMIN 권한 필요 (일반 작업자는 제품 등록 불가)\n\nAttributes:\n    barcode (str): 바코드 (1~50자, 유니크)\n    name (str): 제품명 (1~200자)\n    categoryId (str): 카테고리 ID (UUID 문자열)\n    safetyStock (int): 안전재고 수량 (0 이상, 기본값: 10)\n    imageUrl (str, optional): 제품 이미지 URL (최대 500자, 선택)\n    memo (str, optional): 메모 (자유 텍스트, 선택)\n\n검증 규칙:\n    - barcode: 1~50자 (min_length=1, max_length=50)\n    - name: 1~200자 (min_length=1, max_length=200)\n    - categoryId: UUID 문자열 (서버에서 UUID 변환 및 존재 여부 확인)\n    - safetyStock: 0 이상 (ge=0), 기본값 10\n    - imageUrl: 최대 500자 (선택 필드)\n    - memo: 자유 텍스트 (선택 필드)\n\n예시:\n    >>> # 요청 예시\n    >>> {\n    ...     \"barcode\": \"8801234567890\",\n    ...     \"name\": \"하이드라 에센스 100ml\",\n    ...     \"categoryId\": \"550e8400-e29b-41d4-a716-446655440000\",\n    ...     \"safetyStock\": 20,\n    ...     \"imageUrl\": \"https://cdn.example.com/products/essence.jpg\",\n    ...     \"memo\": \"베스트셀러 제품\"\n    ... }\n\n주의사항:\n    - categoryId는 유효한 카테고리 ID여야 함 (서버에서 검증)\n    - barcode 중복 체크 필요 (UNIQUE 제약)\n    - ADMIN 권한만 제품 등록 가능"
+      },
+      "ProductListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProductResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "pagination"
+        ],
+        "title": "ProductListResponse"
+      },
+      "ProductResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "제품 고유 식별자 (UUID)"
+          },
+          "barcode": {
+            "type": "string",
+            "title": "Barcode",
+            "description": "바코드"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "제품명"
+          },
+          "categoryId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Categoryid",
+            "description": "카테고리 ID"
+          },
+          "safetyStock": {
+            "type": "integer",
+            "title": "Safetystock",
+            "description": "안전재고 수량"
+          },
+          "imageUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imageurl",
+            "description": "제품 이미지 URL (없으면 null)"
+          },
+          "memo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Memo",
+            "description": "메모 (없으면 null)"
+          },
+          "isActive": {
+            "type": "boolean",
+            "title": "Isactive",
+            "description": "활성화 여부 (False=단종/판매중지)"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat",
+            "description": "제품 등록일시 (UTC)"
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat",
+            "description": "최종 수정일시 (UTC, 수정 없으면 null)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "barcode",
+          "name",
+          "categoryId",
+          "safetyStock",
+          "isActive",
+          "createdAt"
+        ],
+        "title": "ProductResponse",
+        "description": "제품 응답 스키마"
+      },
+      "ProductSimpleResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "barcode": {
+            "type": "string",
+            "title": "Barcode"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "safetyStock": {
+            "type": "integer",
+            "title": "Safetystock"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "barcode",
+          "name",
+          "safetyStock"
+        ],
+        "title": "ProductSimpleResponse"
+      },
+      "ProductStockDetailResponse": {
+        "properties": {
+          "product": {
+            "$ref": "#/components/schemas/ProductResponse"
+          },
+          "stocks": {
+            "items": {
+              "$ref": "#/components/schemas/StockItemResponse"
+            },
+            "type": "array",
+            "title": "Stocks"
+          },
+          "totalQuantity": {
+            "type": "integer",
+            "title": "Totalquantity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product",
+          "stocks",
+          "totalQuantity"
+        ],
+        "title": "ProductStockDetailResponse"
+      },
+      "StockItemResponse": {
+        "properties": {
+          "product": {
+            "$ref": "#/components/schemas/ProductSimpleResponse"
+          },
+          "store": {
+            "$ref": "#/components/schemas/StoreSimpleResponse"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "lastAlertedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastalertedat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product",
+          "store",
+          "quantity",
+          "status"
+        ],
+        "title": "StockItemResponse"
+      },
+      "StockListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/StockItemResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "pagination"
+        ],
+        "title": "StockListResponse"
+      },
+      "StoreResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "isActive": {
+            "type": "boolean",
+            "title": "Isactive"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "code",
+          "name",
+          "isActive"
+        ],
+        "title": "StoreResponse"
+      },
+      "StoreSimpleResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "code"
+        ],
+        "title": "StoreSimpleResponse"
+      },
+      "SyncRequest": {
+        "properties": {
+          "transactions": {
+            "items": {
+              "$ref": "#/components/schemas/SyncTransactionItem"
+            },
+            "type": "array",
+            "title": "Transactions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "transactions"
+        ],
+        "title": "SyncRequest"
+      },
+      "SyncResponse": {
+        "properties": {
+          "synced": {
+            "items": {
+              "$ref": "#/components/schemas/SyncedItem"
+            },
+            "type": "array",
+            "title": "Synced"
+          },
+          "failed": {
+            "items": {
+              "$ref": "#/components/schemas/FailedItem"
+            },
+            "type": "array",
+            "title": "Failed"
+          },
+          "syncedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Syncedat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "synced",
+          "failed",
+          "syncedAt"
+        ],
+        "title": "SyncResponse"
+      },
+      "SyncTransactionItem": {
+        "properties": {
+          "localId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Localid"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TransactionType"
+          },
+          "productId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Productid"
+          },
+          "storeId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Storeid"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AdjustReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "localId",
+          "type",
+          "productId",
+          "storeId",
+          "quantity",
+          "createdAt"
+        ],
+        "title": "SyncTransactionItem"
+      },
+      "SyncedItem": {
+        "properties": {
+          "localId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Localid"
+          },
+          "serverId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Serverid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "localId",
+          "serverId"
+        ],
+        "title": "SyncedItem"
+      },
+      "TransactionListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TransactionResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "pagination"
+        ],
+        "title": "TransactionListResponse"
+      },
+      "TransactionResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "트랜잭션 고유 식별자 (UUID)"
+          },
+          "productId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Productid",
+            "description": "제품 ID"
+          },
+          "storeId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Storeid",
+            "description": "매장 ID"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Userid",
+            "description": "작업자 ID (누가 처리했는지)"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "description": "트랜잭션 타입 (INBOUND, OUTBOUND, ADJUST)"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity",
+            "description": "수량 (양수=입고, 음수=출고/조정)"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason",
+            "description": "조정 사유 (ADJUST일 때만, 나머지는 null)"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note",
+            "description": "비고 (없으면 null)"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat",
+            "description": "트랜잭션 발생 일시 (UTC)"
+          },
+          "syncedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Syncedat",
+            "description": "동기화 완료 일시 (UTC, null=동기화 대기 중)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "productId",
+          "storeId",
+          "userId",
+          "type",
+          "quantity",
+          "createdAt"
+        ],
+        "title": "TransactionResponse",
+        "description": "트랜잭션 응답 스키마"
+      },
+      "TransactionResultResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "트랜잭션 고유 식별자 (UUID)"
+          },
+          "productId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Productid",
+            "description": "제품 ID"
+          },
+          "storeId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Storeid",
+            "description": "매장 ID"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Userid",
+            "description": "작업자 ID (누가 처리했는지)"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "description": "트랜잭션 타입 (INBOUND, OUTBOUND, ADJUST)"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity",
+            "description": "수량 (양수=입고, 음수=출고/조정)"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason",
+            "description": "조정 사유 (ADJUST일 때만, 나머지는 null)"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note",
+            "description": "비고 (없으면 null)"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Createdat",
+            "description": "트랜잭션 발생 일시 (UTC)"
+          },
+          "syncedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Syncedat",
+            "description": "동기화 완료 일시 (UTC, null=동기화 대기 중)"
+          },
+          "newStock": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Newstock",
+            "description": "트랜잭션 후 현재고 (계산된 값)"
+          },
+          "safetyAlert": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Safetyalert",
+            "description": "안전재고 경고 발생 여부 (True=부족)",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "productId",
+          "storeId",
+          "userId",
+          "type",
+          "quantity",
+          "createdAt"
+        ],
+        "title": "TransactionResultResponse",
+        "description": "트랜잭션 처리 결과 응답 스키마\n\n목적:\n    트랜잭션 생성 후 결과(새로운 재고량, 알림 여부 등)를 포함하여 반환합니다."
+      },
+      "TransactionType": {
+        "type": "string",
+        "enum": [
+          "INBOUND",
+          "OUTBOUND",
+          "ADJUST"
+        ],
+        "title": "TransactionType",
+        "description": "트랜잭션 유형 열거형\n\n목적:\n    재고 이동의 종류를 명확하게 구분하고 타입 안전성을 보장합니다.\n\n값:\n    INBOUND: 입고\n        - 공급업체로부터 제품 입고\n        - quantity는 양수 (예: +30)\n        - CurrentStock 증가\n\n    OUTBOUND: 출고\n        - 판매, 이동 등으로 제품 출고\n        - quantity는 음수 (예: -10)\n        - CurrentStock 감소\n        - 재고 부족 시 트랜잭션 생성 불가\n\n    ADJUST: 조정\n        - 재고 실사, 폐기, 정정 등\n        - quantity는 양수/음수 가능\n        - reason 필드 필수 (AdjustReason)\n\n예시:\n    >>> # 입고 30개\n    >>> transaction = InventoryTransaction(\n    ...     type=TransactionType.INBOUND,\n    ...     quantity=30  # 양수\n    ... )\n\n    >>> # 출고 10개\n    >>> transaction = InventoryTransaction(\n    ...     type=TransactionType.OUTBOUND,\n    ...     quantity=-10  # 음수\n    ... )"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "OAuth2PasswordBearer": {
+        "type": "oauth2",
+        "flows": {
+          "password": {
+            "scopes": {},
+            "tokenUrl": "/api/v1/auth/login"
+          }
+        }
+      }
+    }
+  }
+}

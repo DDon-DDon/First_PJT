@@ -1,28 +1,17 @@
 #!/bin/bash
 
-# 똔똔 개발 서버 실행 스크립트
+# 똔똔 개발 서버 실행 스크립트 (uv 기반)
 
 set -e
 
-echo "🚀 똔똔 개발 서버 시작 중..."
+echo "🚀 똔똔 개발 서버 시작 중 (using uv)..."
 
-# 프로젝트 루트로 이동
-cd "$(dirname "$0")/.."
-
-# 가상환경 활성화 확인
-if [ -z "$VIRTUAL_ENV" ]; then
-    echo "⚠️  가상환경이 활성화되지 않았습니다."
-    echo "💡 활성화 방법: source backend/.venv/Scripts/activate"
-    echo ""
-    echo "자동으로 활성화를 시도합니다..."
-    source backend/.venv/Scripts/activate || {
-        echo "❌ 가상환경 활성화 실패"
-        exit 1
-    }
-fi
+# backend 폴더 위치 파악 (스크립트 기준 상위 폴더)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BACKEND_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # backend 폴더로 이동
-cd backend
+cd "$BACKEND_DIR"
 
 # .env 파일 확인
 if [ ! -f ".env" ]; then
@@ -37,5 +26,5 @@ echo "📝 ReDoc: http://localhost:8000/redoc"
 echo "💚 Health Check: http://localhost:8000/health"
 echo ""
 
-# Uvicorn으로 서버 실행 (Hot Reload)
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+# uv run으로 서버 실행 (환경 자동 관리)
+uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
