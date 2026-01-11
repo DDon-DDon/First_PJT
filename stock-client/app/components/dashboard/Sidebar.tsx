@@ -6,6 +6,9 @@ import {
   Package,
   ShoppingCart,
   LucideIcon,
+  LayoutList,
+  FolderDown,
+  FolderUp 
 } from 'lucide-react';
 
 export interface SidebarNavItem {
@@ -15,12 +18,28 @@ export interface SidebarNavItem {
 }
 
 // --- 더미 데이터 ---
+
 export const sidebarNavItems: SidebarNavItem[] = [
+  // {
+  //   label: 'Dashboard',
+  //   href: '/',
+  //   icon: LayoutDashboard,
+  // },  
   {
-    label: 'Dashboard',
+    label: 'Stock View',
     href: '/',
-    icon: LayoutDashboard,
+    icon: LayoutList,
+  },  
+  {
+    label: 'Stock-In',
+    href: '/stock-in',
+    icon: FolderDown,  
   },
+  {
+    label: 'Stock-Out',
+    href: '/stock-out',
+    icon: FolderUp,
+  },    
   {
     label: 'Inventory',
     href: '/inventory',
@@ -33,7 +52,6 @@ export const sidebarNavItems: SidebarNavItem[] = [
   },
 ];
 
-
 export interface SidebarProps {
   items: SidebarNavItem[];
 }
@@ -44,7 +62,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="p-6 pb-2">
         <div className="flex items-center gap-3">
-          <div className="bg-primary rounded-lg h-10 w-10 flex items-center justify-center text-white">
+          <div className="bg-primary rounded-lg h-10 w-10 flex items-center justify-center text-black">
             <Package size={24} />
           </div>
           <div className="flex flex-col">
