@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Stock Management Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#2563eb",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .sidebar-item-active {
+            background-color: #eff6ff;
+            color: #1e40af;
+            border-right: 4px solid #2563eb;
+        }
+
+        .dark .sidebar-item-active {
+            background-color: #1e293b;
+            color: #60a5fa;
+            border-right: 4px solid #3b82f6;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex">
+    <aside
+        class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hidden md:flex flex-col">
+        <div class="p-6 flex items-center gap-2 mb-4">
+            <span class="material-icons-outlined text-primary text-3xl">inventory_2</span>
+            <div>
+                <h1 class="font-bold text-xl leading-none">Stock I/O</h1>
+                <p class="text-[10px] text-slate-400 font-semibold tracking-wider">MVP FOR FIGMA</p>
+            </div>
+        </div>
+        <nav class="flex-1 px-2 space-y-1">
+            <a class="sidebar-item-active flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-r-none rounded-l-md"
+                href="#">
+                <span class="material-icons-outlined">dashboard</span>
+                Stock View
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-md transition-colors"
+                href="#">
+                <span class="material-icons-outlined">move_to_inbox</span>
+                Stock-In
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-md transition-colors"
+                href="#">
+                <span class="material-icons-outlined">outbox</span>
+                Stock-Out
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-md transition-colors"
+                href="#">
+                <span class="material-icons-outlined">more_horiz</span>
+                Etc
+            </a>
+        </nav>
+        <div class="p-4 border-t border-slate-200 dark:border-slate-800">
+            <button
+                class="flex items-center gap-3 px-4 py-2 w-full text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-md transition-colors"
+                onclick="document.documentElement.classList.toggle('dark')">
+                <span class="material-icons-outlined">dark_mode</span>
+                Toggle Theme
+            </button>
+        </div>
+    </aside>
+    <main class="flex-1 overflow-y-auto">
+        <header class="px-8 py-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <nav class="flex text-xs font-medium text-slate-400 mb-2">
+                        <span>Product</span>
+                        <span class="mx-2">&gt;</span>
+                        <span class="text-slate-600 dark:text-slate-300">View</span>
+                    </nav>
+                    <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Stock View</h2>
+                    <p class="text-sm text-slate-400 mt-1">Manage and track your inventory levels in real-time.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button
+                        class="flex items-center gap-2 px-5 py-2.5 bg-slate-400/20 text-slate-700 dark:text-slate-200 font-semibold rounded-lg hover:bg-slate-400/30 transition-all">
+                        <span class="material-icons-outlined text-lg">upload</span>
+                        Import
+                    </button>
+                    <button
+                        class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white font-semibold rounded-lg hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all">
+                        <span class="material-icons-outlined text-lg">add</span>
+                        Add Product
+                    </button>
+                </div>
+            </div>
+        </header>
+        <section class="px-8 pb-8">
+            <div
+                class="flex flex-wrap items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800">
+                <div class="relative flex-1 min-w-[300px]">
+                    <span
+                        class="material-icons-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+                    <input
+                        class="w-full pl-12 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border-none rounded-lg focus:ring-2 focus:ring-primary/20 text-sm"
+                        placeholder="Search products, SKU or category..." type="text" />
+                </div>
+                <div class="flex items-center gap-3">
+                    <select
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm px-4 py-2 focus:ring-primary/20">
+                        <option>Category</option>
+                        <option>Wearables</option>
+                        <option>Computers</option>
+                        <option>Electronics</option>
+                    </select>
+                    <select
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm px-4 py-2 focus:ring-primary/20">
+                        <option>Status</option>
+                        <option>In Stock</option>
+                        <option>Low Stock</option>
+                        <option>Out of Stock</option>
+                    </select>
+                    <select
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm px-4 py-2 focus:ring-primary/20">
+                        <option>Price Range</option>
+                        <option>$0 - $100</option>
+                        <option>$100 - $500</option>
+                        <option>$500+</option>
+                    </select>
+                    <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
+                    <button class="p-2 text-slate-400 hover:text-primary transition-colors">
+                        <span class="material-icons-outlined">grid_view</span>
+                    </button>
+                    <button class="p-2 text-slate-400 hover:text-primary transition-colors">
+                        <span class="material-icons-outlined">list</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <section class="px-8 pb-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div
+                class="bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 group hover:shadow-xl transition-all duration-300">
+                <div class="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                    <img alt="Apple Watch"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWWXAP1BUqnQIl6u7aHMI-iP6aVqVwLR04xuzdpduITj5MGlvONlYqF329ZMThRZSH9C5aPfywpmSihKr_oz2NmEN-W2h3BFmxAoJMli5V3E_3BVL54M6z5In-tWlRI_ej5aeMKfHn2qGNU0f_PX8rKs_OI6RO7WZ8wzJCN_5zVluxgMz9n9fbBhE3lpaVZtmvxXN8vaZjhtJB4La1XSsiUVvPryKVcpEbiNIzS-gkCApDM3l_xS1jOQAZFdqEEElULOn2_4KkVQ" />
+                    <span
+                        class="absolute top-3 left-3 bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Low
+                        Stock</span>
+                </div>
+                <div class="p-5">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Wearables</span>
+                        <span class="text-sm font-bold text-slate-800 dark:text-white">$399.00</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 dark:text-white mb-1">Apple Watch Series 8</h3>
+                    <p class="text-xs text-slate-400 mb-4">SKU: APL-W8-GPS</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase">Inventory</p>
+                            <p class="text-sm font-bold text-amber-600">3 Units</p>
+                        </div>
+                        <button class="flex items-center gap-1 text-primary text-xs font-bold hover:underline">
+                            Restock <span class="material-icons-outlined text-xs">shopping_cart</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 group hover:shadow-xl transition-all duration-300">
+                <div class="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                    <img alt="Dell Laptop"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8UJ-J1OUldTZmdNn6jZZ1iN18pwR9p9XPNl8wYL0IXuXnoIMNpgK8YpfNGP191SoXKXfe83o5yjpjhYfR3YZS7lsUBeCYFHaMVdvW15TBorPtcfsyNdmapwgS06JxyNuzxVQ5zYPZmg8EP0swKeSftgbxdWH13Bv3tCh1qSY_bo-2VHtxFSEhp1VaupnQnglpSclsnkNHTYVb8jzhXrCavBvgyINLxo6p0COt2H1-pkCzNroDa8kEDmhpYCuqgV3VGy7hPDcSYg" />
+                    <span
+                        class="absolute top-3 left-3 bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Out
+                        of Stock</span>
+                </div>
+                <div class="p-5">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Computers</span>
+                        <span class="text-sm font-bold text-slate-800 dark:text-white">$999.00</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 dark:text-white mb-1">Dell XPS 13</h3>
+                    <p class="text-xs text-slate-400 mb-4">SKU: DEL-XPS-13</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase">Inventory</p>
+                            <p class="text-sm font-bold text-rose-600">0 Units</p>
+                        </div>
+                        <button class="flex items-center gap-1 text-primary text-xs font-bold hover:underline">
+                            Details <span class="material-icons-outlined text-xs">open_in_new</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 group hover:shadow-xl transition-all duration-300">
+                <div class="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                    <img alt="Sony Headphones"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYfQFkImFw05bbiUTDmMvp39tewbBdkMTgT1CLuy6C4CAgkxMkI10HA4K3Ow5xYxqrqvyNhKjpqpcGT2IdG_RWvVeFi8BJbUvhntFCxAfaNFmlCHjBy-iMm36Ceeq0WVcHCsGWGCht-rowbvYj-eiq3qbHfYB_WzC3pg2b67jLCM9RhTPXtU6HJvv1Z9iDnpNLBMBwho5rfa0TpvRuH2ZsA2MXc0o30bTDjm4Iyzv63eTJhct9mMryOi4Gk6hl_ybm2-Rs1eAQlg" />
+                    <span
+                        class="absolute top-3 left-3 bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">In
+                        Stock</span>
+                </div>
+                <div class="p-5">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Electronics</span>
+                        <span class="text-sm font-bold text-slate-800 dark:text-white">$348.00</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 dark:text-white mb-1">Sony WH-1000XM4</h3>
+                    <p class="text-xs text-slate-400 mb-4">SKU: SNY-XM4-BLK</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase">Inventory</p>
+                            <p class="text-sm font-bold text-emerald-600">45 Units</p>
+                        </div>
+                        <button class="flex items-center gap-1 text-primary text-xs font-bold hover:underline">
+                            Edit <span class="material-icons-outlined text-xs">edit</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 group hover:shadow-xl transition-all duration-300">
+                <div class="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                    <img alt="Apple Watch"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAl1uWCYRCE-K-iSje6N-l5F-IC-5vuWm1wleKFpeA6p9md7ZfhwajdEHX6HeymACVw4LaHIaieaTGtqXF1PVm0CH6EV8JaJpzioKo_FzT3TUBbAgqoUAcBpegkgyw3AZO3VAWaG_xrn1Z95AD0dA94U71Pgl0XFGyPZ8QN6vds6I_VN4Rz2JvuW2Df0fkgqRYeliE1LHOZNA5kCr2jzU4rMBq3KJdfPnqvcK83RX8b5A923KKEEzh1OhVs7hIVlR1iCM9wbfX7jQ" />
+                    <span
+                        class="absolute top-3 left-3 bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Low
+                        Stock</span>
+                </div>
+                <div class="p-5">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Wearables</span>
+                        <span class="text-sm font-bold text-slate-800 dark:text-white">$399.00</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 dark:text-white mb-1">Apple Watch Series 8</h3>
+                    <p class="text-xs text-slate-400 mb-4">SKU: APL-W8-GPS</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase">Inventory</p>
+                            <p class="text-sm font-bold text-amber-600">3 Units</p>
+                        </div>
+                        <button class="flex items-center gap-1 text-primary text-xs font-bold hover:underline">
+                            Restock <span class="material-icons-outlined text-xs">shopping_cart</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 group hover:shadow-xl transition-all duration-300">
+                <div class="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                    <img alt="Dell Laptop"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLm2D1V6KpdrbNsa7TUvt-gT0EMtdhjA2vVvwwa9QwHvZhgVHdJuX4cBN6v6g5QwJRO45ndJm0bZPBMcAXIoU4eGRjqqvNpDhwHHwprIWlcH6g4SpMD2z291tggY-cNt7R7e1VD-2J_0cBWbBqN4T2K5VgpqwPDKH58XxthtxYV8E3e1BBijhPFGAD5QC4kt2wVta-JT4DX1G6o1qSEBNwVGOGoxzlF2klj9NYwptdzylCxnk9tg642g7XGAK8SnFlCNP1Fosuzw" />
+                    <span
+                        class="absolute top-3 left-3 bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Out
+                        of Stock</span>
+                </div>
+                <div class="p-5">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Computers</span>
+                        <span class="text-sm font-bold text-slate-800 dark:text-white">$999.00</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 dark:text-white mb-1">Dell XPS 13</h3>
+                    <p class="text-xs text-slate-400 mb-4">SKU: DEL-XPS-13</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase">Inventory</p>
+                            <p class="text-sm font-bold text-rose-600">0 Units</p>
+                        </div>
+                        <button class="flex items-center gap-1 text-primary text-xs font-bold hover:underline">
+                            Details <span class="material-icons-outlined text-xs">open_in_new</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 group hover:shadow-xl transition-all duration-300">
+                <div class="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                    <img alt="Sony Headphones"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA11Y9R7cJQQu9FtxPnNvAv0aq8eahvUUz96Uds2XDC4Y0yql2Al2KPSZzxBm0HuowBJtCsvYH5Iu3a-N3LkwmKFtt26wfK5gVvTbJZpFgPWOHqcVpKfZHTkDs_b3BRKmd8mVmHzq0JRiqB1EdPluOxLHBbh6iCuJL5IN3NyABabqFKCGo6cM8JwUszseiTvRMe6aDrxIcjipauLKe8gbAR7qhJ5ovIBiKBa2Kgr-FAcaDl8SX-dOy9IeMAlLEQO00gpZMV0NVZ1w" />
+                    <span
+                        class="absolute top-3 left-3 bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">In
+                        Stock</span>
+                </div>
+                <div class="p-5">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Electronics</span>
+                        <span class="text-sm font-bold text-slate-800 dark:text-white">$348.00</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 dark:text-white mb-1">Sony WH-1000XM4</h3>
+                    <p class="text-xs text-slate-400 mb-4">SKU: SNY-XM4-BLK</p>
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase">Inventory</p>
+                            <p class="text-sm font-bold text-emerald-600">45 Units</p>
+                        </div>
+                        <button class="flex items-center gap-1 text-primary text-xs font-bold hover:underline">
+                            Edit <span class="material-icons-outlined text-xs">edit</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <div class="fixed bottom-6 right-6">
+        <button
+            class="w-14 h-14 bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-full flex items-center justify-center font-bold text-lg shadow-lg hover:scale-105 transition-transform">
+            AI
+        </button>
+    </div>
+
+</body>
+
+</html>
