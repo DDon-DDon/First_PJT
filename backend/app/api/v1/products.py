@@ -20,7 +20,6 @@ router = APIRouter()
     summary="바코드 스캔 제품 조회",
     description="""
     바코드 번호로 제품 정보를 조회합니다.
-
     - **Unique Index**를 활용하여 대량의 데이터에서도 빠른 조회가 가능합니다.
     - 바코드 스캐너 연동 시 사용됩니다.
     """,
@@ -113,7 +112,6 @@ async def list_products(
     summary="신규 제품 등록 (관리자)",
     description="""
     새로운 제품을 시스템에 등록합니다.
-
     - **권한**: `ADMIN` 권한이 있는 사용자만 가능합니다.
     - **바코드**: 이미 존재하는 바코드는 등록할 수 없습니다 (409 Conflict).
     """,
