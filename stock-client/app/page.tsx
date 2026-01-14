@@ -1,5 +1,5 @@
 // pages/MainPage.tsx
-import Sidebar, { SidebarNavItem } from './components/dashboard/Sidebar';
+import Sidebar, { SidebarNavItem } from './components/Sidebar';
 import { StockHeader } from './components/stock/StockHeader';
 import { StockFilters } from './components/stock/StockFilters';
 import { StockGrid } from './components/stock/StockGrid';

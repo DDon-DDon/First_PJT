@@ -7,8 +7,7 @@ import {
   ShoppingCart,
   LucideIcon,
   LayoutList,
-  FolderDown,
-  FolderUp 
+  ArrowLeftRight
 } from 'lucide-react';
 
 export interface SidebarNavItem {
@@ -31,15 +30,10 @@ export const sidebarNavItems: SidebarNavItem[] = [
     icon: LayoutList,
   },  
   {
-    label: 'Stock-In',
-    href: '/stock-in',
-    icon: FolderDown,  
+    label: 'transactions',
+    href: '/transactions',
+    icon: ArrowLeftRight,  
   },
-  {
-    label: 'Stock-Out',
-    href: '/stock-out',
-    icon: FolderUp,
-  },    
   {
     label: 'Inventory',
     href: '/inventory',
