@@ -19,7 +19,7 @@ export function StockHeader() {
         </div>
         <div className="flex items-center gap-2">
           {/* 머터리얼의 'Outlined Button' 스타일 */}
-          <button className="flex items-center gap-2 px-4 py-2 text-sm bg-transparent text-slate-700 dark:text-slate-200 font-bold rounded-full border border-slate-300 dark:border-slate-600 hover:bg-slate-100 transition-all">
+          <button className="cursor-pointer flex items-center gap-2 px-8 py-2.5 bg-gray-400 text-white font-semibold rounded-lg hover:bg-gray-500 transition-all">
             <Upload size={16} /> Import
           </button>
           {/* 머터리얼의 'Filled Button' 스타일 */}
