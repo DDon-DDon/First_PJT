@@ -1,8 +1,81 @@
+// 'use client';
+
+// import Link from 'next/link';
+// import { usePathname } from 'next/navigation'; // 현재 경로 확인용
+// import { Package, LayoutList, ArrowLeftRight, ShoppingCart, LayoutDashboardIcon, Settings2 } from 'lucide-react';
+// export const sidebarNavItems = [
+//   { label: 'Dashboard', href: '/', icon: LayoutDashboardIcon },
+//   { label: 'Stocks', href: '/stocks', icon: Package }, 
+//   { label: 'Transactions', href: '/transactions', icon: ArrowLeftRight },
+//   { label: 'Audit', href: '/audit', icon: Settings2 },
+//   { label: 'Orders', href: '/orders', icon: ShoppingCart },
+// ];
+
+// export default function Sidebar() {
+//   const pathname = usePathname(); // 현재 URL 경로를 가져옴
+
+//   return (
+//     <aside className="w-64 flex flex-col h-full border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-shrink-0">
+//       {/* Logo Section */}
+//       <Link href="/" className="block p-6 cursor-pointer hover:opacity-80 transition-opacity">
+//         <div className="flex items-center gap-3.5">
+//           {/* 로고 아이콘 컨테이너 */}
+//           <div className="bg-blue-600 rounded-[12px] h-11 w-11 flex items-center justify-center text-white shadow-sm shadow-blue-500/20">
+//             <Package size={24} strokeWidth={2.5} />
+//           </div>
+
+//           <div className="flex flex-col gap-0.5">
+//             <h1 className="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-tight">
+//               StockPilot
+//             </h1>
+//             <p className="text-slate-500 dark:text-slate-400 text-[13px] font-medium leading-none">
+//               Admin Dashboard
+//             </p>
+//           </div>
+//         </div>
+//       </Link>
+//       <nav className="flex-1 px-4 py-4 flex flex-col gap-2">
+//         {sidebarNavItems.map((item) => {
+//           const Icon = item.icon;
+//           // 현재 경로와 메뉴의 href가 같은지 확인
+//           const isActive =
+//             pathname === item.href ||
+//             pathname.startsWith(item.href + '/');
+
+//           return (
+//             <Link
+//               key={item.label}
+//               href={item.href}
+//               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition ${isActive
+//                 ? 'bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400 font-bold' // 활성화 스타일
+//                 : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+//                 }`}
+//             >
+//               <Icon size={20} className={isActive ? 'text-blue-600' : ''} />
+//               <span className="font-medium">{item.label}</span>
+//             </Link>
+//           );
+//         })}
+//       </nav>
+//     </aside>
+//   );
+// }
+
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation'; // 현재 경로 확인용
-import { Package, LayoutList, ArrowLeftRight, ShoppingCart, LayoutDashboardIcon, Settings2 } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { 
+  Package, 
+  ArrowLeftRight, 
+  ShoppingCart, 
+  LayoutDashboardIcon, 
+  Settings2,
+  ChevronLeft,
+  Menu
+} from 'lucide-react';
+
 export const sidebarNavItems = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboardIcon },
   { label: 'Stocks', href: '/stocks', icon: Package }, 
@@ -12,47 +85,74 @@ export const sidebarNavItems = [
 ];
 
 export default function Sidebar() {
-  const pathname = usePathname(); // 현재 URL 경로를 가져옴
+  const pathname = usePathname();
+  // 접힘 상태 관리 (기본값: false - 펼쳐짐)
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <aside className="w-64 flex flex-col h-full border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-shrink-0">
+    <aside className={`
+      relative h-full border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-shrink-0 transition-all duration-300 ease-in-out
+      ${isCollapsed ? 'w-20' : 'w-64'}
+    `}>
+      {/* 접기/펴기 토글 버튼 */}
+      <button 
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="absolute -right-3 top-12 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full p-1 shadow-md hover:text-blue-600 transition-all z-50"
+      >
+        {isCollapsed ? <ChevronLeft className="rotate-180" size={16} /> : <ChevronLeft size={16} />}
+      </button>
+
       {/* Logo Section */}
-      <Link href="/" className="block p-6 cursor-pointer hover:opacity-80 transition-opacity">
-        <div className="flex items-center gap-3.5">
-          {/* 로고 아이콘 컨테이너 */}
-          <div className="bg-blue-600 rounded-[12px] h-11 w-11 flex items-center justify-center text-white shadow-sm shadow-blue-500/20">
+      <Link href="/" className="block p-4 mt-2 cursor-pointer hover:opacity-80 transition-opacity">
+        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3.5'}`}>
+          <div className="bg-blue-600 rounded-[12px] h-11 w-11 flex items-center justify-center text-white shadow-sm shadow-blue-500/20 flex-shrink-0">
             <Package size={24} strokeWidth={2.5} />
           </div>
 
-          <div className="flex flex-col gap-0.5">
-            <h1 className="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-tight">
-              StockPilot
-            </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-[13px] font-medium leading-none">
-              Admin Dashboard
-            </p>
-          </div>
+          {!isCollapsed && (
+            <div className="flex flex-col gap-0.5 whitespace-nowrap overflow-hidden transition-all">
+              <h1 className="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-tight">
+                StockPilot
+              </h1>
+              <p className="text-slate-500 dark:text-slate-400 text-[13px] font-medium leading-none">
+                Admin Dashboard
+              </p>
+            </div>
+          )}
         </div>
       </Link>
-      <nav className="flex-1 px-4 py-4 flex flex-col gap-2">
+
+      {/* Navigation */}
+      <nav className="flex-1 px-3 py-4 flex flex-col gap-2 mt-4">
         {sidebarNavItems.map((item) => {
           const Icon = item.icon;
-          // 현재 경로와 메뉴의 href가 같은지 확인
-          const isActive =
-            pathname === item.href ||
-            pathname.startsWith(item.href + '/');
+          const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
 
           return (
             <Link
               key={item.label}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition ${isActive
-                ? 'bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400 font-bold' // 활성화 스타일
-                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                }`}
+              className={`
+                relative flex items-center transition-all duration-200 rounded-lg group
+                ${isCollapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5 gap-3'}
+                ${isActive
+                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-bold'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                }
+              `}
             >
               <Icon size={20} className={isActive ? 'text-blue-600' : ''} />
-              <span className="font-medium">{item.label}</span>
+              
+              {!isCollapsed && (
+                <span className="font-medium whitespace-nowrap">{item.label}</span>
+              )}
+
+              {/* 접혔을 때 호버 툴팁 (선택 사항) */}
+              {isCollapsed && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-[100]">
+                  {item.label}
+                </div>
+              )}
             </Link>
           );
         })}
