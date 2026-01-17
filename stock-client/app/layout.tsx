@@ -38,9 +38,9 @@ export default function RootLayout({
           </main>
 
           {/* 공통 UI (AI 버튼 등) */}
-          <button className="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold shadow-2xl hover:scale-110 transition-transform z-50">
+          {/* <button className="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold shadow-2xl hover:scale-110 transition-transform z-50">
             AI
-          </button>
+          </button> */}
         </div>
       </body>
     </html>

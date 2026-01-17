@@ -1,6 +1,12 @@
 "use client";
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
+
+interface PageProps {
+    // 경로에 [id]가 포함되어 있으므로 동일하게 접근 가능합니다.
+    params: Promise<{ id: string }>;
+}
+
 import {
     Save, X, Upload, DollarSign, Truck,
     Info, FileText, Plus, ChevronRight, Image as ImageIcon, Trash2,
@@ -15,9 +21,12 @@ const tempImages = [
     "https://images.unsplash.com/photo-1586920740199-47ce35183cfd?w=800"
 ];
 
-export default function NewProductPage() {
-    const [activeTab, setActiveTab] = useState('basic');
+export default function EditProductPage({ params }: PageProps) {
+    // 1. Next.js 15 방식에 맞춰 params 언랩
+    const resolvedParams = use(params);
+    const productId = resolvedParams.id;
 
+    const [activeTab, setActiveTab] = useState('basic');
     const menuItems = [
         { id: 'basic', label: '기본 정보', icon: <Info size={18} /> },
         { id: 'pricing', label: '가격 및 재고', icon: <DollarSign size={18} /> },
@@ -35,7 +44,7 @@ export default function NewProductPage() {
                     <div className="bg-blue-600 p-1.5 rounded text-white">
                         <Plus size={18} />
                     </div>
-                    <h1 className="text-lg font-bold tracking-tight">상품 등록하기</h1>
+                    <h1 className="text-lg font-bold tracking-tight">상품 수정하기</h1>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -91,7 +100,11 @@ export default function NewProductPage() {
                                     <Input label="* 상품명" placeholder="정확한 상품명을 입력하세요" />
                                     <Select label="상품 카테고리" options={['웨어러블', '전자기기', '의류', '식품']} />
                                     <Input label="* 상품 코드 (SKU)" placeholder="예: SKU-100234" />
-                                    <Input label="* 주문 번호" placeholder="PO 번호를 입력하세요" />
+                                    <Input label="* 주문 번호"
+                                        placeholder="PO 번호를 입력하세요"
+                                        value={productId}
+                                        onChange={() => { console.log() }}
+                                    />
                                 </div>
                             </div>
                         )}
@@ -172,12 +185,15 @@ export default function NewProductPage() {
 }
 
 
-// 컴포넌트 
-const Input = ({ label, ...props }: any) => (
+// 공통 컴포넌트 영역
+const Input = ({ label, onChange, ...props }: any) => (
     <div className="space-y-2">
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-tight">{label}</label>
+        <label className="text-xs font-bold text-slate-500 uppercase tracking-tight">
+            {label}
+        </label>
         <input
             {...props}
+            onChange={onChange} // 부모로부터 받은 onChange를 명시적으로 전달
             className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
         />
     </div>
