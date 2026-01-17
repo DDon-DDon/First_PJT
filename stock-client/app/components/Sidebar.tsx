@@ -2,13 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation'; // 현재 경로 확인용
-import { Package, LayoutList, ArrowLeftRight, ShoppingCart, LayoutDashboardIcon } from 'lucide-react';
-
+import { Package, LayoutList, ArrowLeftRight, ShoppingCart, LayoutDashboardIcon, Settings2 } from 'lucide-react';
 export const sidebarNavItems = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboardIcon },
-  { label: 'Stock View', href: '/stocks', icon: LayoutList },
+  { label: 'Stocks', href: '/stocks', icon: Package }, 
   { label: 'Transactions', href: '/transactions', icon: ArrowLeftRight },
-  { label: 'Inventory', href: '/inventory', icon: Package },
+  { label: 'Audit', href: '/audit', icon: Settings2 },
   { label: 'Orders', href: '/orders', icon: ShoppingCart },
 ];
 
