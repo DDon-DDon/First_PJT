@@ -16,6 +16,7 @@ interface InventoryItem {
 }
 
 const InventoryAuditPage = () => {
+
     // 1. 현재 테이블에 올라와 있는 조정 대상 리스트
     const [items, setItems] = useState<InventoryItem[]>([]);
     // 2. 다이얼로그(모달) 오픈 상태
@@ -54,6 +55,14 @@ const InventoryAuditPage = () => {
         setItems(items.map(item =>
             item.id === id ? { ...item, finalStock: value, adjustment: value - item.currentStock } : item
         ));
+    };
+
+    // 1. 전달할 객체를 인터페이스 규격에 맞게 생성
+    const dialogProps: AuditInquiryDialogProps = {
+        isOpen: isModalOpen,
+        onClose: () => setIsModalOpen(false),
+        onAddItem: addItemToAudit,
+        mockDB: mockDB,
     };
 
     return (

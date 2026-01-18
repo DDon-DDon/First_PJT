@@ -20,7 +20,7 @@ const AuditInquiryDialog = ({ isOpen, onClose, onAddItem, mockDB }: AuditInquiry
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl overflow-hidden">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
         <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-[#f9fafb]">
           <h2 className="font-bold text-lg text-gray-800">조정 상품 선택</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
