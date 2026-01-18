@@ -18,10 +18,10 @@ import {
   PieChart, Pie, Cell, Legend, AreaChart, Area
 } from 'recharts';
 import { AlertCircle, ArrowUpRight, ChevronRight, Package, DollarSign, Bell } from 'lucide-react';
-import MonitoringSection from "./components/MonitoringSection"
-import DashSummaryCard, { DashSummaryProps } from "./components/DashSummaryCard"
-import DashTransactionTable from "./components/DashTransactionTable"
-import InventoryTrendChart from './components/InventoryTrendChart';
+import MonitoringSection from "./components/dashboard/MonitoringSection"
+import DashSummaryCard, { DashSummaryProps } from "./components/dashboard/DashSummaryCard"
+import DashTransactionTable from "./components/dashboard/DashTransactionTable"
+import InventoryTrendChart from './components/dashboard/InventoryTrendChart';
 
 //
 // 데이터를 배열로 관리하여 유지보수성 향상
