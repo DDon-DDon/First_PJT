@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
@@ -14,7 +14,7 @@ from app.schemas.transaction import (
 async def sync_transactions(
     db: AsyncSession, 
     request: SyncRequest, 
-    user: User
+    user: Optional[User] = None  # TODO: 인증 구현 후 필수로 변경
 ) -> SyncResponse:
     
     synced_items = []
@@ -35,8 +35,8 @@ async def sync_transactions(
             tx = None
             if tx_item.type == TransactionType.INBOUND:
                 data = InboundTransactionCreate(
-                    productId=str(tx_item.product_id),
-                    storeId=str(tx_item.store_id),
+                    product_id=str(tx_item.product_id),
+                    store_id=str(tx_item.store_id),
                     quantity=tx_item.quantity,
                     note=tx_item.note
                 )
@@ -44,8 +44,8 @@ async def sync_transactions(
                 
             elif tx_item.type == TransactionType.OUTBOUND:
                 data = OutboundTransactionCreate(
-                    productId=str(tx_item.product_id),
-                    storeId=str(tx_item.store_id),
+                    product_id=str(tx_item.product_id),
+                    store_id=str(tx_item.store_id),
                     quantity=tx_item.quantity,
                     note=tx_item.note
                 )
@@ -56,8 +56,8 @@ async def sync_transactions(
                     raise ValueError("Reason is required for ADJUST")
                     
                 data = AdjustTransactionCreate(
-                    productId=str(tx_item.product_id),
-                    storeId=str(tx_item.store_id),
+                    product_id=str(tx_item.product_id),
+                    store_id=str(tx_item.store_id),
                     quantity=tx_item.quantity,
                     reason=tx_item.reason,
                     note=tx_item.note
@@ -78,14 +78,7 @@ async def sync_transactions(
                 raise ValueError("Unknown transaction type")
             
         except Exception as e:
-            # 트랜잭션 처리 중 오류 발생 시 롤백은 process_... 내부에서 발생하지 않음 (process_...는 성공 시 commit함)
-            # 하지만 process_... 가 에러를 raise하면 DB는 clean state (rollback in deps or session manager)
-            # 여기서는 loop 내에서 개별 처리하므로, process_... 실패 시 rollback이 필요할 수 있음.
-            # 하지만 process_... 함수는 에러 발생 시 commit하지 않음.
-            # 안전을 위해 explicit rollback for current session state if needed?
-            # FastAPI dependency session automatically rolls back on exception?
-            # But we are catching exception here.
-            # So we must rollback manually to clear the failed transaction state if any.
+            # 트랜잭션 처리 중 오류 발생 시 롤백
             await db.rollback()
             failed_items.append(FailedItem(localId=tx_item.local_id, error=str(e)))
             

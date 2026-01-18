@@ -308,7 +308,7 @@ class InsufficientStockException(ApiException):
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-@app.exception_handler(ApiException)
+@app.exception_handler(ApiException) # 커스텀 예외 헨들러
 async def api_exception_handler(request: Request, exc: ApiException):
     return JSONResponse(
         status_code=exc.status_code,
@@ -383,7 +383,7 @@ app.add_middleware(
 from starlette.middleware.base import BaseHTTPMiddleware
 
 class TimingMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request, call_next):
+    async def dispatch(self, request, call_next): # 요청과 응답 사이에 시간을 측정
         start = time.time()
         response = await call_next(request)
         duration = time.time() - start

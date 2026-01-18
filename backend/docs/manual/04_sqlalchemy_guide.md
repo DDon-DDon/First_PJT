@@ -12,7 +12,7 @@ SQLAlchemy는 Python의 **ORM(Object-Relational Mapping)** 라이브러리입니
 
 ```
 ┌──────────────────┐           ┌──────────────────┐
-│   Python 객체    │  ←──ORM──→  │   DB 테이블     │
+│   Python 객체     │ ←──ORM──→ │   DB 테이블       │
 │   class User     │           │   users          │
 │   id, name, ...  │           │   id, name, ...  │
 └──────────────────┘           └──────────────────┘

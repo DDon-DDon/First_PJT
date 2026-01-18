@@ -82,22 +82,22 @@ async def create_product(db: AsyncSession, data: ProductCreate) -> Product:
     # 2. 카테고리 존재 확인 (Optional but good for explicit error)
     # Pydantic schema takes string UUID, need to convert
     try:
-        cat_id = UUID(data.categoryId)
+        cat_id = UUID(data.category_id)
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid category ID format")
         
     category_stmt = select(Category).where(Category.id == cat_id)
     category_res = await db.execute(category_stmt)
     if not category_res.scalar_one_or_none():
-         raise NotFoundException(f"Category {data.categoryId} not found")
+         raise NotFoundException(f"Category {data.category_id} not found")
 
     # 3. 생성
     product = Product(
         barcode=data.barcode,
         name=data.name,
         category_id=cat_id,
-        safety_stock=data.safetyStock,
-        image_url=data.imageUrl,
+        safety_stock=data.safety_stock,
+        image_url=data.image_url,
         memo=data.memo
     )
     db.add(product)
@@ -105,3 +105,4 @@ async def create_product(db: AsyncSession, data: ProductCreate) -> Product:
     await db.refresh(product)
     
     return product
+

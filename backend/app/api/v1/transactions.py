@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, Query, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
-from app.api.deps import get_current_user
-from app.models.user import User
+# TODO: 인증 구현 후 활성화 (나중에 구현 예정)
+# from app.api.deps import get_current_user
+# from app.models.user import User
 from app.schemas.transaction import (
     InboundTransactionCreate,
     OutboundTransactionCreate,
@@ -20,11 +21,13 @@ router = APIRouter()
 @router.post("/inbound", response_model=TransactionResultResponse, status_code=status.HTTP_201_CREATED)
 async def inbound(
     data: InboundTransactionCreate,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: AsyncSession = Depends(get_db)
+    # TODO: 인증 구현 후 활성화 (나중에 구현 예정)
+    # current_user: User = Depends(get_current_user)
 ):
     """입고 처리"""
-    tx, new_stock, _ = await inventory_service.process_inbound(db, data, current_user)
+    # TODO: 인증 구현 후 활성화 - 현재는 user=None으로 처리
+    tx, new_stock, _ = await inventory_service.process_inbound(db, data, user=None)
     
     resp = TransactionResultResponse.model_validate(tx)
     resp.new_stock = new_stock
@@ -34,11 +37,13 @@ async def inbound(
 @router.post("/outbound", response_model=TransactionResultResponse, status_code=status.HTTP_201_CREATED)
 async def outbound(
     data: OutboundTransactionCreate,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: AsyncSession = Depends(get_db)
+    # TODO: 인증 구현 후 활성화 (나중에 구현 예정)
+    # current_user: User = Depends(get_current_user)
 ):
     """출고 처리"""
-    tx, new_stock, safety_alert = await inventory_service.process_outbound(db, data, current_user)
+    # TODO: 인증 구현 후 활성화 - 현재는 user=None으로 처리
+    tx, new_stock, safety_alert = await inventory_service.process_outbound(db, data, user=None)
     
     resp = TransactionResultResponse.model_validate(tx)
     resp.new_stock = new_stock
@@ -48,11 +53,13 @@ async def outbound(
 @router.post("/adjust", response_model=TransactionResultResponse, status_code=status.HTTP_201_CREATED)
 async def adjust(
     data: AdjustTransactionCreate,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: AsyncSession = Depends(get_db)
+    # TODO: 인증 구현 후 활성화 (나중에 구현 예정)
+    # current_user: User = Depends(get_current_user)
 ):
     """재고 조정"""
-    tx, new_stock, _ = await inventory_service.process_adjust(db, data, current_user)
+    # TODO: 인증 구현 후 활성화 - 현재는 user=None으로 처리
+    tx, new_stock, _ = await inventory_service.process_adjust(db, data, user=None)
     
     resp = TransactionResultResponse.model_validate(tx)
     resp.new_stock = new_stock
@@ -65,8 +72,9 @@ async def list_transactions(
     store_id: Optional[str] = None,
     product_id: Optional[str] = None,
     type: Optional[str] = None,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: AsyncSession = Depends(get_db)
+    # TODO: 인증 구현 후 활성화 (나중에 구현 예정)
+    # current_user: User = Depends(get_current_user)
 ):
     """트랜잭션 이력 조회"""
     s_id = None

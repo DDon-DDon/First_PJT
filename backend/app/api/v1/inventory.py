@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
-from app.api.deps import get_current_user
-from app.models.user import User
+# TODO: 인증 구현 후 활성화 (나중에 구현 예정)
+# from app.api.deps import get_current_user
+# from app.models.user import User
 from app.schemas.inventory import StockListResponse, StockItemResponse
 from app.services import inventory as inventory_service
 
@@ -18,8 +19,9 @@ async def list_stocks(
     store_id: Optional[str] = None,
     category_id: Optional[str] = None,
     status: Optional[str] = Query(None, regex="^(LOW|NORMAL|GOOD)$"),
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: AsyncSession = Depends(get_db)
+    # TODO: 인증 구현 후 활성화 (나중에 구현 예정)
+    # current_user: User = Depends(get_current_user)
 ):
     """현재고 목록 조회"""
     
@@ -38,9 +40,10 @@ async def list_stocks(
         except ValueError:
             raise HTTPException(status_code=400, detail="Invalid category_id")
 
+    # TODO: 인증 구현 후 활성화 - 현재는 user=None으로 처리
     stocks, total = await inventory_service.get_current_stocks(
         db,
-        user=current_user,
+        user=None,  # TODO: current_user로 변경 필요
         page=page,
         limit=limit,
         store_id=s_id,
@@ -85,8 +88,9 @@ from app.schemas.inventory import ProductStockDetailResponse
 @router.get("/stocks/{product_id}", response_model=ProductStockDetailResponse)
 async def get_product_stock_detail(
     product_id: str,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: AsyncSession = Depends(get_db)
+    # TODO: 인증 구현 후 활성화 (나중에 구현 예정)
+    # current_user: User = Depends(get_current_user)
 ):
     """제품별 매장 재고 조회 (ADMIN Only)"""
     try:
@@ -94,8 +98,9 @@ async def get_product_stock_detail(
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid product_id")
 
+    # TODO: 인증 구현 후 활성화 - 현재는 user=None으로 처리
     product, stocks = await inventory_service.get_product_stock_detail(
-        db, p_id, current_user
+        db, p_id, user=None  # TODO: current_user로 변경 필요
     )
     
     if not product:

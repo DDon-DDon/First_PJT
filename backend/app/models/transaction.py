@@ -222,8 +222,8 @@ class InventoryTransaction(Base):
     user_id = Column(
         GUID,
         ForeignKey("users.id"),
-        nullable=False,
-        comment="트랜잭션 작성자 ID"
+        nullable=True,  # TODO: 인증 구현 후 nullable=False로 변경
+        comment="트랜잭션 작성자 ID (MVP 단계에서는 NULL 허용)"
     )
 
     # 트랜잭션 정보

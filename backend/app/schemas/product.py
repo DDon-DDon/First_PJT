@@ -84,20 +84,23 @@ class ProductCreate(BaseModel):
         description="제품명 (1~200자)"
     )
 
-    categoryId: str = Field(
+    category_id: str = Field(
         ...,
+        alias="categoryId",
         description="카테고리 ID (UUID 문자열)"
     )
 
-    safetyStock: int = Field(
+    safety_stock: int = Field(
         default=10,  # 기본값: 10개
         ge=0,  # Greater or Equal: 0 이상
+        alias="safetyStock",
         description="안전재고 수량 (0 이상, 기본값: 10)"
     )
 
-    imageUrl: Optional[str] = Field(
+    image_url: Optional[str] = Field(
         None,  # 선택 필드
         max_length=500,
+        alias="imageUrl",
         description="제품 이미지 URL (최대 500자, 선택)"
     )
 
@@ -105,6 +108,10 @@ class ProductCreate(BaseModel):
         None,
         description="메모 (자유 텍스트, 선택)"
     )
+
+    model_config = {
+        "populate_by_name": True
+    }
 
 
 class ProductResponse(BaseModel):

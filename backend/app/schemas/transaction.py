@@ -66,13 +66,15 @@ class InboundTransactionCreate(BaseModel):
         - CurrentStock도 함께 업데이트 필요 (원자적 처리)
         - 권한 체크: 해당 매장에 배정된 사용자만 입고 가능
     """
-    productId: str = Field(
-        ...,  # 필수 필드
+    product_id: str = Field(
+        ...,
+        alias="productId",  # 필수 필드
         description="제품 ID (UUID 문자열)"
     )
 
-    storeId: str = Field(
+    store_id: str = Field(
         ...,
+        alias="storeId",
         description="매장 ID (UUID 문자열)"
     )
 
@@ -86,6 +88,10 @@ class InboundTransactionCreate(BaseModel):
         None,  # 선택 필드
         description="비고 (선택, 예: 정기 입고, 긴급 입고)"
     )
+
+    model_config = {
+        "populate_by_name": True
+    }
 
 
 class OutboundTransactionCreate(BaseModel):
@@ -102,14 +108,14 @@ class OutboundTransactionCreate(BaseModel):
         - 다른 매장으로 이동 출고
 
     Attributes:
-        productId (str): 제품 ID (UUID 문자열)
-        storeId (str): 매장 ID (UUID 문자열)
+        product_id (str): 제품 ID (UUID 문자열)
+        store_id (str): 매장 ID (UUID 문자열)
         quantity (int): 출고 수량 (1 이상, 양수로 받음)
         note (str, optional): 비고 (선택, 예: "판매")
 
     검증 규칙:
-        - productId: 필수, 유효한 제품 ID (서버에서 존재 여부 확인)
-        - storeId: 필수, 유효한 매장 ID (서버에서 존재 여부 확인)
+        - product_id: 필수, 유효한 제품 ID (서버에서 존재 여부 확인)
+        - store_id: 필수, 유효한 매장 ID (서버에서 존재 여부 확인)
         - quantity: 1 이상 (gt=0), 양수로 받아서 서버에서 음수로 변환
         - note: 선택 필드
 
@@ -128,13 +134,15 @@ class OutboundTransactionCreate(BaseModel):
         - 재고 부족 시 에러 반환 (INSUFFICIENT_STOCK)
         - CurrentStock도 함께 업데이트 필요 (원자적 처리)
     """
-    productId: str = Field(
+    product_id: str = Field(
         ...,
+        alias="productId",
         description="제품 ID (UUID 문자열)"
     )
 
-    storeId: str = Field(
+    store_id: str = Field(
         ...,
+        alias="storeId",
         description="매장 ID (UUID 문자열)"
     )
 
@@ -148,6 +156,10 @@ class OutboundTransactionCreate(BaseModel):
         None,
         description="비고 (선택, 예: 판매, 이동)"
     )
+
+    model_config = {
+        "populate_by_name": True
+    }
 
 
 class AdjustTransactionCreate(BaseModel):
@@ -165,15 +177,15 @@ class AdjustTransactionCreate(BaseModel):
         - 재고 실사 후 차이 정정 (양수/음수 조정)
 
     Attributes:
-        productId (str): 제품 ID (UUID 문자열)
-        storeId (str): 매장 ID (UUID 문자열)
+        product_id (str): 제품 ID (UUID 문자열)
+        store_id (str): 매장 ID (UUID 문자열)
         quantity (int): 조정 수량 (양수/음수 가능, 0 제외)
         reason (str): 조정 사유 (EXPIRED, DAMAGED, CORRECTION, OTHER)
         note (str, optional): 비고 (선택, 상세 사유 설명)
 
     검증 규칙:
-        - productId: 필수, 유효한 제품 ID
-        - storeId: 필수, 유효한 매장 ID
+        - product_id: 필수, 유효한 제품 ID
+        - store_id: 필수, 유효한 매장 ID
         - quantity: 필수, 0이 아닌 정수 (양수/음수 가능)
         - reason: 필수, AdjustReason Enum 값
         - note: 선택 필드 (상세 사유 기록 권장)
@@ -203,13 +215,15 @@ class AdjustTransactionCreate(BaseModel):
         - 음수 조정 시 재고 부족 체크 필요
         - CurrentStock도 함께 업데이트 필요 (원자적 처리)
     """
-    productId: str = Field(
+    product_id: str = Field(
         ...,
+        alias="productId",
         description="제품 ID (UUID 문자열)"
     )
 
-    storeId: str = Field(
+    store_id: str = Field(
         ...,
+        alias="storeId",
         description="매장 ID (UUID 문자열)"
     )
 
@@ -227,6 +241,10 @@ class AdjustTransactionCreate(BaseModel):
         None,
         description="비고 (선택, 상세 사유 설명 권장)"
     )
+
+    model_config = {
+        "populate_by_name": True
+    }
 
 
 class TransactionResponse(BaseModel):

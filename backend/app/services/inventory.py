@@ -14,8 +14,6 @@ from app.schemas.transaction import (
 )
 from app.core.exceptions import ForbiddenException, InsufficientStockException
 
-# ... (Previous functions: get_stock_status, get_current_stocks, get_product_stock_detail, _get_or_create_stock)
-# To save context space, I will repeat the whole file content.
 
 def get_stock_status(quantity: int, safety_stock: int) -> str:
     if quantity < safety_stock:
@@ -27,7 +25,7 @@ def get_stock_status(quantity: int, safety_stock: int) -> str:
 
 async def get_current_stocks(
     db: AsyncSession,
-    user: User,
+    user: Optional[User] = None,  # TODO: 인증 구현 후 필수로 변경
     page: int = 1,
     limit: int = 10,
     store_id: Optional[UUID] = None,
@@ -37,23 +35,26 @@ async def get_current_stocks(
     
     allowed_store_ids = []
     
-    if user.role == UserRole.WORKER:
-        stmt = select(UserStore.store_id).where(UserStore.user_id == user.id)
-        result = await db.execute(stmt)
-        allowed_store_ids = result.scalars().all()
-        
-        if not allowed_store_ids:
-            return [], 0
-            
-        if store_id:
-            if store_id not in allowed_store_ids:
-                raise ForbiddenException("Access denied to this store")
-            target_store_ids = [store_id]
-        else:
-            target_store_ids = allowed_store_ids
-            
-    else: # ADMIN
-        target_store_ids = [store_id] if store_id else []
+    # TODO: 인증 구현 후 활성화 (나중에 구현 예정)
+    # if user and user.role == UserRole.WORKER:
+    #     stmt = select(UserStore.store_id).where(UserStore.user_id == user.id)
+    #     result = await db.execute(stmt)
+    #     allowed_store_ids = result.scalars().all()
+    #     
+    #     if not allowed_store_ids:
+    #         return [], 0
+    #         
+    #     if store_id:
+    #         if store_id not in allowed_store_ids:
+    #             raise ForbiddenException("Access denied to this store")
+    #         target_store_ids = [store_id]
+    #     else:
+    #         target_store_ids = allowed_store_ids
+    # else:  # ADMIN or no user (MVP)
+    #     target_store_ids = [store_id] if store_id else []
+    
+    # MVP: 모든 매장 접근 허용
+    target_store_ids = [store_id] if store_id else []
 
     query = select(CurrentStock).options(
         joinedload(CurrentStock.product),
@@ -93,10 +94,11 @@ async def get_current_stocks(
 async def get_product_stock_detail(
     db: AsyncSession,
     product_id: UUID,
-    user: User
+    user: Optional[User] = None  # TODO: 인증 구현 후 필수로 변경
 ) -> Tuple[Optional[Product], Sequence[CurrentStock]]:
-    if user.role != UserRole.ADMIN:
-        raise ForbiddenException("Only ADMIN can view stock details")
+    # TODO: 인증 구현 후 활성화 (나중에 구현 예정)
+    # if user and user.role != UserRole.ADMIN:
+    #     raise ForbiddenException("Only ADMIN can view stock details")
     
     product = await db.get(Product, product_id)
     if not product:
@@ -165,14 +167,14 @@ async def _get_or_create_stock(db: AsyncSession, product_id: UUID, store_id: UUI
 async def process_inbound(
     db: AsyncSession, 
     data: InboundTransactionCreate, 
-    user: User
+    user: Optional[User] = None  # TODO: 인증 구현 후 필수로 변경
 ) -> Tuple[InventoryTransaction, int, bool]:
-    stock = await _get_or_create_stock(db, UUID(data.productId), UUID(data.storeId))
+    stock = await _get_or_create_stock(db, UUID(data.product_id), UUID(data.store_id))
     
     tx = InventoryTransaction(
-        product_id=UUID(data.productId),
-        store_id=UUID(data.storeId),
-        user_id=user.id,
+        product_id=UUID(data.product_id),
+        store_id=UUID(data.store_id),
+        user_id=user.id if user else None,  # TODO: 인증 구현 후 필수로 변경
         type=TransactionType.INBOUND,
         quantity=data.quantity,
         note=data.note
@@ -189,10 +191,10 @@ async def process_inbound(
 async def process_outbound(
     db: AsyncSession, 
     data: OutboundTransactionCreate, 
-    user: User
+    user: Optional[User] = None  # TODO: 인증 구현 후 필수로 변경
 ) -> Tuple[InventoryTransaction, int, bool]:
-    p_id = UUID(data.productId)
-    s_id = UUID(data.storeId)
+    p_id = UUID(data.product_id)
+    s_id = UUID(data.store_id)
     stock = await _get_or_create_stock(db, p_id, s_id)
     
     if stock.quantity < data.quantity:
@@ -203,7 +205,7 @@ async def process_outbound(
     tx = InventoryTransaction(
         product_id=p_id,
         store_id=s_id,
-        user_id=user.id,
+        user_id=user.id if user else None,  # TODO: 인증 구현 후 필수로 변경
         type=TransactionType.OUTBOUND,
         quantity=-data.quantity,
         note=data.note
@@ -228,10 +230,10 @@ async def process_outbound(
 async def process_adjust(
     db: AsyncSession, 
     data: AdjustTransactionCreate, 
-    user: User
+    user: Optional[User] = None  # TODO: 인증 구현 후 필수로 변경
 ) -> Tuple[InventoryTransaction, int, bool]:
-    p_id = UUID(data.productId)
-    s_id = UUID(data.storeId)
+    p_id = UUID(data.product_id)
+    s_id = UUID(data.store_id)
     stock = await _get_or_create_stock(db, p_id, s_id)
     
     if data.quantity < 0 and stock.quantity < abs(data.quantity):
@@ -240,7 +242,7 @@ async def process_adjust(
     tx = InventoryTransaction(
         product_id=p_id,
         store_id=s_id,
-        user_id=user.id,
+        user_id=user.id if user else None,  # TODO: 인증 구현 후 필수로 변경
         type=TransactionType.ADJUST,
         quantity=data.quantity,
         reason=data.reason,

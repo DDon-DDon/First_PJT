@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
-from app.api.deps import get_current_user
-from app.models.user import User
+# TODO: 인증 구현 후 활성화 (나중에 구현 예정)
+# from app.api.deps import get_current_user
+# from app.models.user import User
 from app.schemas.product import ProductCreate, ProductResponse, ProductListResponse
 from app.schemas.common import Pagination
 from app.services import product as product_service
@@ -59,11 +60,13 @@ async def list_products(
 @router.post("", response_model=ProductResponse, status_code=status.HTTP_201_CREATED)
 async def create_product(
     data: ProductCreate,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: AsyncSession = Depends(get_db)
+    # TODO: 인증 구현 후 활성화 (나중에 구현 예정)
+    # current_user: User = Depends(get_current_user)
 ):
     """제품 등록 (관리자 전용)"""
-    if current_user.role != "ADMIN":
-        raise ForbiddenException("Only ADMIN can create products")
+    # TODO: 인증 구현 후 활성화 (나중에 구현 예정)
+    # if current_user.role != "ADMIN":
+    #     raise ForbiddenException("Only ADMIN can create products")
         
     return await product_service.create_product(db, data)
