@@ -1,16 +1,20 @@
 "use client";
 // app/stocks/[id]/page.tsx
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // 뒤로가기 기능을 위해 추가
+import React, { useState, use } from 'react';
+
+import {
+  ChevronLeft, ChevronRight, Edit3, History, Truck,
+  Package, Calendar, User, Tag, Hash, ArrowUpRight, ArrowDownRight,
+  TrendingDown, Box, ArrowLeft
+} from 'lucide-react';
+
+import ImagePreviewDialog from '../../components/ImagePreviewDialog';
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
-import React, { useState, use } from 'react';
-import {
-  ChevronLeft, ChevronRight, Edit3, History, Truck,
-  Package, Calendar, User, Tag, Hash, ArrowUpRight, ArrowDownRight,
-  TrendingDown, Box
-} from 'lucide-react';
 
 // --- 샘플 데이터 타입 ---
 interface HistoryLog {
@@ -24,6 +28,7 @@ export default function ProductDetailView({ params }: PageProps) {
   // 1. Next.js 15 방식에 맞춰 params 언랩
   const resolvedParams = use(params);
   const productId = resolvedParams.id;
+  const router = useRouter();
 
   // 2. 이제 useState를 정상적으로 사용할 수 있습니다.
   const [currentImg, setCurrentImg] = useState(0);
@@ -33,16 +38,29 @@ export default function ProductDetailView({ params }: PageProps) {
     "https://images.unsplash.com/photo-1586920740199-47ce35183cfd?w=800"
   ];
 
+
+  const [openPreview, setOpenPreview] = useState(false);
+
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 pb-20 overflow-y-auto">
       {/* 상단 액션 바 */}
       <div className="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 px-6 py-4">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <nav className="flex gap-2 text-[11px] text-slate-400 font-bold uppercase tracking-wider">
-            <span>Inventory</span>
-            <span>/</span>
-            <span className="text-blue-600">Product Analysis</span>
-          </nav>
+
+          <div className="flex justify-between items-center">
+            <button
+              onClick={() => router.back()}
+              className="p-2 -ml-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors text-slate-500 group mr-4"
+              title="Go back"
+            >
+              <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
+            </button>
+            <nav className="flex gap-2 text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+              <span>Inventory</span>
+              <span>/</span>
+              <span className="text-blue-600">Product Analysis</span>
+            </nav>
+          </div>
 
 
           <Link
@@ -65,15 +83,18 @@ export default function ProductDetailView({ params }: PageProps) {
 
           {/* 좌측: 상품 이미지 캐로셀 (디자인 핵심) */}
           <div className="col-span-12 lg:col-span-6 space-y-4">
-            <div className="relative aspect-square rounded-2xl overflow-hidden bg-slate-100 group">
+            <div
+              className="relative aspect-square rounded-2xl overflow-hidden bg-slate-100 group"
+              onClick={() => { setOpenPreview(true) }}
+            >
               <img
                 src={images[currentImg]}
                 alt="Product"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => setCurrentImg(0)} className="p-2 bg-white/50 backdrop-blur-md rounded-full hover:bg-white"><ChevronLeft /></button>
-                <button onClick={() => setCurrentImg(1)} className="p-2 bg-white/50 backdrop-blur-md rounded-full hover:bg-white"><ChevronRight /></button>
+                {/* <button onClick={() => setCurrentImg(0)} className="p-2 bg-white/50 backdrop-blur-md rounded-full hover:bg-white"><ChevronLeft /></button>
+                <button onClick={() => setCurrentImg(1)} className="p-2 bg-white/50 backdrop-blur-md rounded-full hover:bg-white"><ChevronRight /></button> */}
 
               </div>
             </div>
@@ -200,6 +221,13 @@ export default function ProductDetailView({ params }: PageProps) {
           <History size={24} />
         </button>
       </div>
+      {/* {openPreview && (
+                              <ImagePreviewDialog
+                                  imgUrl={images[currentImg]}
+                                  isOpen={openPreview}
+                                  onClose={() => setOpenPreview(false)}
+                              />
+                          )} */}
     </div>
   );
 };
