@@ -4,7 +4,7 @@
     "started_at": "2026-01-24T10:00:00Z",
     "roadmap_path": "docs/roadmap/2026-01-23_improved-roadmap.md",
     "current_phase": "C",
-    "current_task": "C-1",
+    "current_task": "C-2",
     "current_step": "pending"
   },
   "phases": {
@@ -71,9 +71,15 @@
     },
     "C": {
       "name": "에러 핸들링 & 로깅",
-      "status": "pending",
+      "status": "in_progress",
+      "started_at": "2026-01-25T22:00:00Z",
       "tasks": {
-        "C-1": { "name": "커스텀 예외 계층 구축", "status": "pending" },
+        "C-1": {
+          "name": "커스텀 예외 계층 구축",
+          "status": "completed",
+          "summary": "ApiException 베이스 클래스 도입, 전역 예외 핸들러 등록, 예외 처리 단위 테스트 작성",
+          "completed_at": "2026-01-25T22:30:00Z"
+        },
         "C-2": { "name": "구조화된 로깅", "status": "pending" },
         "C-3": { "name": "Request ID 추적", "status": "pending" },
         "C-4": { "name": "Request/Response 로깅", "status": "pending" }
@@ -113,7 +119,7 @@
     }
   },
   "context": {
-    "last_action": "Phase B 테스트 강화 완료",
+    "last_action": "C-1 커스텀 예외 계층 구축 완료",
     "last_skill": "orchestrator",
     "blockers": []
   }
