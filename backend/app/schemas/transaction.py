@@ -334,7 +334,21 @@ class TransactionResponse(BaseModel):
     # Pydantic v2 설정
     model_config = {
         "from_attributes": True,  # SQLAlchemy 모델 → Pydantic 스키마 자동 변환
-        "populate_by_name": True  # 필드명으로도 생성 가능
+        "populate_by_name": True,  # 필드명으로도 생성 가능
+        "json_schema_extra": {
+            "example": {
+                "id": "880e8400-e29b-41d4-a716-446655440000",
+                "productId": "550e8400-e29b-41d4-a716-446655440000",
+                "storeId": "660e8400-e29b-41d4-a716-446655440000",
+                "userId": "990e8400-e29b-41d4-a716-446655440000",
+                "type": "INBOUND",
+                "quantity": 30,
+                "reason": None,
+                "note": "정기 입고",
+                "createdAt": "2026-01-24T09:00:00Z",
+                "syncedAt": "2026-01-24T09:00:05Z"
+            }
+        }
     }
 
 
@@ -357,9 +371,58 @@ class TransactionResultResponse(TransactionResponse):
         description="안전재고 경고 발생 여부 (True=부족)"
     )
 
+    model_config = {
+        "from_attributes": True,
+        "populate_by_name": True,
+        "json_schema_extra": {
+            "example": {
+                "id": "880e8400-e29b-41d4-a716-446655440000",
+                "productId": "550e8400-e29b-41d4-a716-446655440000",
+                "storeId": "660e8400-e29b-41d4-a716-446655440000",
+                "userId": "990e8400-e29b-41d4-a716-446655440000",
+                "type": "OUTBOUND",
+                "quantity": -10,
+                "reason": None,
+                "note": "판매",
+                "createdAt": "2026-01-24T10:00:00Z",
+                "syncedAt": "2026-01-24T10:00:05Z",
+                "newStock": 15,
+                "safetyAlert": False
+            }
+        }
+    }
+
 from typing import List
 from app.schemas.common import Pagination
 
 class TransactionListResponse(BaseModel):
+    """트랜잭션 목록 응답 스키마"""
     items: List[TransactionResponse]
     pagination: Pagination
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "items": [
+                    {
+                        "id": "880e8400-e29b-41d4-a716-446655440000",
+                        "productId": "550e8400-e29b-41d4-a716-446655440000",
+                        "storeId": "660e8400-e29b-41d4-a716-446655440000",
+                        "userId": "990e8400-e29b-41d4-a716-446655440000",
+                        "type": "INBOUND",
+                        "quantity": 30,
+                        "reason": None,
+                        "note": "정기 입고",
+                        "createdAt": "2026-01-24T09:00:00Z",
+                        "syncedAt": "2026-01-24T09:00:05Z"
+                    }
+                ],
+                "pagination": {
+                    "page": 1,
+                    "limit": 10,
+                    "total": 1,
+                    "totalPages": 1
+                }
+            }
+        }
+    }

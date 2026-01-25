@@ -56,7 +56,8 @@ async def get_current_stocks(
     # MVP: 모든 매장 접근 허용
     target_store_ids = [store_id] if store_id else []
 
-    query = select(CurrentStock).options(
+    # product, store 조인 포함하여 재고 조회
+    query = select(CurrentStock).options( # Eager loading 사용
         joinedload(CurrentStock.product),
         joinedload(CurrentStock.store)
     )
