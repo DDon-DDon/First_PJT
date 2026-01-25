@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation'; // 뒤로가기 기능을 위해 추가
+import { Toaster, toast } from 'react-hot-toast';
 
 import {
     PlusIcon,
@@ -27,6 +28,20 @@ const PRODUCT_IMAGES = [
     'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&q=80'
 ];
 
+const STAFF_LIST = [
+    { id: 's1', name: 'Alex Morgan' },
+    { id: 's2', name: 'Sarah Connor' },
+    { id: 's3', name: 'John Doe' },
+    { id: 's4', name: 'Jane Smith' }
+];  
+
+const STOCK_REASONS = [
+    '구매 주문', // purchase order
+    '재고 조정', // inventory adjustment
+    '고객 반품',  // customer return
+    '기타'      // others
+];
+
 export default function TransactionDetail({ productId }: StockTransactionsProps) {
     const router = useRouter();
 
@@ -49,8 +64,8 @@ export default function TransactionDetail({ productId }: StockTransactionsProps)
     };
 
     return (
-
         <main className="flex-1 overflow-y-auto">
+            <Toaster position="bottom-right" /> {/* 토스트가 나올 자리 */}
             {/* max-w를 조정하고 px를 메인과 통일 (px-6 ~ px-8) */}
             <div className="max-w-[1600px] mx-auto px-8 py-8">
                 <div className="max-w-[1200px] mx-auto space-y-10 animate-in fade-in duration-500">
@@ -72,13 +87,17 @@ export default function TransactionDetail({ productId }: StockTransactionsProps)
                         {/* 입고/출고 스위치 (이미지 상단 탭 스타일 반영) */}
                         <div className="inline-flex p-1 bg-slate-100 rounded-xl w-fit">
                             <button
-                                onClick={() => setTransactionType('in')}
+                                onClick={() => {
+                                    setTransactionType('in')
+                                }}
                                 className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${transactionType === 'in' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                             >
                                 재고 입고
                             </button>
                             <button
-                                onClick={() => setTransactionType('out')}
+                                onClick={() => {
+                                    setTransactionType('out')
+                                }}
                                 className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${transactionType === 'out' ? 'bg-white text-rose-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                             >
                                 재고 출고
@@ -175,8 +194,11 @@ export default function TransactionDetail({ productId }: StockTransactionsProps)
                                     <div className="relative">
                                         <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                                         <select className="w-full h-16 pl-12 pr-10 bg-slate-50 border border-slate-100 rounded-2xl appearance-none font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all">
-                                            <option>Alex Morgan</option>
-                                            <option>Sarah Connor</option>
+                                            {
+                                                STAFF_LIST .map(staff => (
+                                                    <option key={staff.id}>{staff.name}</option>
+                                                ))
+                                            }
                                         </select>
                                         <ChevronDown size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                                     </div>
@@ -187,9 +209,11 @@ export default function TransactionDetail({ productId }: StockTransactionsProps)
                                     <label className="text-xs font-black text-slate-400 uppercase ml-1">입출고 사유 및 참조번호</label>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         <select className="h-14 px-4 bg-white border border-slate-200 rounded-xl font-bold text-slate-700">
-                                            <option>구매 주문 (Purchase Order)</option>
-                                            <option>재고 조정 (Inventory Adjustment)</option>
-                                            <option>고객 반품 (Return)</option>
+                                            {
+                                                STOCK_REASONS.map((reason, idx) => (
+                                                    <option key={idx}>{reason}</option>
+                                                ))
+                                            }
                                         </select>
                                         <input
                                             type="text"
@@ -202,25 +226,30 @@ export default function TransactionDetail({ productId }: StockTransactionsProps)
 
                             {/* 최종 확인 버튼 */}
                             <div className="pt-6 flex gap-4">
-                                <button className={`flex-1 h-16 rounded-2xl flex items-center justify-center gap-3 text-white font-black text-lg shadow-lg shadow-blue-200 transition-transform active:scale-95 ${transactionType === 'in' ? 'bg-blue-600' : 'bg-rose-600 shadow-rose-200'}`}>
+                                <button 
+                                    onClick={()=>{
+                                        toast.success(`재고 ${transactionType === 'in' ? '입고' : '출고'}가 완료되었습니다!`);
+                                    }}
+                                    className={`flex-1 h-16 rounded-2xl flex items-center justify-center gap-3 text-white font-black text-lg shadow-lg shadow-blue-200 transition-transform active:scale-95 ${transactionType === 'in' ? 'bg-blue-600' : 'bg-rose-600 shadow-rose-200'}`}>
                                     <CheckCircle2 size={24} />
                                     {transactionType === 'in' ? '입고 완료하기' : '출고 완료하기'}
                                 </button>
-                                <button className="px-8 h-16 bg-slate-100 rounded-2xl font-bold text-slate-500 hover:bg-slate-200 transition-colors">
+                                <button 
+                                    onClick={() => router.back()}
+                                    className="px-8 h-16 bg-slate-100 rounded-2xl font-bold text-slate-500 hover:bg-slate-200 transition-colors">
                                     취소
                                 </button>
                             </div>
                         </div>
                     </div>
                     <HistoryTable />
-
-                    {/* {openPreview && (
+                    {openPreview && (
                         <ImagePreviewDialog
                             imgUrl={PRODUCT_IMAGES[currentImgIdx]}
                             isOpen={openPreview}
                             onClose={() => setOpenPreview(false)}
                         />
-                    )} */}
+                    )}
                 </div>
             </div>
         </main>
