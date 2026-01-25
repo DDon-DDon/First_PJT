@@ -63,7 +63,7 @@ class TestUserSchemas:
             "name": "테스트유저",
             "role": "WORKER",
             "isActive": True,
-            "createdAt": datetime.utcnow()
+            "createdAt": datetime.now()
         }
         user_response = UserResponse(**data)
 
@@ -118,12 +118,12 @@ class TestProductSchemas:
             "categoryId": uuid4(),
             "safetyStock": 10,
             "isActive": True,
-            "createdAt": datetime.utcnow()
+            "createdAt": datetime.now()
         }
         product_response = ProductResponse(**data)
 
         assert product_response.barcode == "8801234567890"
-        assert product_response.isActive is True
+        assert product_response.is_active is True
 
 
 # ========== Transaction 스키마 테스트 ==========
@@ -186,7 +186,7 @@ class TestTransactionSchemas:
             "userId": uuid4(),
             "type": "INBOUND",
             "quantity": 30,
-            "createdAt": datetime.utcnow()
+            "createdAt": datetime.now()
         }
         txn_response = TransactionResponse(**data)
 

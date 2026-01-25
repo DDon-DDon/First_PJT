@@ -9,7 +9,36 @@ from app.schemas.store import StoreResponse, StoreCreate
 
 router = APIRouter()
 
-@router.get("", response_model=List[StoreResponse])
+@router.get(
+    "",
+    response_model=List[StoreResponse],
+    summary="매장 목록 조회",
+    description="""
+    등록된 모든 매장 목록을 조회합니다.
+
+    - 매장명 기준 오름차순 정렬
+    - 인증 없이 접근 가능 (공개 API)
+    """,
+    responses={
+        200: {
+            "description": "매장 목록 조회 성공",
+            "content": {
+                "application/json": {
+                    "example": [
+                        {
+                            "id": "660e8400-e29b-41d4-a716-446655440000",
+                            "code": "GN001",
+                            "name": "강남점",
+                            "address": "서울시 강남구 테헤란로 123",
+                            "phone": "02-1234-5678",
+                            "isActive": True
+                        }
+                    ]
+                }
+            }
+        }
+    }
+)
 async def list_stores(db: AsyncSession = Depends(get_db)):
     """매장 목록 조회"""
     result = await db.execute(select(Store).order_by(Store.name))

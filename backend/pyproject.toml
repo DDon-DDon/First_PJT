@@ -30,7 +30,40 @@ dev = [
     "black>=24.1.1",
     "httpx>=0.26.0",
     "isort>=5.13.2",
+    "locust>=2.20.0",
     "mypy>=1.8.0",
     "pytest>=7.4.4",
     "pytest-asyncio>=0.23.3",
+    "pytest-cov>=7.0.0",
+    "schemathesis>=3.25.0",
 ]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "--cov=app --cov-report=term-missing --cov-report=html"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["app"]
+omit = [
+    "app/__init__.py",
+    "app/db/__init__.py",
+    "app/api/__init__.py",
+    "app/models/__init__.py",
+    "app/schemas/__init__.py",
+    "app/services/__init__.py",
+]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
+fail_under = 60
+show_missing = true

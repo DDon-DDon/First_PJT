@@ -23,7 +23,8 @@ TDD: Phase 1.2 - GREEN 단계에서 구현
 from pydantic import BaseModel, Field
 from uuid import UUID
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
+from app.schemas.common import Pagination
 
 
 class ProductCreate(BaseModel):
@@ -37,38 +38,6 @@ class ProductCreate(BaseModel):
     사용 시나리오:
         - POST /api/products (제품 등록)
         - ADMIN 권한 필요 (일반 작업자는 제품 등록 불가)
-
-    Attributes:
-        barcode (str): 바코드 (1~50자, 유니크)
-        name (str): 제품명 (1~200자)
-        categoryId (str): 카테고리 ID (UUID 문자열)
-        safetyStock (int): 안전재고 수량 (0 이상, 기본값: 10)
-        imageUrl (str, optional): 제품 이미지 URL (최대 500자, 선택)
-        memo (str, optional): 메모 (자유 텍스트, 선택)
-
-    검증 규칙:
-        - barcode: 1~50자 (min_length=1, max_length=50)
-        - name: 1~200자 (min_length=1, max_length=200)
-        - categoryId: UUID 문자열 (서버에서 UUID 변환 및 존재 여부 확인)
-        - safetyStock: 0 이상 (ge=0), 기본값 10
-        - imageUrl: 최대 500자 (선택 필드)
-        - memo: 자유 텍스트 (선택 필드)
-
-    예시:
-        >>> # 요청 예시
-        >>> {
-        ...     "barcode": "8801234567890",
-        ...     "name": "하이드라 에센스 100ml",
-        ...     "categoryId": "550e8400-e29b-41d4-a716-446655440000",
-        ...     "safetyStock": 20,
-        ...     "imageUrl": "https://cdn.example.com/products/essence.jpg",
-        ...     "memo": "베스트셀러 제품"
-        ... }
-
-    주의사항:
-        - categoryId는 유효한 카테고리 ID여야 함 (서버에서 검증)
-        - barcode 중복 체크 필요 (UNIQUE 제약)
-        - ADMIN 권한만 제품 등록 가능
     """
     barcode: str = Field(
         ...,  # 필수 필드
@@ -84,23 +53,20 @@ class ProductCreate(BaseModel):
         description="제품명 (1~200자)"
     )
 
-    category_id: str = Field(
+    categoryId: str = Field(
         ...,
-        alias="categoryId",
         description="카테고리 ID (UUID 문자열)"
     )
 
-    safety_stock: int = Field(
+    safetyStock: int = Field(
         default=10,  # 기본값: 10개
         ge=0,  # Greater or Equal: 0 이상
-        alias="safetyStock",
         description="안전재고 수량 (0 이상, 기본값: 10)"
     )
 
-    image_url: Optional[str] = Field(
+    imageUrl: Optional[str] = Field(
         None,  # 선택 필드
         max_length=500,
-        alias="imageUrl",
         description="제품 이미지 URL (최대 500자, 선택)"
     )
 
@@ -110,7 +76,16 @@ class ProductCreate(BaseModel):
     )
 
     model_config = {
-        "populate_by_name": True
+        "json_schema_extra": {
+            "example": {
+                "barcode": "8801234567890",
+                "name": "하이드라 에센스 100ml",
+                "categoryId": "550e8400-e29b-41d4-a716-446655440000",
+                "safetyStock": 20,
+                "imageUrl": "https://cdn.example.com/products/essence.jpg",
+                "memo": "베스트셀러 제품"
+            }
+        }
     }
 
 
@@ -177,12 +152,51 @@ class ProductResponse(BaseModel):
     # Pydantic v2 설정
     model_config = {
         "from_attributes": True,  # SQLAlchemy 모델 → Pydantic 스키마 자동 변환
-        "populate_by_name": True  # 필드명으로도 생성 가능
+        "populate_by_name": True,  # 필드명으로도 생성 가능
+        "json_schema_extra": {
+            "example": {
+                "id": "550e8400-e29b-41d4-a716-446655440000",
+                "barcode": "8801234567890",
+                "name": "하이드라 에센스 100ml",
+                "categoryId": "660e8400-e29b-41d4-a716-446655440000",
+                "safetyStock": 20,
+                "imageUrl": "https://cdn.example.com/products/essence.jpg",
+                "memo": "베스트셀러 제품",
+                "isActive": True,
+                "createdAt": "2026-01-01T09:00:00Z",
+                "updatedAt": "2026-01-02T10:00:00Z"
+            }
+        }
     }
 
-from typing import List
-from app.schemas.common import Pagination
 
 class ProductListResponse(BaseModel):
     items: List[ProductResponse]
     pagination: Pagination
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "items": [
+                    {
+                        "id": "550e8400-e29b-41d4-a716-446655440000",
+                        "barcode": "8801234567890",
+                        "name": "하이드라 에센스 100ml",
+                        "categoryId": "660e8400-e29b-41d4-a716-446655440000",
+                        "safetyStock": 20,
+                        "imageUrl": "https://cdn.example.com/products/essence.jpg",
+                        "memo": "베스트셀러 제품",
+                        "isActive": True,
+                        "createdAt": "2026-01-01T09:00:00Z",
+                        "updatedAt": "2026-01-02T10:00:00Z"
+                    }
+                ],
+                "pagination": {
+                    "page": 1,
+                    "limit": 10,
+                    "total": 1,
+                    "totalPages": 1
+                }
+            }
+        }
+    }

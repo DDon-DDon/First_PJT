@@ -9,7 +9,40 @@ from app.schemas.category import CategoryResponse, CategoryCreate
 
 router = APIRouter()
 
-@router.get("", response_model=List[CategoryResponse])
+@router.get(
+    "",
+    response_model=List[CategoryResponse],
+    summary="카테고리 목록 조회",
+    description="""
+    등록된 모든 카테고리 목록을 조회합니다.
+
+    - 정렬 순서(`sortOrder`) 기준 오름차순 정렬
+    - 인증 없이 접근 가능 (공개 API)
+    """,
+    responses={
+        200: {
+            "description": "카테고리 목록 조회 성공",
+            "content": {
+                "application/json": {
+                    "example": [
+                        {
+                            "id": "770e8400-e29b-41d4-a716-446655440000",
+                            "code": "SNACK",
+                            "name": "스낵",
+                            "sortOrder": 1
+                        },
+                        {
+                            "id": "780e8400-e29b-41d4-a716-446655440000",
+                            "code": "DRINK",
+                            "name": "음료",
+                            "sortOrder": 2
+                        }
+                    ]
+                }
+            }
+        }
+    }
+)
 async def list_categories(db: AsyncSession = Depends(get_db)):
     """카테고리 목록 조회"""
     result = await db.execute(select(Category).order_by(Category.sort_order))
