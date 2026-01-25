@@ -90,7 +90,15 @@ class InboundTransactionCreate(BaseModel):
     )
 
     model_config = {
-        "populate_by_name": True
+        "populate_by_name": True,
+        "json_schema_extra": {
+            "example": {
+                "productId": "550e8400-e29b-41d4-a716-446655440000",
+                "storeId": "660e8400-e29b-41d4-a716-446655440000",
+                "quantity": 30,
+                "note": "정기 입고"
+            }
+        }
     }
 
 
@@ -158,7 +166,15 @@ class OutboundTransactionCreate(BaseModel):
     )
 
     model_config = {
-        "populate_by_name": True
+        "populate_by_name": True,
+        "json_schema_extra": {
+            "example": {
+                "productId": "550e8400-e29b-41d4-a716-446655440000",
+                "storeId": "660e8400-e29b-41d4-a716-446655440000",
+                "quantity": 10,
+                "note": "판매"
+            }
+        }
     }
 
 
@@ -243,7 +259,16 @@ class AdjustTransactionCreate(BaseModel):
     )
 
     model_config = {
-        "populate_by_name": True
+        "populate_by_name": True,
+        "json_schema_extra": {
+            "example": {
+                "productId": "550e8400-e29b-41d4-a716-446655440000",
+                "storeId": "660e8400-e29b-41d4-a716-446655440000",
+                "quantity": -5,
+                "reason": "EXPIRED",
+                "note": "유통기한 만료 폐기"
+            }
+        }
     }
 
 

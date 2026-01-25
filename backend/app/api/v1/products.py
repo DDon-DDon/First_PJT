@@ -8,6 +8,7 @@ from app.db.session import get_db
 # from app.api.deps import get_current_user
 # from app.models.user import User
 from app.schemas.product import ProductCreate, ProductResponse, ProductListResponse
+from app.schemas.common import ErrorResponse
 from app.services import product as product_service
 from app.core.exceptions import ForbiddenException
 
@@ -24,7 +25,19 @@ router = APIRouter()
     - 바코드 스캐너 연동 시 사용됩니다.
     """,
     responses={
-        404: {"description": "해당 바코드의 제품이 존재하지 않음"}
+        404: {
+            "model": ErrorResponse,
+            "description": "해당 바코드의 제품이 존재하지 않음",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": "PRODUCT_NOT_FOUND",
+                        "message": "해당 바코드의 제품을 찾을 수 없습니다",
+                        "details": {"barcode": "8801234567890"}
+                    }
+                }
+            }
+        }
     }
 )
 async def get_product_by_barcode(
@@ -46,11 +59,26 @@ async def get_product_by_barcode(
     - **검색(`search`)**: 제품명 또는 바코드에 검색어가 포함된 제품을 찾습니다.
     - **카테고리(`category_id`)**: 특정 카테고리의 제품만 필터링합니다.
     - **정렬**: 최신 등록순으로 정렬됩니다.
-    """
+    """,
+    responses={
+        400: {
+            "model": ErrorResponse,
+            "description": "잘못된 요청 파라미터",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": "INVALID_CATEGORY_ID",
+                        "message": "카테고리 ID 형식이 올바르지 않습니다",
+                        "details": {"category_id": "invalid-uuid"}
+                    }
+                }
+            }
+        }
+    }
 )
 async def list_products(
     page: int = Query(1, ge=1, description="페이지 번호"),
-    limit: int = Query(10, ge=1, le=100, description="페이지당 항목 수"),
+    limit: int = Query(10, ge=1, le=100, description="페이지당 항목 수 (최대 100)"),
     search: Optional[str] = Query(None, description="검색어 (제품명/바코드)"),
     category_id: Optional[str] = Query(None, description="카테고리 필터 (UUID)"),
     db: AsyncSession = Depends(get_db)
@@ -90,9 +118,45 @@ async def list_products(
     - **바코드**: 이미 존재하는 바코드는 등록할 수 없습니다 (409 Conflict).
     """,
     responses={
-        403: {"description": "권한 없음 (Worker 접근 불가)"},
-        409: {"description": "이미 존재하는 바코드"},
-        400: {"description": "잘못된 카테고리 ID"}
+        403: {
+            "model": ErrorResponse,
+            "description": "권한 없음 (Worker 접근 불가)",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": "FORBIDDEN",
+                        "message": "관리자 권한이 필요합니다",
+                        "details": None
+                    }
+                }
+            }
+        },
+        409: {
+            "model": ErrorResponse,
+            "description": "이미 존재하는 바코드",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": "BARCODE_ALREADY_EXISTS",
+                        "message": "이미 등록된 바코드입니다",
+                        "details": {"barcode": "8801234567890"}
+                    }
+                }
+            }
+        },
+        400: {
+            "model": ErrorResponse,
+            "description": "잘못된 카테고리 ID",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": "INVALID_CATEGORY",
+                        "message": "존재하지 않는 카테고리입니다",
+                        "details": {"categoryId": "invalid-uuid"}
+                    }
+                }
+            }
+        }
     }
 )
 async def create_product(

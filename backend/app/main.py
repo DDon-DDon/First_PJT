@@ -73,7 +73,19 @@ app = FastAPI(
     openapi_tags=tags_metadata,
     docs_url="/docs",
     redoc_url="/redoc",
-    openapi_url="/openapi.json"
+    openapi_url="/openapi.json",
+    contact={
+        "name": "DoneDone Team",
+        "email": "dev@donedone.example.com",
+    },
+    license_info={
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT",
+    },
+    servers=[
+        {"url": "http://localhost:8000", "description": "로컬 개발 서버"},
+        {"url": "https://api.donedone.example.com", "description": "프로덕션 서버"},
+    ]
 )
 
 
