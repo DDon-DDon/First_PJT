@@ -192,7 +192,13 @@ async def root():
 
 # ========== API 라우터 등록 ==========
 
-from app.api.v1 import products, inventory, transactions, sync, stores, categories, admin
+from app.api.v1 import auth, products, inventory, transactions, sync, stores, categories, admin
+
+app.include_router(
+    auth.router,
+    prefix=f"{settings.API_V1_PREFIX}/auth",
+    tags=["Auth"]
+)
 
 app.include_router(
     products.router,

@@ -87,6 +87,17 @@ class UserCreate(BaseModel):
         description="역할 (WORKER 또는 ADMIN, 기본: WORKER)"
     )
 
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "email": "worker@donedone.local",
+                "password": "worker123",
+                "name": "홍길동",
+                "role": "WORKER"
+            }
+        }
+    }
+
 
 class UserResponse(BaseModel):
     """

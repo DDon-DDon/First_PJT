@@ -41,9 +41,10 @@ class ProductCreate(BaseModel):
     """
     barcode: str = Field(
         ...,  # 필수 필드
-        min_length=1,
-        max_length=50,
-        description="바코드 (1~50자, EAN-13 등)"
+        min_length=13,
+        max_length=13,
+        pattern=r"^\d{13}$",
+        description="바코드 (EAN-13 표준, 숫자 13자리)"
     )
 
     name: str = Field(
@@ -53,9 +54,9 @@ class ProductCreate(BaseModel):
         description="제품명 (1~200자)"
     )
 
-    categoryId: str = Field(
+    categoryId: UUID = Field(
         ...,
-        description="카테고리 ID (UUID 문자열)"
+        description="카테고리 ID (UUID)"
     )
 
     safetyStock: int = Field(
