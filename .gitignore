@@ -53,3 +53,8 @@ thumb
 sketch
 
 # .env
+
+backend/.venv/
+backend/.hypothesis/
+backend/.pytest_cache/
+backend/
