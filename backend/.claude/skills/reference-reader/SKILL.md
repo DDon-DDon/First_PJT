@@ -25,14 +25,13 @@ description: 프로젝트 레퍼런스 문서(PRD, ERD, API 명세, 기술 스�
 ```
 project/
 ├── docs/
-│   ├── prd.md
-│   ├── api-spec.md
-│   └── tech-spec.md
-├── references/
-│   ├── erd.md
-│   └── test-cases.md
-└── database/
-    └── schema.sql
+├──── setup_references/
+│     ├── prd.md
+│     ├── api-spec.md
+│     ├── tech-spec.md
+│     ├── erd.md
+│     ├── test-cases.md
+      └── schema.sql
 ```
 
 ### Step 2: 태스크 관련 섹션 식별

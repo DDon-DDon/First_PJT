@@ -12,9 +12,13 @@ FastAPI 애플리케이션 엔트리포인트 (Application Entry Point)
 
 작성일: 2025-12-31
 """
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
 from app.core.config import settings
+from app.core.exceptions import ApiException
 
 # ========== API 문서 설정 ==========
 
@@ -98,6 +102,68 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ========== 예외 핸들러 등록 ==========
+
+@app.exception_handler(ApiException)
+async def api_exception_handler(request: Request, exc: ApiException):
+    """
+    커스텀 API 예외 처리
+    정의된 에러 코드와 메시지를 JSON 형식으로 반환합니다.
+    """
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "success": False,
+            "error": {
+                "code": exc.error_code,
+                "message": exc.message,
+                "details": exc.details,
+            },
+        },
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """
+    Pydantic 검증 에러 처리 (422)
+    FastAPI 기본 에러 형식을 프로젝트 표준 형식으로 변환합니다.
+    """
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={
+            "success": False,
+            "error": {
+                "code": "VALIDATION_ERROR",
+                "message": "입력값이 올바르지 않습니다.",
+                "details": {"errors": exc.errors()},
+            },
+        },
+    )
+
+
+@app.exception_handler(Exception)
+async def uncaught_exception_handler(request: Request, exc: Exception):
+    """
+    처리되지 않은 예외 처리 (500)
+    내부 서버 에러를 반환하고, 실제 에러 내용은 (로깅이 추가되면) 로그에 남깁니다.
+    """
+    # TODO: 로깅 추가 (Phase C-2)
+    # logger.error(f"Uncaught error: {exc}", exc_info=True)
+
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={
+            "success": False,
+            "error": {
+                "code": "INTERNAL_SERVER_ERROR",
+                "message": "서버 내부 오류가 발생했습니다.",
+                "details": None,  # 보안상 상세 내용은 숨김
+            },
+        },
+    )
 
 
 # ========== 기본 엔드포인트 ==========
