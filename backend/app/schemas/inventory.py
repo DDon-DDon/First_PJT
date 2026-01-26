@@ -7,10 +7,10 @@ from app.schemas.product import ProductResponse
 
 class ProductSimpleResponse(BaseModel):
     """제품 간략 정보 (재고 조회 시 사용)"""
-    id: UUID
-    barcode: str
-    name: str
-    safety_stock: int = Field(..., alias="safetyStock")
+    id: UUID = Field(..., description="제품 고유 식별자")
+    barcode: str = Field(..., description="제품 바코드")
+    name: str = Field(..., description="제품명")
+    safety_stock: int = Field(..., alias="safetyStock", description="설정된 안전재고 수량")
 
     model_config = {
         "from_attributes": True,
@@ -27,9 +27,9 @@ class ProductSimpleResponse(BaseModel):
 
 class StoreSimpleResponse(BaseModel):
     """매장 간략 정보 (재고 조회 시 사용)"""
-    id: UUID
-    name: str
-    code: str
+    id: UUID = Field(..., description="매장 고유 식별자")
+    name: str = Field(..., description="매장명")
+    code: str = Field(..., description="매장 코드")
 
     model_config = {
         "from_attributes": True,
