@@ -19,6 +19,11 @@ from fastapi.responses import JSONResponse
 
 from app.core.config import settings
 from app.core.exceptions import ApiException
+from app.core.logging import setup_logging, get_logger
+
+# 로깅 설정 초기화 (앱 시작 시 한 번만)
+setup_logging()
+logger = get_logger(__name__)
 
 # ========== API 문서 설정 ==========
 
@@ -104,6 +109,17 @@ app.add_middleware(
 )
 
 
+# ========== 커스텀 미들웨어 설정 (Phase C) ==========
+
+from app.middleware import RequestIdMiddleware, LoggingMiddleware
+
+# 미들웨어는 역순으로 실행됨 (마지막 등록이 먼저 실행)
+# 1. LoggingMiddleware (요청/응답 로깅)
+# 2. RequestIdMiddleware (요청 ID 생성 및 컨텍스트 바인딩)
+app.add_middleware(LoggingMiddleware)
+app.add_middleware(RequestIdMiddleware)
+
+
 # ========== 예외 핸들러 등록 ==========
 
 @app.exception_handler(ApiException)
@@ -148,10 +164,17 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 async def uncaught_exception_handler(request: Request, exc: Exception):
     """
     처리되지 않은 예외 처리 (500)
-    내부 서버 에러를 반환하고, 실제 에러 내용은 (로깅이 추가되면) 로그에 남깁니다.
+    내부 서버 에러를 반환하고, 실제 에러 내용은 로그에 남깁니다.
     """
-    # TODO: 로깅 추가 (Phase C-2)
-    # logger.error(f"Uncaught error: {exc}", exc_info=True)
+    # Phase C-2: 구조화된 로깅 추가
+    logger.error(
+        "Uncaught exception",
+        error_type=type(exc).__name__,
+        error_message=str(exc),
+        path=str(request.url.path),
+        method=request.method,
+        exc_info=True
+    )
 
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
