@@ -19,7 +19,7 @@
 작성일: 2026-01-01
 TDD: Phase 1.1 - GREEN 단계에서 구현
 """
-from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, Enum as SQLEnum
+from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, Enum as SQLEnum, Index
 from sqlalchemy.orm import relationship
 import enum
 from datetime import datetime
@@ -195,6 +195,12 @@ class InventoryTransaction(Base):
 
     # 테이블 이름
     __tablename__ = "inventory_transactions"
+    
+    # 인덱스 정의 (복합 인덱스)
+    __table_args__ = (
+        Index('idx_transactions_store_created', 'store_id', 'created_at'),
+        Index('idx_transactions_product_created', 'product_id', 'created_at'),
+    )
 
     # Primary Key
     id = Column(
@@ -228,7 +234,7 @@ class InventoryTransaction(Base):
 
     # 트랜잭션 정보
     type = Column(
-        SQLEnum(TransactionType),
+        SQLEnum(TransactionType, name="transaction_type"),
         nullable=False,
         comment="트랜잭션 유형 (INBOUND/OUTBOUND/ADJUST)"
     )
@@ -240,7 +246,7 @@ class InventoryTransaction(Base):
     )
 
     reason = Column(
-        SQLEnum(AdjustReason),
+        SQLEnum(AdjustReason, name="adjust_reason"),
         nullable=True,  # ADJUST일 때만 필수
         comment="조정 사유 (type=ADJUST일 때 필수)"
     )

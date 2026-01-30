@@ -11,7 +11,7 @@
 ```
 Phase A: API 문서화 & DX          ████████████████████ 100%  ✅
 Phase B: 테스트 강화              ████████████████████ 100%  ✅
-Phase C: 에러 핸들링 & 로깅       █████░░░░░░░░░░░░░░░  25%
+Phase C: 에러 핸들링 & 로깅       ████████████████████ 100%  ✅
 Phase D: 쿼리 최적화 & 벤치마크   ░░░░░░░░░░░░░░░░░░░░   0%
 Phase E: 인프라 & 배포            ░░░░░░░░░░░░░░░░░░░░   0%
 Phase F: 보안 강화                ░░░░░░░░░░░░░░░░░░░░   0%
@@ -27,6 +27,7 @@ Phase F: 보안 강화                ░░░░░░░░░░░░░░
 ### A-1. OpenAPI 스펙 강화 ✅
 
 #### 체크리스트
+
 - [x] 모든 엔드포인트에 `summary`, `description` 추가
 - [x] 요청/응답 예시(examples) 추가
 - [x] 에러 응답 스키마 정의 (`responses` 파라미터)
@@ -46,7 +47,7 @@ class ErrorResponse(BaseModel):
     error_code: str
     message: str
     detail: Optional[Any] = None
-    
+
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -83,7 +84,7 @@ router = APIRouter(prefix="/products", tags=["제품 관리"])
     summary="바코드로 제품 조회",
     description="""
     POS 또는 모바일에서 바코드 스캔 시 호출하는 API입니다.
-    
+
     - 바코드 인덱스를 활용하여 100ms 이내 응답을 보장합니다.
     - 제품이 없는 경우 404를 반환합니다.
     """,
@@ -167,6 +168,7 @@ async def list_products(
 ### A-2. API 문서 커스터마이징 ✅
 
 #### 체크리스트
+
 - [x] Swagger UI 타이틀, 설명 커스터마이징
 - [x] API 버전 정보 표시
 - [x] 서버 URL 환경별 구분
@@ -182,15 +184,15 @@ app = FastAPI(
     title="DoneDone API",
     description="""
     ## 똔똔 재고관리 시스템 API
-    
+
     오프라인 매장을 위한 바코드 기반 재고관리 API입니다.
-    
+
     ### 주요 기능
     - 🔍 **제품 관리**: 바코드 조회, 제품 등록/수정
     - 📦 **재고 관리**: 입고, 출고, 재고 조정
     - 🔄 **오프라인 동기화**: 배치 트랜잭션 처리
     - 📊 **리포트**: 안전재고 알림, 엑셀 내보내기
-    
+
     ### 인증
     모든 API는 JWT Bearer 토큰 인증이 필요합니다.
     """,
@@ -234,6 +236,7 @@ app = FastAPI(openapi_tags=tags_metadata, ...)
 ### A-3. Postman/Insomnia Collection 생성 ✅
 
 #### 체크리스트
+
 - [x] OpenAPI 스펙에서 Collection 자동 생성
 - [x] 환경 변수 설정 (dev, staging, prod)
 - [x] 인증 토큰 자동 주입 설정
@@ -274,26 +277,30 @@ app = FastAPI(openapi_tags=tags_metadata, ...)
 ```javascript
 // Postman Collection > Pre-request Script
 if (!pm.environment.get("access_token")) {
-    pm.sendRequest({
-        url: pm.environment.get("base_url") + "/auth/login",
-        method: "POST",
-        header: { "Content-Type": "application/json" },
-        body: {
-            mode: "raw",
-            raw: JSON.stringify({
-                email: pm.environment.get("test_email"),
-                password: pm.environment.get("test_password")
-            })
-        }
-    }, function (err, res) {
-        pm.environment.set("access_token", res.json().access_token);
-    });
+  pm.sendRequest(
+    {
+      url: pm.environment.get("base_url") + "/auth/login",
+      method: "POST",
+      header: { "Content-Type": "application/json" },
+      body: {
+        mode: "raw",
+        raw: JSON.stringify({
+          email: pm.environment.get("test_email"),
+          password: pm.environment.get("test_password"),
+        }),
+      },
+    },
+    function (err, res) {
+      pm.environment.set("access_token", res.json().access_token);
+    },
+  );
 }
 ```
 
 ### A-4. API 변경 이력 관리 ✅
 
 #### 체크리스트
+
 - [x] CHANGELOG.md 작성
 - [x] Deprecated API 표시 방법 정의
 - [x] 버전 관리 전략 수립 (URL vs Header)
@@ -322,6 +329,7 @@ async def get_stocks_legacy():
 ### B-1. 테스트 커버리지 측정 및 목표 설정 ✅
 
 #### 체크리스트
+
 - [x] pytest-cov 설정
 - [x] 커버리지 리포트 생성
 - [x] 목표 커버리지 설정 (권장: 80% 이상)
@@ -355,6 +363,7 @@ exclude_lines = [
 ### B-2. 단위 테스트 보강 ✅
 
 #### 체크리스트
+
 - [x] 서비스 레이어 테스트 (비즈니스 로직)
 - [x] 엣지 케이스 테스트 (경계값, null, 빈 값)
 - [x] Mock 활용한 외부 의존성 격리
@@ -370,17 +379,17 @@ from app.exceptions import StockInsufficientError
 
 class TestInventoryService:
     """재고 서비스 단위 테스트"""
-    
+
     @pytest.fixture
     def mock_session(self):
         """Mock DB 세션"""
         session = AsyncMock()
         return session
-    
+
     @pytest.fixture
     def service(self, mock_session):
         return InventoryService(mock_session)
-    
+
     async def test_outbound_insufficient_stock_raises_error(
         self, service, mock_session
     ):
@@ -388,7 +397,7 @@ class TestInventoryService:
         # Given
         mock_stock = MagicMock(quantity=5)
         mock_session.execute.return_value.scalar_one_or_none.return_value = mock_stock
-        
+
         # When & Then
         with pytest.raises(StockInsufficientError) as exc_info:
             await service.process_outbound(
@@ -396,27 +405,27 @@ class TestInventoryService:
                 store_id="...",
                 quantity=10  # 재고(5)보다 많음
             )
-        
+
         assert exc_info.value.available == 5
         assert exc_info.value.requested == 10
-    
+
     async def test_outbound_success_updates_stock(self, service, mock_session):
         """정상 출고 시 재고 감소"""
         # Given
         mock_stock = MagicMock(quantity=10)
         mock_session.execute.return_value.scalar_one_or_none.return_value = mock_stock
-        
+
         # When
         result = await service.process_outbound(
             product_id="...",
             store_id="...",
             quantity=3
         )
-        
+
         # Then
         assert mock_stock.quantity == 7
         assert result.transaction_type == "OUTBOUND"
-    
+
     @pytest.mark.parametrize("quantity,expected_status", [
         (0, "OUT_OF_STOCK"),
         (5, "LOW"),      # safe_stock=10 기준
@@ -437,6 +446,7 @@ class TestInventoryService:
 ### B-3. 통합 테스트 보강 ✅
 
 #### 체크리스트
+
 - [x] 실제 DB를 사용한 API 테스트
 - [x] 트랜잭션 롤백으로 테스트 격리
 - [x] 테스트 데이터 Fixture 체계화
@@ -469,15 +479,15 @@ def event_loop():
 async def test_engine():
     """테스트 DB 엔진"""
     engine = create_async_engine(TEST_DATABASE_URL, echo=False)
-    
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    
+
     yield engine
-    
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
-    
+
     await engine.dispose()
 
 @pytest.fixture
@@ -486,7 +496,7 @@ async def db_session(test_engine):
     async_session = sessionmaker(
         test_engine, class_=AsyncSession, expire_on_commit=False
     )
-    
+
     async with async_session() as session:
         async with session.begin():
             yield session
@@ -497,15 +507,15 @@ async def client(db_session):
     """테스트 클라이언트"""
     async def override_get_db():
         yield db_session
-    
+
     app.dependency_overrides[get_db] = override_get_db
-    
+
     async with AsyncClient(
         transport=ASGITransport(app=app),
         base_url="http://test"
     ) as ac:
         yield ac
-    
+
     app.dependency_overrides.clear()
 
 # 테스트 데이터 Fixtures
@@ -538,6 +548,7 @@ async def sample_product(db_session, sample_category):
 ### B-4. 부하 테스트 (Performance Testing) ✅
 
 #### 체크리스트
+
 - [x] Locust 또는 k6 설정
 - [x] 주요 시나리오 스크립트 작성
 - [x] 성능 기준선(baseline) 측정
@@ -555,7 +566,7 @@ import random
 class InventoryUser(HttpUser):
     """재고 관리 사용자 시뮬레이션"""
     wait_time = between(1, 3)
-    
+
     def on_start(self):
         """로그인"""
         response = self.client.post("/auth/login", json={
@@ -564,7 +575,7 @@ class InventoryUser(HttpUser):
         })
         self.token = response.json()["access_token"]
         self.headers = {"Authorization": f"Bearer {self.token}"}
-    
+
     @task(10)
     def scan_barcode(self):
         """바코드 스캔 (가장 빈번한 작업)"""
@@ -575,7 +586,7 @@ class InventoryUser(HttpUser):
             headers=self.headers,
             name="/products/barcode/[barcode]"
         )
-    
+
     @task(5)
     def check_stock(self):
         """재고 확인"""
@@ -584,7 +595,7 @@ class InventoryUser(HttpUser):
             headers=self.headers,
             params={"store_id": "my-store-id"}
         )
-    
+
     @task(3)
     def process_inbound(self):
         """입고 처리"""
@@ -598,7 +609,7 @@ class InventoryUser(HttpUser):
                 "note": "테스트 입고"
             }
         )
-    
+
     @task(2)
     def process_outbound(self):
         """출고 처리"""
@@ -611,7 +622,7 @@ class InventoryUser(HttpUser):
                 "quantity": random.randint(1, 3)
             }
         )
-    
+
     @task(1)
     def sync_offline_transactions(self):
         """오프라인 동기화 (배치)"""
@@ -654,32 +665,32 @@ locust -f tests/load/locustfile.py \
 
 ```javascript
 // tests/load/k6-script.js
-import http from 'k6/http';
-import { check, sleep } from 'k6';
+import http from "k6/http";
+import { check, sleep } from "k6";
 
 export const options = {
   stages: [
-    { duration: '30s', target: 20 },   // Ramp up
-    { duration: '1m', target: 50 },    // Stay
-    { duration: '30s', target: 0 },    // Ramp down
+    { duration: "30s", target: 20 }, // Ramp up
+    { duration: "1m", target: 50 }, // Stay
+    { duration: "30s", target: 0 }, // Ramp down
   ],
   thresholds: {
-    http_req_duration: ['p(95)<200'],  // 95%가 200ms 이내
-    http_req_failed: ['rate<0.01'],    // 에러율 1% 미만
+    http_req_duration: ["p(95)<200"], // 95%가 200ms 이내
+    http_req_failed: ["rate<0.01"], // 에러율 1% 미만
   },
 };
 
 export default function () {
-  const BASE_URL = 'http://localhost:8000';
-  
+  const BASE_URL = "http://localhost:8000";
+
   // 바코드 조회
   const res = http.get(`${BASE_URL}/products/barcode/8801234567890`);
-  
+
   check(res, {
-    'status is 200': (r) => r.status === 200,
-    'response time < 100ms': (r) => r.timings.duration < 100,
+    "status is 200": (r) => r.status === 200,
+    "response time < 100ms": (r) => r.timings.duration < 100,
   });
-  
+
   sleep(1);
 }
 ```
@@ -687,6 +698,7 @@ export default function () {
 ### B-5. 계약 테스트 (Contract Testing) ✅
 
 #### 체크리스트
+
 - [x] Pact 또는 Schemathesis 설정
 - [x] 프론트엔드-백엔드 스키마 일치 검증
 - [x] CI에서 자동 검증
@@ -718,6 +730,7 @@ def test_api_contract(case):
 ### C-1. 커스텀 예외 계층 구축 ✅
 
 #### 체크리스트
+
 - [x] 베이스 예외 클래스 정의
 - [x] 도메인별 예외 클래스 정의
 - [x] 글로벌 예외 핸들러 등록
@@ -734,7 +747,7 @@ class DoneDoneException(Exception):
     error_code: str = "INTERNAL_ERROR"
     status_code: int = 500
     message: str = "서버 내부 오류가 발생했습니다"
-    
+
     def __init__(
         self,
         message: Optional[str] = None,
@@ -743,7 +756,7 @@ class DoneDoneException(Exception):
         self.message = message or self.__class__.message
         self.detail = detail
         super().__init__(self.message)
-    
+
     def to_dict(self) -> dict:
         return {
             "error_code": self.error_code,
@@ -781,7 +794,7 @@ class StockInsufficientError(DoneDoneException):
     error_code = "STOCK_INSUFFICIENT"
     status_code = 400
     message = "재고가 부족합니다"
-    
+
     def __init__(self, available: int, requested: int):
         self.available = available
         self.requested = requested
@@ -884,13 +897,14 @@ app.add_exception_handler(IntegrityError, integrity_error_handler)
 app.add_exception_handler(Exception, unhandled_exception_handler)
 ```
 
-### C-2. 구조화된 로깅 (Structured Logging)
+### C-2. 구조화된 로깅 (Structured Logging) ✅
 
 #### 체크리스트
-- [ ] structlog 또는 python-json-logger 설정
-- [ ] 로그 레벨 정책 수립
-- [ ] Request/Response 로깅 미들웨어
-- [ ] 민감 정보 마스킹
+
+- [x] structlog 또는 python-json-logger 설정
+- [x] 로그 레벨 정책 수립
+- [x] Request/Response 로깅 미들웨어
+- [x] 민감 정보 마스킹
 
 #### 구현 가이드
 
@@ -904,7 +918,7 @@ from structlog.types import EventDict
 
 def setup_logging(json_logs: bool = False, log_level: str = "INFO"):
     """로깅 설정"""
-    
+
     # 민감 정보 마스킹 프로세서
     def mask_sensitive_data(
         logger: logging.Logger,
@@ -912,13 +926,13 @@ def setup_logging(json_logs: bool = False, log_level: str = "INFO"):
         event_dict: EventDict
     ) -> EventDict:
         sensitive_keys = {"password", "token", "secret", "authorization"}
-        
+
         for key in list(event_dict.keys()):
             if any(s in key.lower() for s in sensitive_keys):
                 event_dict[key] = "***MASKED***"
-        
+
         return event_dict
-    
+
     # 공통 프로세서
     shared_processors = [
         structlog.contextvars.merge_contextvars,
@@ -929,14 +943,14 @@ def setup_logging(json_logs: bool = False, log_level: str = "INFO"):
         structlog.processors.StackInfoRenderer(),
         mask_sensitive_data,
     ]
-    
+
     if json_logs:
         # 프로덕션: JSON 로그
         shared_processors.append(structlog.processors.JSONRenderer())
     else:
         # 개발: 컬러 콘솔 로그
         shared_processors.append(structlog.dev.ConsoleRenderer())
-    
+
     structlog.configure(
         processors=shared_processors,
         wrapper_class=structlog.stdlib.BoundLogger,
@@ -944,7 +958,7 @@ def setup_logging(json_logs: bool = False, log_level: str = "INFO"):
         logger_factory=structlog.stdlib.LoggerFactory(),
         cache_logger_on_first_use=True,
     )
-    
+
     # 표준 라이브러리 로거 설정
     logging.basicConfig(
         format="%(message)s",
@@ -970,12 +984,13 @@ async def process_outbound(product_id: str, quantity: int):
     )
 ```
 
-### C-3. Request ID 추적 (Correlation ID)
+### C-3. Request ID 추적 (Correlation ID) ✅
 
 #### 체크리스트
-- [ ] Request ID 미들웨어 구현
-- [ ] 모든 로그에 Request ID 포함
-- [ ] 응답 헤더에 Request ID 포함
+
+- [x] Request ID 미들웨어 구현
+- [x] 모든 로그에 Request ID 포함
+- [x] 응답 헤더에 Request ID 포함
 
 #### 구현 가이드
 
@@ -995,7 +1010,7 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
         # 헤더에서 ID 가져오거나 새로 생성
         request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
         request_id_ctx.set(request_id)
-        
+
         # structlog context에 바인딩
         structlog.contextvars.clear_contextvars()
         structlog.contextvars.bind_contextvars(
@@ -1003,23 +1018,24 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
             path=request.url.path,
             method=request.method
         )
-        
+
         response = await call_next(request)
         response.headers["X-Request-ID"] = request_id
-        
+
         return response
 
 # main.py
 app.add_middleware(RequestIdMiddleware)
 ```
 
-### C-4. Request/Response 로깅
+### C-4. Request/Response 로깅 ✅
 
 #### 체크리스트
-- [ ] 요청 정보 로깅 (path, method, params)
-- [ ] 응답 정보 로깅 (status, duration)
-- [ ] 대용량 body 로깅 제한
-- [ ] 헬스체크 등 노이즈 필터링
+
+- [x] 요청 정보 로깅 (path, method, params)
+- [x] 응답 정보 로깅 (status, duration)
+- [x] 대용량 body 로깅 제한
+- [x] 헬스체크 등 노이즈 필터링
 
 #### 구현 가이드
 
@@ -1035,32 +1051,32 @@ logger = structlog.get_logger()
 class LoggingMiddleware(BaseHTTPMiddleware):
     # 로깅 제외 경로
     EXCLUDE_PATHS = {"/health", "/ready", "/metrics", "/docs", "/openapi.json"}
-    
+
     async def dispatch(self, request: Request, call_next):
         if request.url.path in self.EXCLUDE_PATHS:
             return await call_next(request)
-        
+
         start_time = time.perf_counter()
-        
+
         # 요청 로깅
         logger.info(
             "Request started",
             client_ip=request.client.host if request.client else None,
             user_agent=request.headers.get("User-Agent"),
         )
-        
+
         response = await call_next(request)
-        
+
         # 응답 로깅
         duration_ms = (time.perf_counter() - start_time) * 1000
-        
+
         log_method = logger.info if response.status_code < 400 else logger.warning
         log_method(
             "Request completed",
             status_code=response.status_code,
             duration_ms=round(duration_ms, 2)
         )
-        
+
         return response
 ```
 
@@ -1074,6 +1090,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 ### D-1. 쿼리 분석 환경 구축
 
 #### 체크리스트
+
 - [ ] SQLAlchemy echo 모드 설정
 - [ ] PostgreSQL slow query log 활성화
 - [ ] EXPLAIN ANALYZE 활용법 숙지
@@ -1105,6 +1122,7 @@ log_statement = 'none'  -- 모든 쿼리 로깅 비활성화 (슬로우만)
 ### D-2. N+1 문제 점검 및 해결
 
 #### 체크리스트
+
 - [ ] 현재 코드에서 N+1 발생 지점 식별
 - [ ] `selectinload`, `joinedload` 적용
 - [ ] 적용 전/후 쿼리 수 비교
@@ -1118,11 +1136,11 @@ async def get_stocks_bad(store_id: UUID) -> list[CurrentStock]:
         select(CurrentStock).where(CurrentStock.store_id == store_id)
     )
     stocks = result.scalars().all()
-    
+
     # 각 stock마다 product를 개별 조회 (N+1)
     for stock in stocks:
         _ = stock.product.name  # Lazy loading 발생!
-    
+
     return stocks
 
 # After: Eager Loading으로 해결
@@ -1145,16 +1163,17 @@ async def get_stocks_good(store_id: UUID) -> list[CurrentStock]:
 
 **언제 어떤 로딩 전략을 사용할지:**
 
-| 전략 | 용도 | 예시 |
-|------|------|------|
-| `selectinload` | 1:N, N:M 관계 | Stock → Transactions |
-| `joinedload` | N:1, 1:1 관계 | Stock → Product |
-| `subqueryload` | 복잡한 1:N (집계 필요) | - |
-| `lazyload` (기본) | 필요할 때만 로드 | 드물게 접근하는 관계 |
+| 전략              | 용도                   | 예시                 |
+| ----------------- | ---------------------- | -------------------- |
+| `selectinload`    | 1:N, N:M 관계          | Stock → Transactions |
+| `joinedload`      | N:1, 1:1 관계          | Stock → Product      |
+| `subqueryload`    | 복잡한 1:N (집계 필요) | -                    |
+| `lazyload` (기본) | 필요할 때만 로드       | 드물게 접근하는 관계 |
 
 ### D-3. 인덱스 최적화
 
 #### 체크리스트
+
 - [ ] 주요 쿼리의 EXPLAIN ANALYZE 실행
 - [ ] 필요한 인덱스 추가
 - [ ] 불필요한 인덱스 제거
@@ -1186,15 +1205,15 @@ WHERE cs.store_id = 'xxx'
 -- Bitmap Index Scan: 여러 인덱스 결합
 
 -- 필요한 인덱스 추가
-CREATE INDEX CONCURRENTLY idx_current_stocks_store_product 
+CREATE INDEX CONCURRENTLY idx_current_stocks_store_product
 ON current_stocks(store_id, product_id);
 
-CREATE INDEX CONCURRENTLY idx_transactions_created_at 
+CREATE INDEX CONCURRENTLY idx_transactions_created_at
 ON inventory_transactions(created_at DESC);
 
 -- 부분 인덱스 (조건부)
-CREATE INDEX CONCURRENTLY idx_stocks_low_quantity 
-ON current_stocks(store_id, product_id) 
+CREATE INDEX CONCURRENTLY idx_stocks_low_quantity
+ON current_stocks(store_id, product_id)
 WHERE quantity < 10;  -- 안전재고 미만만 인덱싱
 ```
 
@@ -1224,6 +1243,7 @@ def downgrade():
 ### D-4. Connection Pool 튜닝
 
 #### 체크리스트
+
 - [ ] 현재 pool 설정 확인
 - [ ] 동시 접속 수 기반 적정값 계산
 - [ ] pool_pre_ping 활성화 (연결 상태 확인)
@@ -1237,14 +1257,14 @@ from sqlalchemy.pool import NullPool
 
 def create_engine(settings):
     """환경별 엔진 설정"""
-    
+
     if settings.TESTING:
         # 테스트: 풀 없음
         return create_async_engine(
             settings.DATABASE_URL,
             poolclass=NullPool
         )
-    
+
     # 프로덕션: 풀 설정
     return create_async_engine(
         settings.DATABASE_URL,
@@ -1270,6 +1290,7 @@ max_overflow = pool_size * 2 = 20
 ### D-5. 벤치마크 및 성능 기준선
 
 #### 체크리스트
+
 - [ ] 주요 API 응답 시간 측정
 - [ ] 성능 목표 설정
 - [ ] 벤치마크 자동화
@@ -1284,13 +1305,13 @@ from statistics import mean, stdev
 
 class TestAPIPerformance:
     """API 성능 벤치마크"""
-    
+
     ITERATIONS = 100
-    
+
     @pytest.fixture
     def performance_results(self):
         return {}
-    
+
     async def measure(self, client, method, url, **kwargs):
         """응답 시간 측정"""
         times = []
@@ -1300,7 +1321,7 @@ class TestAPIPerformance:
             elapsed = (time.perf_counter() - start) * 1000
             times.append(elapsed)
             assert response.status_code < 400
-        
+
         return {
             "min": min(times),
             "max": max(times),
@@ -1310,7 +1331,7 @@ class TestAPIPerformance:
             "p95": sorted(times)[int(len(times) * 0.95)],
             "p99": sorted(times)[int(len(times) * 0.99)],
         }
-    
+
     async def test_barcode_lookup_performance(self, client):
         """바코드 조회 < 100ms (P95)"""
         stats = await self.measure(
@@ -1318,7 +1339,7 @@ class TestAPIPerformance:
         )
         print(f"\n바코드 조회: {stats}")
         assert stats["p95"] < 100, f"P95 {stats['p95']}ms > 100ms"
-    
+
     async def test_stock_list_performance(self, client):
         """재고 목록 < 200ms (P95)"""
         stats = await self.measure(
@@ -1327,7 +1348,7 @@ class TestAPIPerformance:
         )
         print(f"\n재고 목록: {stats}")
         assert stats["p95"] < 200, f"P95 {stats['p95']}ms > 200ms"
-    
+
     async def test_inbound_performance(self, client):
         """입고 처리 < 300ms (P95)"""
         stats = await self.measure(
@@ -1340,11 +1361,11 @@ class TestAPIPerformance:
 
 **성능 목표 (SLO):**
 
-| API | P95 목표 | P99 목표 |
-|-----|----------|----------|
-| 바코드 조회 | < 100ms | < 200ms |
-| 재고 목록 | < 200ms | < 500ms |
-| 입고/출고 | < 300ms | < 500ms |
+| API           | P95 목표 | P99 목표 |
+| ------------- | -------- | -------- |
+| 바코드 조회   | < 100ms  | < 200ms  |
+| 재고 목록     | < 200ms  | < 500ms  |
+| 입고/출고     | < 300ms  | < 500ms  |
 | 동기화 (10건) | < 1000ms | < 2000ms |
 
 ---
@@ -1357,6 +1378,7 @@ class TestAPIPerformance:
 ### E-1. Docker 개발 환경
 
 #### 체크리스트
+
 - [ ] Dockerfile 작성 (멀티 스테이지 빌드)
 - [ ] docker-compose.yml 작성
 - [ ] .dockerignore 설정
@@ -1410,7 +1432,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ```yaml
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 
 services:
   api:
@@ -1463,12 +1485,12 @@ volumes:
 
 ```yaml
 # docker-compose.dev.yml (개발용 오버라이드)
-version: '3.8'
+version: "3.8"
 
 services:
   api:
     build:
-      target: builder  # 개발 의존성 포함
+      target: builder # 개발 의존성 포함
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - .:/app
@@ -1495,6 +1517,7 @@ docker-compose exec api alembic upgrade head
 ### E-2. Health Check 엔드포인트
 
 #### 체크리스트
+
 - [ ] `/health` - 기본 헬스체크
 - [ ] `/ready` - 의존성 상태 확인 (DB 연결 등)
 - [ ] 메트릭 엔드포인트 (선택)
@@ -1515,7 +1538,7 @@ router = APIRouter(tags=["Health"])
 async def health_check():
     """
     기본 헬스체크
-    
+
     컨테이너가 실행 중인지만 확인
     """
     return {"status": "healthy"}
@@ -1524,27 +1547,27 @@ async def health_check():
 async def readiness_check(db: AsyncSession = Depends(get_db)):
     """
     준비 상태 확인
-    
+
     DB 연결 등 의존성 상태 확인
     """
     checks = {}
-    
+
     # DB 연결 확인
     try:
         await db.execute(text("SELECT 1"))
         checks["database"] = "healthy"
     except Exception as e:
         checks["database"] = f"unhealthy: {str(e)}"
-    
+
     # Redis 연결 확인 (사용 시)
     # try:
     #     await redis.ping()
     #     checks["redis"] = "healthy"
     # except Exception as e:
     #     checks["redis"] = f"unhealthy: {str(e)}"
-    
+
     all_healthy = all(v == "healthy" for v in checks.values())
-    
+
     return {
         "status": "ready" if all_healthy else "not_ready",
         "checks": checks
@@ -1557,6 +1580,7 @@ app.include_router(health_router)
 ### E-3. 환경 설정 관리
 
 #### 체크리스트
+
 - [ ] pydantic-settings로 환경변수 검증
 - [ ] 환경별 설정 분리
 - [ ] 비밀값 관리 전략
@@ -1572,33 +1596,33 @@ from functools import lru_cache
 
 class Settings(BaseSettings):
     """애플리케이션 설정"""
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False
     )
-    
+
     # 환경
     ENVIRONMENT: str = "development"
     DEBUG: bool = False
-    
+
     # 데이터베이스
     DATABASE_URL: PostgresDsn
     DB_POOL_SIZE: int = 10
     DB_MAX_OVERFLOW: int = 20
-    
+
     # 인증
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    
+
     # CORS
     CORS_ORIGINS: list[str] = ["http://localhost:3000"]
-    
+
     # 로깅
     LOG_LEVEL: str = "INFO"
     LOG_JSON: bool = False  # 프로덕션에서 True
-    
+
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
     def assemble_db_url(cls, v: str) -> str:
@@ -1606,7 +1630,7 @@ class Settings(BaseSettings):
             # asyncpg 호환 URL로 변환
             return v.replace("postgres://", "postgresql+asyncpg://", 1)
         return v
-    
+
     @property
     def is_production(self) -> bool:
         return self.ENVIRONMENT == "production"
@@ -1640,6 +1664,7 @@ LOG_JSON=false
 ### E-4. CI/CD 파이프라인
 
 #### 체크리스트
+
 - [ ] GitHub Actions 워크플로우
 - [ ] 테스트 자동화
 - [ ] 린트/타입 체크
@@ -1665,29 +1690,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      
+
       - name: Install dependencies
         run: |
           pip install ruff mypy
-      
+
       - name: Run Ruff (lint)
         run: ruff check .
-      
+
       - name: Run Ruff (format check)
         run: ruff format --check .
-      
+
       - name: Run MyPy
         run: mypy app --ignore-missing-imports
 
   test:
     runs-on: ubuntu-latest
     needs: lint
-    
+
     services:
       postgres:
         image: postgres:16-alpine
@@ -1702,26 +1727,26 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      
+
       - name: Install Poetry
         run: pip install poetry
-      
+
       - name: Install dependencies
         run: poetry install
-      
+
       - name: Run migrations
         run: poetry run alembic upgrade head
         env:
           DATABASE_URL: postgresql+asyncpg://test:test@localhost:5432/donedone_test
-      
+
       - name: Run tests with coverage
         run: |
           poetry run pytest \
@@ -1731,7 +1756,7 @@ jobs:
         env:
           DATABASE_URL: postgresql+asyncpg://test:test@localhost:5432/donedone_test
           SECRET_KEY: test-secret-key
-      
+
       - name: Upload coverage
         uses: codecov/codecov-action@v4
         with:
@@ -1741,13 +1766,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Build Docker image
         run: docker build -t donedone-api:${{ github.sha }} .
-      
+
       # 선택: Docker Hub 또는 GitHub Container Registry 푸시
       # - name: Push to registry
       #   run: ...
@@ -1763,6 +1788,7 @@ jobs:
 ### F-1. Rate Limiting
 
 #### 체크리스트
+
 - [ ] slowapi 설정
 - [ ] 엔드포인트별 제한 설정
 - [ ] Rate limit 초과 시 응답 커스터마이징
@@ -1824,6 +1850,7 @@ async def sync_transactions(request: Request, ...):
 ### F-2. Input Validation 강화
 
 #### 체크리스트
+
 - [ ] 문자열 길이 제한
 - [ ] 패턴 검증 (바코드, 이메일 등)
 - [ ] 숫자 범위 검증
@@ -1838,9 +1865,9 @@ import re
 
 class ProductCreate(BaseModel):
     """제품 생성 스키마"""
-    
+
     model_config = {"strict": True}  # 타입 강제
-    
+
     barcode: str = Field(
         ...,
         min_length=8,
@@ -1865,7 +1892,7 @@ class ProductCreate(BaseModel):
         le=100_000,
         description="안전재고"
     )
-    
+
     @field_validator("barcode")
     @classmethod
     def validate_barcode(cls, v: str) -> str:
@@ -1876,7 +1903,7 @@ class ProductCreate(BaseModel):
         if len(v) == 13 and not cls._validate_ean13_checksum(v):
             raise ValueError("유효하지 않은 EAN-13 바코드입니다")
         return v
-    
+
     @staticmethod
     def _validate_ean13_checksum(barcode: str) -> bool:
         """EAN-13 체크섬 검증"""
@@ -1889,7 +1916,7 @@ class ProductCreate(BaseModel):
 
 class TransactionCreate(BaseModel):
     """트랜잭션 생성 스키마"""
-    
+
     quantity: int = Field(
         ...,
         gt=0,  # 0보다 커야 함
@@ -1901,7 +1928,7 @@ class TransactionCreate(BaseModel):
         max_length=500,
         description="메모"
     )
-    
+
     @field_validator("note")
     @classmethod
     def sanitize_note(cls, v: str | None) -> str | None:
@@ -1917,6 +1944,7 @@ class TransactionCreate(BaseModel):
 ### F-3. CORS 설정 검토
 
 #### 체크리스트
+
 - [ ] 허용 Origin 목록 관리
 - [ ] 환경별 설정 분리
 - [ ] Credentials 설정 검토
@@ -1929,7 +1957,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 def setup_cors(app: FastAPI, settings: Settings):
     """CORS 설정"""
-    
+
     if settings.is_production:
         # 프로덕션: 명시적 Origin만 허용
         origins = settings.CORS_ORIGINS
@@ -1941,7 +1969,7 @@ def setup_cors(app: FastAPI, settings: Settings):
             "http://127.0.0.1:3000",
             "http://127.0.0.1:5173",
         ]
-    
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,
@@ -1956,6 +1984,7 @@ def setup_cors(app: FastAPI, settings: Settings):
 ### F-4. SQL Injection 방어 점검
 
 #### 체크리스트
+
 - [ ] Raw SQL 사용처 점검
 - [ ] 파라미터 바인딩 확인
 - [ ] 동적 쿼리 안전성 검토
@@ -1989,6 +2018,7 @@ async def search_products_best(query: str):
 ### F-5. 보안 헤더 설정
 
 #### 체크리스트
+
 - [ ] Security headers 미들웨어 추가
 - [ ] HTTPS 강제 (프로덕션)
 - [ ] Content-Type 검증
@@ -2002,21 +2032,21 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """보안 헤더 추가"""
-    
+
     async def dispatch(self, request: Request, call_next):
         response = await call_next(request)
-        
+
         # XSS 방어
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["X-XSS-Protection"] = "1; mode=block"
-        
+
         # Referrer 정책
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        
+
         # Content Security Policy (API용 간소화)
         response.headers["Content-Security-Policy"] = "default-src 'none'"
-        
+
         return response
 
 # main.py
@@ -2032,45 +2062,51 @@ if settings.is_production:
 
 ## 📅 예상 일정 (파트타임 기준)
 
-| 주차 | Phase | 예상 소요 |
-|------|-------|----------|
-| 1주차 | A. API 문서화 | 3-4일 |
-| 2주차 | B. 테스트 강화 (1/2) | 3-4일 |
-| 3주차 | B. 테스트 강화 (2/2) + C. 에러/로깅 | 4-5일 |
-| 4주차 | D. 쿼리 최적화 | 4-5일 |
-| 5주차 | E. 인프라/배포 | 3-4일 |
-| 6주차 | F. 보안 강화 | 3-4일 |
+| 주차  | Phase                               | 예상 소요 |
+| ----- | ----------------------------------- | --------- |
+| 1주차 | A. API 문서화                       | 3-4일     |
+| 2주차 | B. 테스트 강화 (1/2)                | 3-4일     |
+| 3주차 | B. 테스트 강화 (2/2) + C. 에러/로깅 | 4-5일     |
+| 4주차 | D. 쿼리 최적화                      | 4-5일     |
+| 5주차 | E. 인프라/배포                      | 3-4일     |
+| 6주차 | F. 보안 강화                        | 3-4일     |
 
 ---
 
 ## 🎯 완료 기준
 
 ### Phase A 완료 기준 ✅
+
 - [x] 프론트엔드 개발자가 Swagger만 보고 API 연동 가능
 - [x] Postman Collection으로 모든 API 테스트 가능
 - [x] 에러 응답에 명확한 error_code와 메시지 포함
 
 ### Phase B 완료 기준
+
 - [ ] 테스트 커버리지 80% 이상
 - [ ] 부하 테스트로 P95 응답 시간 측정 완료
 - [ ] CI에서 모든 테스트 자동 실행
 
 ### Phase C 완료 기준
+
 - [ ] 모든 에러에 request_id 추적 가능
 - [ ] JSON 로그로 Kibana/Loki 연동 가능
 - [ ] 민감 정보 로그에 노출 안 됨
 
 ### Phase D 완료 기준
+
 - [ ] 바코드 조회 P95 < 100ms
 - [ ] N+1 쿼리 0건
 - [ ] 주요 쿼리 모두 인덱스 활용
 
 ### Phase E 완료 기준
+
 - [ ] `docker-compose up`으로 로컬 환경 원클릭 실행
 - [ ] GitHub PR마다 자동 테스트 실행
 - [ ] Health check로 서비스 상태 확인 가능
 
 ### Phase F 완료 기준
+
 - [ ] Rate limiting 동작 확인
 - [ ] 모든 입력값 검증 통과
 - [ ] 보안 헤더 적용 확인

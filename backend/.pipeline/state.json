@@ -3,8 +3,8 @@
     "id": "donedone-backend-v1",
     "started_at": "2026-01-24T10:00:00Z",
     "roadmap_path": "docs/roadmap/2026-01-23_improved-roadmap.md",
-    "current_phase": "C",
-    "current_task": "C-4",
+    "current_phase": "D",
+    "current_task": "D-5",
     "current_step": "committing"
   },
   "phases": {
@@ -104,12 +104,33 @@
     "D": {
       "name": "쿼리 최적화 & 벤치마크",
       "status": "pending",
+      "started_at": "2026-01-31T01:00:00Z",
       "tasks": {
-        "D-1": { "name": "쿼리 분석 환경 구축", "status": "pending" },
-        "D-2": { "name": "N+1 문제 점검 및 해결", "status": "pending" },
-        "D-3": { "name": "인덱스 최적화", "status": "pending" },
-        "D-4": { "name": "Connection Pool 튜닝", "status": "pending" },
-        "D-5": { "name": "벤치마크 및 성능 기준선", "status": "pending" }
+        "D-1": {
+          "name": "쿼리 분석 환경 구축",
+          "status": "completed",
+          "summary": "QueryCounter, explain_analyze 등 쿼리 분석 유틸리티 구현"
+        },
+        "D-2": {
+          "name": "N+1 문제 점검 및 해결",
+          "status": "completed",
+          "summary": "InventoryService N+1 분석 및 통합 테스트 검증 완료"
+        },
+        "D-3": {
+          "name": "인덱스 최적화",
+          "status": "completed",
+          "summary": "복합 인덱스(store_id+created_at 등) 추가 및 Enum 타입 명시 마이그레이션 적용"
+        },
+        "D-4": {
+          "name": "Connection Pool 튜닝",
+          "status": "completed",
+          "summary": "DB Connection Pool 설정(.env) 추가 및 적용"
+        },
+        "D-5": {
+          "name": "벤치마크 및 성능 기준선",
+          "status": "committing",
+          "summary": "Locust 부하 테스트 완료, 성능 기준선 문서화"
+        }
       }
     },
     "E": {
@@ -135,7 +156,7 @@
     }
   },
   "context": {
-    "last_action": "C-1 커스텀 예외 계층 구축 완료",
+    "last_action": "Phase D 벤치마크 테스트 완료 및 리포트 작성",
     "last_skill": "orchestrator",
     "blockers": []
   }

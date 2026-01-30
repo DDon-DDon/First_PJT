@@ -10,6 +10,7 @@ description: 단일 태스크를 구현 가능한 상세 계획으로 변환하�
 ## 핵심 원칙
 
 ### 좋은 구현 계획의 조건
+
 1. **구체적**: "서비스 구현" ❌ → "`app/services/product.py`에 `get_by_barcode()` 메서드 추가" ✅
 2. **순서가 명확**: 의존성 고려한 구현 순서
 3. **테스트 포함**: 구현과 함께 테스트 계획
@@ -18,21 +19,27 @@ description: 단일 태스크를 구현 가능한 상세 계획으로 변환하�
 ## 워크플로우
 
 ### Step 1: 태스크 분석
+
 입력 정보 확인:
+
 - 태스크 설명 (로드맵에서)
 - 관련 레퍼런스 문서 (PRD, API 명세 등)
 - 기존 코드베이스 구조
 - 완료 조건
 
 ### Step 2: 영향 범위 파악
+
 분석할 내용:
+
 - 수정이 필요한 기존 파일
 - 새로 생성할 파일
 - 의존하는 모듈/패키지
 - 영향받는 테스트
 
 ### Step 3: 구현 단계 설계
+
 단계별로 분해:
+
 ```
 1. 스키마/타입 정의 (의존성 없음)
 2. 데이터 레이어 (모델, 쿼리)
@@ -43,10 +50,23 @@ description: 단일 태스크를 구현 가능한 상세 계획으로 변환하�
 
 ### Step 4: 상세 계획 문서 생성
 
+**저장 위치**: `docs/plan/YYYY-MM-DD_계획내용.md`
+**파일 명명 규칙**: `YYYY-MM-DD_[태스크ID-내용].md` 예: `2026-02-05_D-2-nplusone-fix.md`
+
+### 계획서 내용 구성
+
+1. **구현 개요**: 무엇을, 왜 구현하는가?
+2. **문제와 해결 방법**: 마주할 수 있는 문제와 그에 대한 해결책
+3. **구현 방향**: 아키텍처, 설계 패턴, 주요 알고리즘
+4. **파일/폴더 참고사항**: 수정할 파일, 새로 만들 파일, 참고할 기존 코드
+5. **단계별 구현 계획**: 구체적인 Step-by-Step 가이드
+6. **검증 계획**: 테스트 및 확인 방법
+
 ## 출력 형식
 
 ### 구현 계획 구조
-```markdown
+
+````markdown
 # [태스크명] 구현 계획
 
 **태스크**: [태스크 ID 및 설명]
@@ -62,17 +82,20 @@ description: 단일 태스크를 구현 가능한 상세 계획으로 변환하�
 ## 영향 범위
 
 ### 수정할 파일
-| 파일 | 변경 내용 |
-|------|----------|
-| `app/schemas/product.py` | `ProductResponse` 스키마 추가 |
+
+| 파일                      | 변경 내용                      |
+| ------------------------- | ------------------------------ |
+| `app/schemas/product.py`  | `ProductResponse` 스키마 추가  |
 | `app/services/product.py` | `get_by_barcode()` 메서드 추가 |
 
 ### 새로 생성할 파일
-| 파일 | 용도 |
-|------|------|
+
+| 파일                                 | 용도               |
+| ------------------------------------ | ------------------ |
 | `tests/unit/test_product_service.py` | 서비스 단위 테스트 |
 
 ### 의존성
+
 - 기존: `app/models/product.py` (Product 모델)
 - 신규: 없음
 
@@ -81,6 +104,7 @@ description: 단일 태스크를 구현 가능한 상세 계획으로 변환하�
 ## 구현 단계
 
 ### 1단계: 스키마 정의
+
 **파일**: `app/schemas/product.py`
 
 ```python
@@ -90,10 +114,12 @@ class ProductResponse(BaseModel):
     name: str
     # ...
 ```
+````
 
 **확인**: import 에러 없이 서버 시작
 
 ### 2단계: 서비스 구현
+
 **파일**: `app/services/product.py`
 
 ```python
@@ -105,6 +131,7 @@ async def get_by_barcode(self, barcode: str) -> Product | None:
 **확인**: 단위 테스트 통과
 
 ### 3단계: 라우터 구현
+
 **파일**: `app/api/v1/products.py`
 
 ```python
@@ -116,9 +143,11 @@ async def get_product_by_barcode(...):
 **확인**: `/docs`에서 엔드포인트 확인
 
 ### 4단계: 테스트 작성
+
 **파일**: `tests/unit/test_product_service.py`
 
 테스트 케이스:
+
 - 존재하는 바코드 조회 → 제품 반환
 - 존재하지 않는 바코드 → None 반환
 - 잘못된 형식 바코드 → ValidationError
@@ -140,26 +169,25 @@ async def get_product_by_barcode(...):
 
 - API 명세: `references/api-spec.md#product-barcode`
 - 기존 유사 코드: `app/services/inventory.py`
+
 ```
 
 ## 구현 순서 원칙
 
 ### 의존성 기반 순서
 ```
+
 1. 타입/스키마 (다른 것에 의존 안 함)
    └── Pydantic 모델, TypedDict, Enum
-   
 2. 데이터 레이어 (타입에만 의존)
    └── ORM 모델, Repository, 쿼리
-   
 3. 비즈니스 로직 (데이터 레이어에 의존)
    └── Service 클래스, 유틸리티 함수
-   
 4. API 레이어 (비즈니스 로직에 의존)
    └── Router, Controller, Middleware
-   
 5. 테스트 (모든 것에 의존)
    └── 단위 테스트, 통합 테스트
+
 ```
 
 ### 점진적 검증
@@ -183,3 +211,4 @@ async def get_product_by_barcode(...):
 ## 참고 파일
 
 - `references/implementation-checklist.md`: 구현 단계별 체크리스트
+```
