@@ -4,8 +4,8 @@
     "started_at": "2026-01-24T10:00:00Z",
     "roadmap_path": "docs/roadmap/2026-01-23_improved-roadmap.md",
     "current_phase": "C",
-    "current_task": "C-2",
-    "current_step": "pending"
+    "current_task": "C-4",
+    "current_step": "committing"
   },
   "phases": {
     "A": {
@@ -71,8 +71,9 @@
     },
     "C": {
       "name": "에러 핸들링 & 로깅",
-      "status": "in_progress",
+      "status": "completed",
       "started_at": "2026-01-25T22:00:00Z",
+      "completed_at": "2026-01-31T00:05:00Z",
       "tasks": {
         "C-1": {
           "name": "커스텀 예외 계층 구축",
@@ -80,9 +81,24 @@
           "summary": "ApiException 베이스 클래스 도입, 전역 예외 핸들러 등록, 예외 처리 단위 테스트 작성",
           "completed_at": "2026-01-25T22:30:00Z"
         },
-        "C-2": { "name": "구조화된 로깅", "status": "pending" },
-        "C-3": { "name": "Request ID 추적", "status": "pending" },
-        "C-4": { "name": "Request/Response 로깅", "status": "pending" }
+        "C-2": {
+          "name": "구조화된 로깅",
+          "status": "completed",
+          "summary": "structlog 기반 로깅 시스템 구현, 민감정보 마스킹, JSON/콘솔 출력 전환, 앱 컨텍스트 자동 추가",
+          "completed_at": "2026-01-31T00:00:00Z"
+        },
+        "C-3": {
+          "name": "Request ID 추적",
+          "status": "completed",
+          "summary": "RequestIdMiddleware 구현, X-Request-ID 헤더 지원, 컨텍스트 변수 바인딩으로 모든 로그에 request_id 자동 포함",
+          "completed_at": "2026-01-31T00:02:00Z"
+        },
+        "C-4": {
+          "name": "Request/Response 로깅",
+          "status": "completed",
+          "summary": "LoggingMiddleware 구현, 자동 요청/응답 로깅, 응답 시간 측정, 느린 요청 경고, 노이즈 경로 제외",
+          "completed_at": "2026-01-31T00:05:00Z"
+        }
       }
     },
     "D": {

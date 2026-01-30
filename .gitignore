@@ -54,6 +54,7 @@ sketch
 
 # .env
 
-backend/.venv/
-backend/.hypothesis/
-backend/.pytest_cache/
+.venv/
+.hypothesis/
+.pytest_cache/
+__pycache__/
