@@ -8,7 +8,7 @@ cd /d "%~dp0\.."
 
 REM 가상환경 존재 여부 확인 및 자동 생성 (uv 사용)
 if not exist ".venv" (
-    echo ⚠️  가상환경(.venv)이 없습니다. uv를 사용하여 생성을 시도합니다...
+    echo ⚠️  가상환경^(.venv^)이 없습니다. uv를 사용하여 생성을 시도합니다...
     
     where uv >nul 2>nul
     if errorlevel 1 (

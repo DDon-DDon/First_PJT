@@ -7,8 +7,17 @@ echo   똔똔(DoneDone) 로컬 개발 환경 실행
 echo ========================================================
 echo.
 
+REM 0. Cleanup existing processes
+echo [1/5] 기존 프로세스 정리 (Port 3000, 8000)...
+powershell -Command "foreach ($port in @(3000, 8000)) { $pids = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess; if ($pids) { foreach ($p in $pids) { Stop-Process -Id $p -Force; Write-Host \"✅ Terminated process $p on port $port\" } } }"
+if exist "stock-client\.next\dev\lock" (
+    del /f /q "stock-client\.next\dev\lock" > nul 2>&1
+    echo ✅ Next.js dev lock 파일 제거 완료.
+)
+echo.
+
 REM 1. Start Database
-echo [1/4] 데이터베이스 시작 (기존 스크립트 활용)...
+echo [2/5] 데이터베이스 시작 (기존 스크립트 활용)...
 call backend\scripts\db-start.bat
 if errorlevel 1 (
     echo ❌ 데이터베이스 시작 실패.
@@ -18,10 +27,10 @@ if errorlevel 1 (
 
 REM 2. Backend Environment Check
 echo.
-echo [2/4] 백엔드 환경 확인 및 설정...
+echo [3/5] 백엔드 환경 확인 및 설정...
 pushd backend
 if not exist ".venv" (
-    echo ⚠️  가상환경(.venv)이 없습니다. 설정을 시작합니다...
+    echo ⚠️  가상환경^(.venv^)이 없습니다. 설정을 시작합니다...
     
     where uv >nul 2>nul
     if errorlevel 1 (
@@ -29,7 +38,7 @@ if not exist ".venv" (
         pip install uv
     )
 
-    echo 📦 의존성 설치 중 (uv sync)...
+    echo 📦 의존성 설치 중 ^(uv sync^)...
     call uv sync
     if errorlevel 1 (
         echo ⚠️  uv sync 실패. 수동 설정을 시도합니다...
@@ -38,18 +47,18 @@ if not exist ".venv" (
         call uv pip install -r requirements.txt
     )
 ) else (
-    echo ✅ 가상환경(.venv)이 이미 존재합니다.
+    echo ✅ 가상환경^(.venv^)이 이미 존재합니다.
 )
 popd
 
 REM 3. Start Backend
 echo.
-echo [3/4] 백엔드 서버 시작...
+echo [4/5] 백엔드 서버 시작...
 start "DDon-DDon Backend" cmd /k "call backend\scripts\dev-server.bat"
 
 REM 4. Start Frontend
 echo.
-echo [4/4] 프론트엔드 클라이언트 시작...
+echo [5/5] 프론트엔드 클라이언트 시작...
 start "DDon-DDon Frontend" cmd /k "call stock-client\run_dev.bat"
 
 echo.
