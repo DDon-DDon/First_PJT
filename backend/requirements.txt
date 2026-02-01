@@ -7,7 +7,6 @@ python-multipart==0.0.6
 sqlalchemy==2.0.25
 alembic==1.13.1
 asyncpg==0.29.0
-aiosqlite>=0.22.1
 
 # Data Validation
 pydantic==2.5.3
@@ -17,21 +16,39 @@ email-validator==2.3.0
 # Authentication & Security
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+# FastAPI & ASGI Server
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
 
-# Excel Support
-openpyxl==3.1.5
+# Database & ORM
+sqlalchemy==2.0.25
+alembic==1.13.1
+asyncpg==0.29.0
 
-# Logging (Phase C-2)
-structlog>=25.5.0
-watchfiles>=1.1.1
+# Data Validation
+pydantic==2.5.3
+pydantic-settings==2.1.0
+email-validator==2.3.0
 
-# Testing & Dev
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+
+# Testing
 pytest==7.4.4
 pytest-asyncio==0.23.3
-pytest-cov>=7.0.0
 httpx==0.26.0
+aiosqlite==0.19.0
+
+# Dev Dependencies
 black==24.1.1
 isort==5.13.2
 mypy==1.8.0
-locust>=2.20.0
-schemathesis>=3.25.0
+openpyxl==3.1.5
+
+# Logging (Phase C-2)
+structlog==24.1.0
+watchfiles>=0.21.0
