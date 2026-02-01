@@ -1,447 +1,401 @@
 ---
 name: doc-updater
-description: 로드맵/체크리스트 문서의 진행 상태를 업데이트하는 스킬. (1) 태스크 완료 후 "체크리스트 업데이트해줘", "완료 표시해줘" 요청 시, (2) 진행률 갱신이 필요할 때, (3) Phase 완료 시 요약 업데이트 시 트리거. 마크다운 체크리스트의 상태를 변경하고 진행률을 자동 계산함.
+description: 로드맵/체크리스트 문서의 진행 상태를 업데이트하고, 태스크/Phase 완료 시 상세 구현 문서를 생성하는 스킬. (1) 태스크 완료 후 "체크리스트 업데이트해줘", "완료 표시해줘" 요청 시, (2) 진행률 갱신이 필요할 때, (3) Phase 완료 시 **docs/implemented/**에 구현 매뉴얼 작성 시 트리거.
 ---
 
 # Doc Updater
 
-로드맵 및 체크리스트 문서의 진행 상태를 업데이트한다. 체크박스 상태 변경, 진행률 계산, 완료 시간 기록 등을 수행.
+로드맵 및 체크리스트 문서의 진행 상태를 업데이트하고, 완료된 구현에 대한 상세 매뉴얼 문서를 생성한다.
 
 ## 핵심 기능
 
 ### 1. 체크리스트 상태 변경
-
 ```markdown
 변경 전: - [ ] 태스크 1
 변경 후: - [x] 태스크 1
 ```
 
 ### 2. 진행률 자동 계산
-
 ```markdown
-변경 전: Phase A: [Phase명] ░░░░░░░░░░░░░░░░░░░░ 0%
-변경 후: Phase A: [Phase명] ████████░░░░░░░░░░░░ 40%
+변경 전: Phase D: [쿼리 최적화] ░░░░░░░░░░░░░░░░░░░░ 0%
+변경 후: Phase D: [쿼리 최적화] ████████░░░░░░░░░░░░ 40%
 ```
 
 ### 3. 상태 표시 업데이트
-
 ```markdown
-변경 전: | X-1. 태스크 | 2일 | ⬜ 대기 |
-변경 후: | X-1. 태스크 | 2일 | ✅ 완료 |
+변경 전: | D-1. N+1 해결 | 2일 | ⬜ 대기 |
+변경 후: | D-1. N+1 해결 | 2일 | ✅ 완료 |
 ```
 
-### 4. 타임스탬프 갱신
+### 4. 🆕 구현 매뉴얼 문서 생성
+```
+docs/implemented/YYYY-MM-DD_태스크-내용.md
+```
 
-```markdown
-**최종 업데이트**: 2026-01-24
+## 저장 위치
+
+### 구현 매뉴얼 문서
+```
+docs/implemented/
+├── 2026-01-20_phase-a-api-documentation.md
+├── 2026-01-25_phase-b-testing.md
+├── 2026-01-31_D-1-nplusone-fix.md        ← 개별 태스크 문서
+└── 2026-02-01_phase-d-query-optimization.md  ← Phase 전체 문서
+```
+
+### 파일 명명 규칙
+```
+YYYY-MM-DD_{phase|task}-{내용}.md
+
+예시:
+- 2026-01-31_D-1-nplusone-fix.md        # 개별 태스크
+- 2026-02-01_phase-d-query-optimization.md  # Phase 전체
 ```
 
 ## 워크플로우
 
 ### Step 1: 문서 로드
-
 - 로드맵/체크리스트 파일 경로 확인
 - 현재 문서 내용 파싱
 
 ### Step 2: 변경 사항 식별
-
 사용자 요청에서 파악:
-
 - 완료할 태스크/서브태스크
 - 상태 변경 (대기 → 진행중 → 완료)
 - 추가 메모/노트
 
 ### Step 3: 문서 업데이트
-
 1. 체크박스 상태 변경
 2. 진행률 재계산
 3. 상태 표시 업데이트
 4. 타임스탬프 갱신
 
-### Step 4: 변경 내역 출력
+### Step 4: 구현 매뉴얼 생성 (태스크/Phase 완료 시)
+1. 구현 내용 정리
+2. `docs/implemented/` 디렉토리에 저장
+3. **state.json 업데이트** (outputs.implemented 경로 기록)
 
-무엇이 변경되었는지 요약 제공
+### Step 5: 변경 내역 출력
 
-## 업데이트 규칙
+## 구현 매뉴얼 문서 템플릿
 
-### 체크박스 변환
-
-```
-미완료 → 완료: - [ ] → - [x]
-완료 → 미완료: - [x] → - [ ]
-```
-
-### 진행률 계산
-
-```
-진행률 = (완료된 체크박스 수 / 전체 체크박스 수) × 100
-
-예: 10개 중 4개 완료 → 40%
-```
-
-### 진행률 바 생성
-
-```
-  0%: ░░░░░░░░░░░░░░░░░░░░
- 25%: █████░░░░░░░░░░░░░░░
- 50%: ██████████░░░░░░░░░░
- 75%: ███████████████░░░░░
-100%: ████████████████████
-```
-
-### 상태 아이콘
-
-```
-⬜ 대기 (Todo)
-🔄 진행중 (In Progress)
-✅ 완료 (Done)
-⏸️ 보류 (On Hold)
-❌ 취소 (Cancelled)
-```
-
-## 사용 예시
-
-### 단일 태스크 완료
-
-**요청**: "A-1 태스크의 '스키마 정의' 완료 처리해줘"
-
-**변경 전**:
+### 개별 태스크 완료 시
 
 ```markdown
-### A-1. OpenAPI 스펙 강화
+# [태스크ID] [태스크명] 구현 문서
 
-#### 체크리스트
+**작성일**: YYYY-MM-DD
+**Phase**: [Phase명]
+**태스크**: [태스크 ID 및 설명]
+**관련 커밋**: [커밋 해시]
+**계획 문서**: [docs/plan/경로.md](링크)
 
-- [ ] 공통 에러 응답 스키마 정의
-- [ ] 엔드포인트 설명 추가
+---
+
+## 1. 구현 개요
+
+### 1.1 목적
+- 이 태스크에서 해결한 문제
+- 달성한 목표
+
+### 1.2 범위
+- 변경된 파일 목록
+- 새로 추가된 기능
+
+---
+
+## 2. 구현 내용
+
+### 2.1 핵심 변경사항
+
+**파일**: `app/services/inventory.py`
+
+**변경 전**:
+```python
+async def get_all_stocks(self):
+    result = await self.session.execute(select(CurrentStock))
+    return result.scalars().all()
 ```
 
 **변경 후**:
+```python
+from sqlalchemy.orm import selectinload
 
-```markdown
-### A-1. OpenAPI 스펙 강화
-
-#### 체크리스트
-
-- [x] 공통 에러 응답 스키마 정의
-- [ ] 엔드포인트 설명 추가
+async def get_all_stocks(self, include_product: bool = True):
+    stmt = select(CurrentStock)
+    if include_product:
+        stmt = stmt.options(selectinload(CurrentStock.product))
+    result = await self.session.execute(stmt)
+    return result.scalars().all()
 ```
 
-### 태스크 전체 완료
+**설명**: selectinload를 사용하여 N+1 쿼리 문제 해결
 
-**요청**: "A-1 태스크 전체 완료"
+### 2.2 추가된 테스트
 
-**변경 사항**:
+**파일**: `tests/integration/test_inventory_query.py`
 
-1. 모든 서브태스크 체크
-2. 일정 테이블 상태 업데이트
-3. Phase 진행률 업데이트
-
-### 진행 상태 변경
-
-**요청**: "A-2 태스크 진행중으로 변경"
-
-**변경 전**:
-
-```markdown
-| A-2. Postman Collection | 1일 | ⬜ 대기 |
+```python
+async def test_get_stocks_no_nplusone(db_session):
+    # N+1 쿼리 미발생 검증
 ```
 
-**변경 후**:
+---
+
+## 3. 설계 결정
+
+| 결정 사항 | 선택 | 대안 | 선택 이유 |
+|----------|------|------|----------|
+| Eager loading | selectinload | joinedload | 1:N 관계에 적합 |
+
+---
+
+## 4. 검증 결과
+
+### 4.1 테스트 결과
+```
+pytest tests/integration/test_inventory_query.py -v
+============================
+3 passed in 0.5s
+============================
+```
+
+### 4.2 성능 개선
+- **쿼리 수**: 11 → 2 (82% 감소)
+- **응답 시간**: 450ms → 120ms (73% 개선)
+
+---
+
+## 5. 사용 방법
+
+```python
+# 제품 정보 포함 조회 (기본)
+stocks = await service.get_all_stocks()
+
+# 제품 정보 미포함 조회
+stocks = await service.get_all_stocks(include_product=False)
+```
+
+---
+
+## 6. 참고 자료
+
+- [구현 계획서](../plan/2026-01-31_D-1-nplusone-plan.md)
+- [SQLAlchemy 문서 - Eager Loading](https://docs.sqlalchemy.org/en/20/orm/queryguide/relationships.html)
+```
+
+### Phase 완료 시 (통합 문서)
 
 ```markdown
-| A-2. Postman Collection | 1일 | 🔄 진행중 |
+# Phase [X]: [Phase명] 구현 문서
+
+**작성일**: YYYY-MM-DD
+**작성자**: [이름]
+**Phase 기간**: YYYY-MM-DD ~ YYYY-MM-DD
+**관련 커밋**: [커밋 범위 또는 링크]
+
+---
+
+## 1. 개요
+
+### 1.1 목적
+- 이 Phase에서 해결한 문제
+- 달성한 목표
+
+### 1.2 범위
+- 포함된 태스크 목록:
+  - [X-1] 태스크명
+  - [X-2] 태스크명
+  - [X-3] 태스크명
+- 영향받는 모듈/파일
+
+---
+
+## 2. 구현 내용
+
+### 2.1 태스크별 요약
+
+#### [X-1] 태스크명
+- **파일**: `경로`
+- **핵심 변경**: 설명
+- **상세 문서**: [링크](./2026-01-31_X-1-xxx.md)
+
+#### [X-2] 태스크명
+- **파일**: `경로`
+- **핵심 변경**: 설명
+
+### 2.2 아키텍처 변경
+
+```
+[변경 전]
+Component A → Component B → DB
+
+[변경 후]
+Component A → Component B → Cache → DB
+```
+
+---
+
+## 3. 설계 결정
+
+### 3.1 주요 결정 사항
+
+| 결정 | 선택 | 대안 | 이유 |
+|------|------|------|------|
+| 캐싱 방식 | Redis | 인메모리 | 분산 환경 고려 |
+
+### 3.2 트레이드오프
+
+**장점**:
+- 장점 1
+- 장점 2
+
+**단점**:
+- 단점 1 (대응 방안)
+
+---
+
+## 4. 테스트 및 검증
+
+### 4.1 테스트 결과
+```
+Tests: 25 passed
+Coverage: 85% (+3%)
+```
+
+### 4.2 성능 지표
+| 지표 | 이전 | 이후 | 개선률 |
+|------|------|------|--------|
+| 응답 시간 (P95) | 450ms | 120ms | 73% |
+| 쿼리 수 | 11 | 2 | 82% |
+
+---
+
+## 5. 문제 해결
+
+### 5.1 발생한 이슈
+
+| 이슈 | 원인 | 해결 방법 |
+|------|------|----------|
+| 캐시 무효화 | 동시성 문제 | TTL 설정 |
+
+### 5.2 디버깅 팁
+- 로그 위치: `logs/query.log`
+- 디버깅 환경 변수: `DEBUG_QUERY=1`
+
+---
+
+## 6. 결론
+
+### 6.1 달성 사항
+- 목표 1 ✅
+- 목표 2 ✅
+
+### 6.2 다음 단계
+- Phase Y와의 연관성
+- 추가 개선 가능 영역
+
+---
+
+## 7. 참고 자료
+
+- [Phase X 로드맵](../roadmap.md#phase-x)
+- [계획 문서들](../plan/)
+- [API 명세](../api-spec.md)
+```
+
+## state.json 연동
+
+### 태스크 완료 시 업데이트
+
+```bash
+# 구현 문서 경로 기록
+jq '.phases.D.tasks["D-1"].outputs.implemented = "docs/implemented/2026-01-31_D-1-nplusone-fix.md"' \
+   .pipeline/state.json > tmp.json && mv tmp.json .pipeline/state.json
+
+# 상태 완료 처리
+jq '.phases.D.tasks["D-1"].status = "completed" | 
+    .phases.D.tasks["D-1"].completed_at = "2026-01-31T16:00:00Z"' \
+   .pipeline/state.json > tmp.json && mv tmp.json .pipeline/state.json
+```
+
+### Phase 완료 시 업데이트
+
+```bash
+# Phase 상태 완료
+jq '.phases.D.status = "completed" | 
+    .phases.D.completed_at = "2026-02-01T18:00:00Z"' \
+   .pipeline/state.json > tmp.json && mv tmp.json .pipeline/state.json
 ```
 
 ## 출력 형식
 
-### 변경 요약
+### 변경 요약 (태스크 완료)
 
 ```markdown
 ## 📝 문서 업데이트 완료
 
 **파일**: `docs/roadmap.md`
-**시간**: 2026-01-24 15:30
+**시간**: 2026-01-31 16:00
 
 ### 변경 내역
+- ✅ D-1: "N+1 쿼리 해결" 완료 처리
+- 📊 Phase D 진행률: 0% → 33%
 
-- ✅ A-1: "스키마 정의" 완료 처리
-- 📊 Phase A 진행률: 0% → 25%
+### 생성된 문서
+- 📄 구현 매뉴얼: `docs/implemented/2026-01-31_D-1-nplusone-fix.md`
 
 ### 현재 상태
+- Phase D: 33% (1/3 태스크)
+- 다음 태스크: D-2. 인덱스 최적화
 
-- Phase A: 25% (1/4 태스크)
-- 다음 태스크: A-1의 "엔드포인트 설명 추가"
+### state.json 업데이트
+- D-1.status: "committing" → "completed"
+- D-1.outputs.implemented: 경로 기록
+```
+
+### 변경 요약 (Phase 완료)
+
+```markdown
+## 🎉 Phase D 완료!
+
+**Phase**: D. 쿼리 최적화
+**기간**: 2026-01-31 ~ 2026-02-01 (2일)
+
+### 완료된 태스크
+- ✅ D-1: N+1 쿼리 해결
+- ✅ D-2: 인덱스 최적화
+- ✅ D-3: 쿼리 캐싱
+
+### 생성된 문서
+- 📄 Phase 매뉴얼: `docs/implemented/2026-02-01_phase-d-query-optimization.md`
+- 📄 개별 태스크 문서: 3개
+
+### 성과 요약
+- 응답 시간: 450ms → 120ms (73% 개선)
+- 테스트 커버리지: 82% → 87%
+
+### 다음 Phase
+- Phase E: 캐싱 & 성능
+```
+
+## 상태 아이콘
+
+```
+⬜ 대기 (pending)
+🔄 진행중 (planning, implementing, reviewing, committing)
+✅ 완료 (completed)
+⏸️ 보류 (blocked)
+❌ 취소
 ```
 
 ## 주의사항
 
 ### 파일 백업
-
 중요한 변경 전 원본 내용 보존 권장
 
 ### 포맷 유지
+기존 문서의 마크다운 포맷 스타일 유지
 
-기존 문서의 마크다운 포맷 스타일 유지:
-
-- 들여쓰기 일관성
-- 빈 줄 처리
-- 헤더 레벨
-
-### 충돌 방지
-
-동시에 여러 항목 변경 시 순서대로 처리
-
----
-
-## 🆕 Phase 구현 매뉴얼 문서 생성
-
-Phase 완료 시 **상세한 구현 매뉴얼 문서**를 생성한다. 이 문서는 구현 내용을 기록하고, 향후 참조 및 온보딩 자료로 활용된다.
-
-### 트리거
-
-- "Phase 완료" 후 문서 업데이트 시
-- "매뉴얼 작성해줘", "구현 문서화해줘" 요청 시
-- 커밋 완료 후 문서화 단계에서
-
-### 저장 위치
-
-```
-backend/docs/implemented/
-├── 2026-01-20_phase-a-api-documentation.md
-├── 2026-01-25_phase-b-testing.md
-├── 2026-01-31_phase-c-logging.md          ← 예시
-└── 2026-02-05_phase-d-optimization.md
-```
-
-### 파일 명명 규칙
-
-```
-YYYY-MM-DD_작업내용.md
-
-예시:
-- 2026-01-31_phase-c-logging.md
-- 2026-01-31_phase-c-error-handling.md
-- 2026-02-01_hotfix-stock-validation.md
-```
-
-### 문서 구조 (필수 섹션)
-
-````markdown
-# Phase [X]: [Phase 이름] 구현 문서
-
-**작성일**: YYYY-MM-DD  
-**작성자**: iskim  
-**Phase 기간**: YYYY-MM-DD ~ YYYY-MM-DD  
-**관련 커밋**: [커밋 해시 또는 링크]
-
----
-
-## 1. 개요 (Overview)
-
-### 1.1 목적
-
-- 이 Phase에서 해결하고자 한 문제
-- 달성하고자 한 목표
-
-### 1.2 범위
-
-- 포함된 태스크 목록
-- 영향받는 모듈/파일
-
-### 1.3 사전 조건
-
-- 필요한 의존성
-- 선행 Phase/태스크
-
----
-
-## 2. 구현 내용 (Implementation Details)
-
-### 2.1 아키텍처 개요
-
-- 전체 구조 다이어그램 (ASCII 또는 Mermaid)
-- 컴포넌트 간 관계
-
-### 2.2 태스크별 구현
-
-#### [X-1] 태스크 이름
-
-**파일**: `app/path/to/file.py`
-
-**핵심 코드**:
-
-```python
-# 주요 코드 스니펫 (핵심 로직만)
-```
-````
-
-**설명**: 이 코드가 하는 일과 동작 방식
-
-#### [X-2] 태스크 이름
-
-...
-
-### 2.3 설정 및 환경
-
-- 추가된 환경 변수
-- 설정 파일 변경 사항
-- 의존성 추가
-
----
-
-## 3. 설계 결정 (Design Decisions)
-
-### 3.1 선택한 접근 방식
-
-| 결정 사항       | 선택      | 대안               | 선택 이유                      |
-| --------------- | --------- | ------------------ | ------------------------------ |
-| 로깅 라이브러리 | structlog | python-json-logger | 프로세서 체인, 컨텍스트 바인딩 |
-| ...             | ...       | ...                | ...                            |
-
-### 3.2 트레이드오프 분석
-
-**장점**:
-
-- 장점 1
-- 장점 2
-
-**단점**:
-
-- 단점 1 (해결 방법 또는 수용 이유)
-- 단점 2
-
-### 3.3 미래 고려사항
-
-- 확장 가능성
-- 알려진 제한사항
-
----
-
-## 4. 사용 방법 (Usage Guide)
-
-### 4.1 기본 사용법
-
-```python
-# 사용 예시 코드
-```
-
-### 4.2 설정 옵션
-
-- 설정 가능한 옵션 목록
-- 권장 설정값
-
-### 4.3 주의사항
-
-- 사용 시 주의할 점
-- 흔한 실수
-
----
-
-## 5. 테스트 및 검증 (Testing & Validation)
-
-### 5.1 테스트 범위
-
-- 단위 테스트: N개
-- 통합 테스트: N개
-- 테스트 커버리지: N%
-
-### 5.2 검증 방법
-
-```bash
-# 테스트 실행 명령어
-pytest tests/test_xxx.py -v
-```
-
-### 5.3 수동 검증 항목
-
-- [ ] 검증 항목 1
-- [ ] 검증 항목 2
-
----
-
-## 6. 문제 해결 (Troubleshooting)
-
-### 6.1 알려진 이슈
-
-| 증상 | 원인 | 해결 방법 |
-| ---- | ---- | --------- |
-| ...  | ...  | ...       |
-
-### 6.2 디버깅 팁
-
-- 디버깅 시 확인할 사항
-- 유용한 로그 위치
-
----
-
-## 7. 결론 (Conclusion)
-
-### 7.1 달성 사항
-
-- 완료된 목표 요약
-- 주요 성과
-
-### 7.2 다음 단계
-
-- 후속 Phase와의 연관성
-- 추가 개선 가능 영역
-
-### 7.3 참고 자료
-
-- 관련 문서 링크
-- 외부 레퍼런스
-
-````
-
-### 작성 가이드라인
-
-1. **구체적으로 작성**: 추상적 설명보다 실제 코드와 예시 중심
-2. **이유 설명**: "무엇"보다 "왜"에 집중
-3. **실용적 정보**: 읽는 사람이 바로 활용할 수 있도록
-4. **일관된 형식**: 모든 Phase 문서가 동일한 구조 유지
-5. **코드 스니펫**: 핵심 로직만 발췌, 전체 코드는 파일 참조
-
-### 예시: Phase C 매뉴얼 목차
-
-```markdown
-# Phase C: 에러 핸들링 & 로깅 구현 매뉴얼
-
-## 1. 개요
-- 목적: 운영 환경에서 디버깅 가능한 로깅 시스템 구축
-- 범위: C-1 ~ C-4 (예외 처리, 로깅, Request ID, 요청/응답 로깅)
-
-## 2. 구현 내용
-- C-1: ApiException 계층 구조
-- C-2: structlog 기반 로깅 시스템
-- C-3: RequestIdMiddleware
-- C-4: LoggingMiddleware
-
-## 3. 설계 결정
-- structlog 선택 이유: 프로세서 체인, 컨텍스트 바인딩
-- 민감 정보 마스킹: SENSITIVE_KEYS 세트 기반
-
-## 4. 사용 방법
-- get_logger() 함수 사용법
-- bind_contextvars() 사용법
-
-## 5. 테스트 및 검증
-- X-Request-ID 헤더 확인
-- 로그 출력 검증
-
-## 6. 문제 해결
-- structlog not found → uv pip install structlog
-
-## 7. 결론
-- 구조화된 로깅으로 디버깅 효율성 향상
-- 다음: Phase D 쿼리 최적화
-````
-
-### 자동화 체크리스트
-
-Phase 완료 시 다음을 확인:
-
-- [ ] 매뉴얼 문서 생성 (`docs/implemented/YYYY-MM-DD_phase-x-xxx.md`)
-- [ ] 모든 필수 섹션 포함
-- [ ] 코드 스니펫 검증
-- [ ] 링크 유효성 확인
+### state.json 동기화
+문서 업데이트와 state.json 업데이트를 함께 수행
