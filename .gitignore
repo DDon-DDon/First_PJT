@@ -58,3 +58,6 @@ sketch
 .hypothesis/
 .pytest_cache/
 __pycache__/
+
+# serena
+.serena/

@@ -1,7 +1,7 @@
 @echo off
 REM 똔똔 PostgreSQL 데이터베이스 시작 스크립트 (Windows)
 
-echo 🚀 똔똔 PostgreSQL 데이터베이스 시작 중...
+echo 🚀 똔똔 데이터베이스 서비스 시작 중...
 
 REM Docker가 실행 중인지 확인
 docker info >nul 2>&1
@@ -14,6 +14,7 @@ REM 프로젝트 루트로 이동 (docker-compose.yml이 있는 위치)
 cd /d "%~dp0\..\.."
 
 REM Docker Compose로 PostgreSQL 실행
+echo 📦 PostgreSQL 컨테이너 시작...
 docker-compose up -d postgres
 
 echo ⏳ PostgreSQL 헬스체크 대기 중...
@@ -48,7 +49,6 @@ echo   postgresql+asyncpg://donedone:donedone123@localhost:5432/donedone
 echo.
 echo 💡 로그 확인: docker-compose logs -f postgres
 echo 💡 중지: docker-compose down
-echo 💡 pgAdmin: http://localhost:5050 (admin@donedone.local / admin)
 exit /b 0
 
 :timeout

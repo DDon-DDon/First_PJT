@@ -22,23 +22,25 @@ services:
       retries: 5
 
   # pgAdmin (선택 사항 - DB 관리 UI)
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: donedone-pgadmin
-    restart: unless-stopped
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@donedone.local
-      PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-    ports:
-      - "5050:80"
-    depends_on:
-      - postgres
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
+  # DBeaver 등 외부 DBMS 도구를 사용하는 경우 불필요
+  # 사용하려면 아래 주석 해제 후: docker-compose up -d pgadmin
+  # pgadmin:
+  #   image: dpage/pgadmin4:latest
+  #   container_name: donedone-pgadmin
+  #   restart: unless-stopped
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@example.com
+  #     PGADMIN_DEFAULT_PASSWORD: admin
+  #     PGADMIN_CONFIG_SERVER_MODE: 'False'
+  #   ports:
+  #     - "5050:80"
+  #   depends_on:
+  #     - postgres
+  #   volumes:
+  #     - pgadmin_data:/var/lib/pgadmin
 
 volumes:
   postgres_data:
     driver: local
-  pgadmin_data:
-    driver: local
+  # pgadmin_data:
+  #   driver: local
