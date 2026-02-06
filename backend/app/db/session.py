@@ -61,10 +61,13 @@ from app.core.config import settings
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=settings.ENVIRONMENT == "development",  # 개발 환경에서만 SQL 로깅
+    echo_pool=settings.ENVIRONMENT == "development",  # 커넥션 풀 이벤트 로깅 (D-1)
     future=True,  # SQLAlchemy 2.0 스타일
     pool_pre_ping=True,  # 연결 유효성 검사 (끊어진 연결 자동 재연결)
-    pool_size=10,  # 커넥션 풀 크기 (기본 연결 수)
-    max_overflow=20  # 추가 커넥션 허용 개수 (peak 시 임시 생성)
+    pool_size=settings.DB_POOL_SIZE,  # 커넥션 풀 크기 (기본 연결 수, D-4)
+    max_overflow=settings.DB_MAX_OVERFLOW,  # 추가 커넥션 허용 개수 (peak 시 임시 생성, D-4)
+    pool_recycle=1800,  # 30분마다 연결 재생성 (D-4: Connection Pool 튜닝)
+    pool_timeout=30,  # 연결 대기 타임아웃 30초 (D-4)
 )
 
 

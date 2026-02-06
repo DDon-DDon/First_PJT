@@ -10,8 +10,8 @@ if errorlevel 1 (
     exit /b 1
 )
 
-REM 프로젝트 루트로 이동
-cd /d "%~dp0\.."
+REM 프로젝트 루트로 이동 (docker-compose.yml이 있는 위치)
+cd /d "%~dp0\..\.."
 
 REM Docker Compose로 PostgreSQL 실행
 docker-compose up -d postgres

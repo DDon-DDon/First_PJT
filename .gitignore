@@ -52,4 +52,9 @@ psd
 thumb
 sketch
 
-.env
+# .env
+
+.venv/
+.hypothesis/
+.pytest_cache/
+__pycache__/

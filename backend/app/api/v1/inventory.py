@@ -8,11 +8,38 @@ from app.db.session import get_db
 # from app.api.deps import get_current_user
 # from app.models.user import User
 from app.schemas.inventory import StockListResponse, StockItemResponse
+from app.schemas.common import ErrorResponse
 from app.services import inventory as inventory_service
 
 router = APIRouter()
 
-@router.get("/stocks", response_model=StockListResponse)
+@router.get(
+    "/stocks",
+    response_model=StockListResponse,
+    summary="현재고 목록 조회",
+    description="""
+    매장별 현재고 목록을 페이지네이션하여 조회합니다.
+
+    - **매장 필터(`store_id`)**: 특정 매장의 재고만 조회
+    - **카테고리 필터(`category_id`)**: 특정 카테고리의 제품만 조회
+    - **상태 필터(`status`)**: LOW(안전재고 미달), NORMAL, GOOD 중 선택
+    """,
+    responses={
+        400: {
+            "model": ErrorResponse,
+            "description": "잘못된 요청 파라미터",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": "INVALID_STORE_ID",
+                        "message": "매장 ID 형식이 올바르지 않습니다",
+                        "details": {"store_id": "invalid-uuid"}
+                    }
+                }
+            }
+        }
+    }
+)
 async def list_stocks(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
@@ -85,7 +112,45 @@ async def list_stocks(
 
 from app.schemas.inventory import ProductStockDetailResponse
 
-@router.get("/stocks/{product_id}", response_model=ProductStockDetailResponse)
+@router.get(
+    "/stocks/{product_id}",
+    response_model=ProductStockDetailResponse,
+    summary="제품별 매장 재고 상세 조회",
+    description="""
+    특정 제품의 모든 매장 재고를 조회합니다.
+
+    - **ADMIN**: 모든 매장의 재고 조회 가능
+    - **WORKER**: 본인이 소속된 매장의 재고만 조회 가능
+    """,
+    responses={
+        400: {
+            "model": ErrorResponse,
+            "description": "잘못된 제품 ID",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": "INVALID_PRODUCT_ID",
+                        "message": "제품 ID 형식이 올바르지 않습니다",
+                        "details": {"product_id": "invalid-uuid"}
+                    }
+                }
+            }
+        },
+        404: {
+            "model": ErrorResponse,
+            "description": "제품을 찾을 수 없음",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "code": "PRODUCT_NOT_FOUND",
+                        "message": "해당 제품을 찾을 수 없습니다",
+                        "details": {"product_id": "550e8400-e29b-41d4-a716-446655440000"}
+                    }
+                }
+            }
+        }
+    }
+)
 async def get_product_stock_detail(
     product_id: str,
     db: AsyncSession = Depends(get_db)

@@ -1,0 +1,164 @@
+{
+  "pipeline": {
+    "id": "donedone-backend-v1",
+    "started_at": "2026-01-24T10:00:00Z",
+    "roadmap_path": "docs/roadmap/2026-01-23_improved-roadmap.md",
+    "current_phase": "D",
+    "current_task": "D-5",
+    "current_step": "completed"
+  },
+  "phases": {
+    "A": {
+      "name": "API 문서화 & DX",
+      "status": "completed",
+      "started_at": "2026-01-24T10:00:00Z",
+      "completed_at": "2026-01-24T12:30:00Z",
+      "tasks": {
+        "A-1": {
+          "name": "OpenAPI 스펙 강화",
+          "status": "completed",
+          "summary": "모든 스키마에 json_schema_extra 추가, API 엔드포인트에 responses 상세화"
+        },
+        "A-2": {
+          "name": "API 문서 커스터마이징",
+          "status": "completed",
+          "summary": "main.py에 contact, license_info, servers 추가"
+        },
+        "A-3": {
+          "name": "Postman Collection 생성",
+          "status": "completed",
+          "summary": "postman/environments/에 local, prod 환경 설정 파일 생성"
+        },
+        "A-4": {
+          "name": "API 변경 이력 관리",
+          "status": "completed",
+          "summary": "docs/api/CHANGELOG.md 작성"
+        }
+      }
+    },
+    "B": {
+      "name": "테스트 강화",
+      "status": "completed",
+      "started_at": "2026-01-25T19:00:00Z",
+      "completed_at": "2026-01-25T21:00:00Z",
+      "tasks": {
+        "B-1": {
+          "name": "테스트 커버리지 측정 및 목표 설정",
+          "status": "completed",
+          "summary": "pytest-cov 설정, pyproject.toml에 커버리지 60% 목표 설정"
+        },
+        "B-2": {
+          "name": "단위 테스트 보강",
+          "status": "completed",
+          "summary": "tests/unit/test_inventory_service.py 작성 (16개 테스트)"
+        },
+        "B-3": {
+          "name": "통합 테스트 보강",
+          "status": "completed",
+          "summary": "E2E 테스트 확인, Query 파라미터 deprecation 경고 수정"
+        },
+        "B-4": {
+          "name": "부하 테스트",
+          "status": "completed",
+          "summary": "tests/load/locustfile.py 작성, Locust 부하 테스트 환경 구축"
+        },
+        "B-5": {
+          "name": "계약 테스트",
+          "status": "completed",
+          "summary": "tests/contract/ 작성, Schemathesis 계약 테스트 환경 구축"
+        }
+      }
+    },
+    "C": {
+      "name": "에러 핸들링 & 로깅",
+      "status": "completed",
+      "started_at": "2026-01-25T22:00:00Z",
+      "completed_at": "2026-01-31T00:05:00Z",
+      "tasks": {
+        "C-1": {
+          "name": "커스텀 예외 계층 구축",
+          "status": "completed",
+          "summary": "ApiException 베이스 클래스 도입, 전역 예외 핸들러 등록, 예외 처리 단위 테스트 작성",
+          "completed_at": "2026-01-25T22:30:00Z"
+        },
+        "C-2": {
+          "name": "구조화된 로깅",
+          "status": "completed",
+          "summary": "structlog 기반 로깅 시스템 구현, 민감정보 마스킹, JSON/콘솔 출력 전환, 앱 컨텍스트 자동 추가",
+          "completed_at": "2026-01-31T00:00:00Z"
+        },
+        "C-3": {
+          "name": "Request ID 추적",
+          "status": "completed",
+          "summary": "RequestIdMiddleware 구현, X-Request-ID 헤더 지원, 컨텍스트 변수 바인딩으로 모든 로그에 request_id 자동 포함",
+          "completed_at": "2026-01-31T00:02:00Z"
+        },
+        "C-4": {
+          "name": "Request/Response 로깅",
+          "status": "completed",
+          "summary": "LoggingMiddleware 구현, 자동 요청/응답 로깅, 응답 시간 측정, 느린 요청 경고, 노이즈 경로 제외",
+          "completed_at": "2026-01-31T00:05:00Z"
+        }
+      }
+    },
+    "D": {
+      "name": "쿼리 최적화 & 벤치마크",
+      "status": "completed",
+      "started_at": "2026-01-31T01:00:00Z",
+      "completed_at": "2026-01-31T02:10:00Z",
+      "tasks": {
+        "D-1": {
+          "name": "쿼리 분석 환경 구축",
+          "status": "completed",
+          "summary": "QueryCounter, explain_analyze 등 쿼리 분석 유틸리티 구현"
+        },
+        "D-2": {
+          "name": "N+1 문제 점검 및 해결",
+          "status": "completed",
+          "summary": "InventoryService N+1 분석 및 통합 테스트 검증 완료"
+        },
+        "D-3": {
+          "name": "인덱스 최적화",
+          "status": "completed",
+          "summary": "복합 인덱스(store_id+created_at 등) 추가 및 Enum 타입 명시 마이그레이션 적용"
+        },
+        "D-4": {
+          "name": "Connection Pool 튜닝",
+          "status": "completed",
+          "summary": "DB Connection Pool 설정(.env) 추가 및 적용"
+        },
+        "D-5": {
+          "name": "벤치마크 및 성능 기준선",
+          "status": "completed",
+          "summary": "Locust 부하 테스트 완료 및 성능 벤치마크 리포트 작성"
+        }
+      }
+    },
+    "E": {
+      "name": "인프라 & 배포",
+      "status": "pending",
+      "tasks": {
+        "E-1": { "name": "Docker 개발 환경", "status": "pending" },
+        "E-2": { "name": "Health Check 엔드포인트", "status": "pending" },
+        "E-3": { "name": "환경 설정 관리", "status": "pending" },
+        "E-4": { "name": "CI/CD 파이프라인", "status": "pending" }
+      }
+    },
+    "F": {
+      "name": "보안 강화",
+      "status": "pending",
+      "tasks": {
+        "F-1": { "name": "Rate Limiting", "status": "pending" },
+        "F-2": { "name": "Input Validation 강화", "status": "pending" },
+        "F-3": { "name": "CORS 설정 검토", "status": "pending" },
+        "F-4": { "name": "SQL Injection 방어 점검", "status": "pending" },
+        "F-5": { "name": "보안 헤더 설정", "status": "pending" }
+      }
+    }
+  },
+  "context": {
+    "last_action": "Phase D completed with full benchmark validation and commit",
+    "last_skill": "commit-message-writer",
+    "blockers": []
+  }
+}

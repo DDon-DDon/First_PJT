@@ -146,6 +146,18 @@ class Settings(BaseSettings):
         - asyncpg 드라이버 사용 (비동기)
         - 프로덕션에서는 강력한 비밀번호 사용
     """
+    
+    DB_POOL_SIZE: int = 5
+    """
+    DB 커넥션 풀 크기 (기본 연결 수)
+    기본값: 5
+    """
+
+    DB_MAX_OVERFLOW: int = 10
+    """
+    DB 커넥션 풀 오버플로우 허용 수 (최대 연결 수 = POOL_SIZE + MAX_OVERFLOW)
+    기본값: 10
+    """
 
     # ========== Security Settings ==========
 

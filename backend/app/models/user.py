@@ -133,7 +133,7 @@ class User(Base):
     )
 
     role = Column(
-        SQLEnum(UserRole),  # ENUM 타입으로 저장
+        SQLEnum(UserRole, name="user_role"),  # ENUM 타입으로 저장
         nullable=False,
         default=UserRole.WORKER,  # 기본값: WORKER
         comment="사용자 역할 (WORKER 또는 ADMIN)"

@@ -85,6 +85,17 @@ class Pagination(BaseModel):
         description="전체 페이지 수 (total을 limit로 나눈 값)"
     )
 
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "page": 1,
+                "limit": 10,
+                "total": 47,
+                "totalPages": 5
+            }
+        }
+    }
+
 
 class ErrorResponse(BaseModel):
     """
@@ -143,6 +154,33 @@ class ErrorResponse(BaseModel):
         None,  # 선택 필드
         description="추가 상세 정보 (선택, 예: 필드별 검증 오류)"
     )
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "code": "PRODUCT_NOT_FOUND",
+                    "message": "해당 바코드의 제품을 찾을 수 없습니다",
+                    "details": {"barcode": "8801234567890"}
+                },
+                {
+                    "code": "VALIDATION_ERROR",
+                    "message": "입력값 검증 실패",
+                    "details": {"field": "barcode", "reason": "형식이 올바르지 않습니다"}
+                },
+                {
+                    "code": "STOCK_INSUFFICIENT",
+                    "message": "재고가 부족합니다",
+                    "details": {"available": 5, "requested": 10}
+                },
+                {
+                    "code": "UNAUTHORIZED",
+                    "message": "인증이 필요합니다",
+                    "details": None
+                }
+            ]
+        }
+    }
 
 
 class SuccessResponse(BaseModel):
