@@ -12,7 +12,7 @@
 Phase A: API 문서화 & DX          ████████████████████ 100%  ✅
 Phase B: 테스트 강화              ████████████████████ 100%  ✅
 Phase C: 에러 핸들링 & 로깅       ████████████████████ 100%  ✅
-Phase D: 쿼리 최적화 & 벤치마크   ░░░░░░░░░░░░░░░░░░░░   0%
+Phase D: 쿼리 최적화 & 벤치마크   ████████████████████ 100%  ✅
 Phase E: 인프라 & 배포            ░░░░░░░░░░░░░░░░░░░░   0%
 Phase F: 보안 강화                ░░░░░░░░░░░░░░░░░░░░   0%
 ```
@@ -1082,18 +1082,18 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
 ---
 
-## Phase D: 쿼리 최적화 & 벤치마크
+## Phase D: 쿼리 최적화 & 벤치마크 ✅
 
 **목표**: 주요 API의 응답 시간을 측정하고 최적화  
 **예상 기간**: 4-5일
 
-### D-1. 쿼리 분석 환경 구축
+### D-1. 쿼리 분석 환경 구축 ✅
 
 #### 체크리스트
 
-- [ ] SQLAlchemy echo 모드 설정
-- [ ] PostgreSQL slow query log 활성화
-- [ ] EXPLAIN ANALYZE 활용법 숙지
+- [x] SQLAlchemy echo 모드 설정
+- [x] PostgreSQL slow query log 활성화
+- [x] EXPLAIN ANALYZE 활용법 숙지
 
 #### 구현 가이드
 
@@ -1119,13 +1119,13 @@ log_min_duration_statement = 100  -- 100ms 이상 쿼리 로깅
 log_statement = 'none'  -- 모든 쿼리 로깅 비활성화 (슬로우만)
 ```
 
-### D-2. N+1 문제 점검 및 해결
+### D-2. N+1 문제 점검 및 해결 ✅
 
 #### 체크리스트
 
-- [ ] 현재 코드에서 N+1 발생 지점 식별
-- [ ] `selectinload`, `joinedload` 적용
-- [ ] 적용 전/후 쿼리 수 비교
+- [x] 현재 코드에서 N+1 발생 지점 식별
+- [x] `selectinload`, `joinedload` 적용
+- [x] 적용 전/후 쿼리 수 비교
 
 #### 구현 가이드
 
@@ -1170,14 +1170,14 @@ async def get_stocks_good(store_id: UUID) -> list[CurrentStock]:
 | `subqueryload`    | 복잡한 1:N (집계 필요) | -                    |
 | `lazyload` (기본) | 필요할 때만 로드       | 드물게 접근하는 관계 |
 
-### D-3. 인덱스 최적화
+### D-3. 인덱스 최적화 ✅
 
 #### 체크리스트
 
-- [ ] 주요 쿼리의 EXPLAIN ANALYZE 실행
-- [ ] 필요한 인덱스 추가
-- [ ] 불필요한 인덱스 제거
-- [ ] 복합 인덱스 설계
+- [x] 주요 쿼리의 EXPLAIN ANALYZE 실행
+- [x] 필요한 인덱스 추가
+- [x] 불필요한 인덱스 제거
+- [x] 복합 인덱스 설계
 
 #### 구현 가이드
 
@@ -1240,13 +1240,13 @@ def downgrade():
     op.drop_index('idx_transactions_created_at')
 ```
 
-### D-4. Connection Pool 튜닝
+### D-4. Connection Pool 튜닝 ✅
 
 #### 체크리스트
 
-- [ ] 현재 pool 설정 확인
-- [ ] 동시 접속 수 기반 적정값 계산
-- [ ] pool_pre_ping 활성화 (연결 상태 확인)
+- [x] 현재 pool 설정 확인
+- [x] 동시 접속 수 기반 적정값 계산
+- [x] pool_pre_ping 활성화 (연결 상태 확인)
 
 #### 구현 가이드
 
@@ -1287,13 +1287,13 @@ pool_size = (4 * 2) + 1 = 9 ~ 10
 max_overflow = pool_size * 2 = 20
 ```
 
-### D-5. 벤치마크 및 성능 기준선
+### D-5. 벤치마크 및 성능 기준선 ✅
 
 #### 체크리스트
 
-- [ ] 주요 API 응답 시간 측정
-- [ ] 성능 목표 설정
-- [ ] 벤치마크 자동화
+- [x] 주요 API 응답 시간 측정
+- [x] 성능 목표 설정
+- [x] 벤치마크 자동화
 
 #### 구현 가이드
 
@@ -2113,6 +2113,66 @@ if settings.is_production:
 
 ---
 
+## 🔧 추가 구현사항 (Technical Debt)
+
+### TD-1. 동기화 API local_id 컬럼 추가 (미구현)
+
+**발견일**: 2026-02-08  
+**우선순위**: 🟡 중간  
+**관련 코드**: `app/services/sync.py`, `app/models/transaction.py`
+
+#### 현재 상태
+
+동기화 API (`POST /sync/transactions`)에서 오프라인 트랜잭션의 멱등성(Idempotency)을 보장하기 위해 `local_id`를 사용해야 하지만, 현재 DB 스키마에 해당 컬럼이 없습니다.
+
+**코드 상태:**
+
+- `app/services/sync.py`에서 `InventoryTransaction.local_id`를 참조하고 있음 (25행, 69행)
+- `app/models/transaction.py`에 `local_id` 컬럼 정의가 없음
+- DB 테이블 `inventory_transactions`에 `local_id` 컬럼이 없음
+
+#### 필요 작업
+
+- [ ] `app/models/transaction.py`에 `local_id` 컬럼 추가
+
+```python
+# InventoryTransaction 모델에 추가
+local_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+    UUID(as_uuid=True),
+    nullable=True,
+    unique=True,
+    index=True,
+    comment="클라이언트 오프라인 ID (동기화 멱등성 보장)"
+)
+```
+
+- [ ] Alembic 마이그레이션 생성 및 적용
+
+```bash
+cd backend
+alembic revision --autogenerate -m "Add local_id to inventory_transactions"
+alembic upgrade head
+```
+
+- [ ] 동기화 스키마에 `local_id` 필드 추가
+- [ ] 동기화 API 테스트 케이스 추가
+
+#### 영향 범위
+
+| 파일                        | 변경 사항                                |
+| --------------------------- | ---------------------------------------- |
+| `app/models/transaction.py` | `local_id` 컬럼 추가                     |
+| `app/schemas/sync.py`       | `local_id` 필드 추가 (이미 있을 수 있음) |
+| `app/services/sync.py`      | 현재 코드 정상 동작 (컬럼 추가 후)       |
+| `tests/`                    | 동기화 멱등성 테스트 추가                |
+
+#### 참고 문서
+
+- 도메인 설명 문서: `backend/docs/DOMAIN_DOCUMENTATION.md` - 동기화 API 섹션
+- API 명세서: `backend/docs/setup_references/api-spec.md`
+
+---
+
 **작성자**: Claude  
-**버전**: 1.0.0  
-**최종 업데이트**: 2026-01-24
+**버전**: 1.1.0  
+**최종 업데이트**: 2026-02-08
